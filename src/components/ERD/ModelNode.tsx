@@ -1,16 +1,14 @@
 'use client'
 
 import { Dispatch, SetStateAction } from 'react'
-import { useUpdateNodeInternals, type NodeProps } from 'reactflow'
+import { useStore, useUpdateNodeInternals, type NodeProps } from 'reactflow'
 import { camelize, cn, generateId } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { CalendarIcon, LinkIcon, LockIcon, PlusIcon, SettingsIcon, SparklesIcon, Trash2Icon } from 'lucide-react'
+import { CalendarIcon, LockIcon, PlusIcon, Settings2Icon, SparklesIcon, Trash2Icon } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Switch } from '@/components/ui/switch'
 import { Input } from '@/components/ui/input'
 import { useERDContext } from '@/lib/ERDContext'
-import { Tooltip } from '@/components/Tooltip'
-import { Separator } from '@/components/ui/separator'
 import { z } from 'zod'
 import { PanelRow } from './PanelRow'
 import { FieldRow } from './FieldRow'
@@ -175,141 +173,141 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 			.filter((x) => x.id !== data.id)
 			.some((x) => x.name === data.name) || isReservedKeyword(data.name, true)
 
+	const addSelectedNodes = useStore((store) => store.addSelectedNodes)
+
 	return (
 		<div
 			className={cn(
-				'flex min-w-[216px] cursor-default flex-col overflow-hidden rounded-md border bg-background transition-shadow dark:border',
+				'flex min-w-[216px] cursor-default flex-col gap-4 overflow-hidden rounded-md border bg-background pb-3 transition-shadow dark:border',
 				selected && 'ring-2 ring-ring dark:ring-offset-background',
 				!data.enabled && 'opacity-50'
 			)}
+			onMouseDown={() => {
+				addSelectedNodes([data.id])
+			}}
 		>
-			<div className="mb-[12px] p-0">
-				<div
-					className={cn(
-						'drag-handle flex h-[36px] cursor-grab items-center justify-between border-b bg-background pl-3 pr-2 text-foreground active:cursor-grabbing',
-						selected && 'text-primary dark:text-primary'
-					)}
-					// style={{ background: getTitleBG(titleHSL), color: 'black' }}
-				>
-					{data.name ? (
-						<div className={cn(nameConflicted && 'text-destructive')}>{data.name}</div>
-					) : (
-						<div className="italic text-destructive">New Model</div>
-					)}
-
-					<Popover>
-						<PopoverTrigger asChild>
-							<Button
-								variant="ghost"
-								size="xs"
-								className="h-6 w-6 rounded-full px-0 dark:hover:bg-foreground/10"
-							>
-								<SettingsIcon className="h-4 w-4 opacity-50" />
-							</Button>
-						</PopoverTrigger>
-
-						<PopoverContent align="center" side="right">
-							<div className="flex flex-col gap-3">
-								<div className="flex items-center justify-between pb-3">
-									<div>Model Settings</div>
-
-									<div className="flex items-center gap-2">
-										{isModelLocked(data) ? (
-											<Button variant="ghost" size="xs">
-												<LockIcon className="h-4 w-4" />
-											</Button>
-										) : (
-											<Button
-												variant="ghost"
-												size="xs"
-												onClick={() => {
-													removeSelf()
-												}}
-											>
-												<Trash2Icon className="h-4 w-4" />
-											</Button>
-										)}
-									</div>
-								</div>
-
-								{!hasUserModel && (
-									<div className="flex flex-col gap-2 rounded-md border p-2">
-										<Button
-											size="sm"
-											onClick={() => {
-												setUserModelId(data.id)
-											}}
-										>
-											Set as Auth Model
-										</Button>
-										<div className="rounded-md bg-muted p-2 text-sm text-muted-foreground">
-											The auth model comes with a set of required attributes.
-										</div>
-									</div>
-								)}
-
-								<PanelRow label="Name" hint="The name of the model used for...">
-									<Input
-										value={name}
-										onChange={(e) => {
-											setName(e.currentTarget.value.replace(/\s/g, ''))
-										}}
-										size="sm"
-										autoFocus
-									/>
-								</PanelRow>
-
-								<PanelRow label="Key" hint="The name of the model used in code">
-									<Input
-										value={key}
-										onChange={(e) => {
-											setKey(e.currentTarget.value)
-										}}
-										size="sm"
-										disabled={isModelLocked(data)}
-										placeholder={keyPlaceholder}
-									/>
-								</PanelRow>
-
-								<PanelRow label="Table" hint="The name of the database table">
-									<Input
-										value={tableName}
-										onChange={(e) => setTableName(e.currentTarget.value)}
-										placeholder={tablePlaceholder}
-										size="sm"
-									/>
-								</PanelRow>
-
-								<PanelRow label="Audit Dates" hint="Whether to include createdAt, etc">
-									<Switch
-										checked={data.auditDates}
-										onCheckedChange={(val) => updateModelField('auditDates', val)}
-									/>
-								</PanelRow>
-
-								<PanelRow
-									label="Enabled"
-									hint="If set to false, this model will be omitted from the generated app and db schema"
-								>
-									<Switch
-										checked={data.enabled}
-										onCheckedChange={(val) => updateModelField('enabled', val)}
-										disabled={isUserModel}
-									/>
-								</PanelRow>
-							</div>
-						</PopoverContent>
-					</Popover>
-				</div>
-			</div>
-
 			<div
 				className={cn(
-					'flex flex-col gap-[12px]',
-					sourceRelations.length + targetRelations.length + attrs.length === 0 && 'min-h-[80px]'
+					'drag-handle flex h-[36px] cursor-grab items-center justify-between bg-background pl-3 pr-3 text-foreground active:cursor-grabbing',
+					selected && 'text-primary dark:text-primary'
 				)}
+				// style={{ background: getTitleBG(titleHSL), color: 'black' }}
 			>
-				{attrs.length > 0 && (
+				{data.name ? (
+					<div className={cn('text-sm font-medium', nameConflicted && 'text-destructive')}>{data.name}</div>
+				) : (
+					<div className="italic text-destructive">New Model</div>
+				)}
+
+				<Popover>
+					<PopoverTrigger asChild>
+						<Button variant="ghost" size="xs" className="h-5 w-5 px-0">
+							<Settings2Icon className="h-3 w-3" />
+						</Button>
+					</PopoverTrigger>
+
+					<PopoverContent align="center" side="right">
+						<div className="flex flex-col gap-3">
+							<div className="flex items-center justify-between pb-3">
+								<div>Model Settings</div>
+
+								<div className="flex items-center gap-2">
+									{isModelLocked(data) ? (
+										<Button variant="ghost" size="xs">
+											<LockIcon className="h-4 w-4" />
+										</Button>
+									) : (
+										<Button
+											variant="ghost"
+											size="xs"
+											onClick={() => {
+												removeSelf()
+											}}
+										>
+											<Trash2Icon className="h-4 w-4" />
+										</Button>
+									)}
+								</div>
+							</div>
+
+							{!hasUserModel && (
+								<div className="flex flex-col gap-2 rounded-md border p-2">
+									<Button
+										size="sm"
+										onClick={() => {
+											setUserModelId(data.id)
+										}}
+									>
+										Set as Auth Model
+									</Button>
+									<div className="rounded-md bg-muted p-2 text-sm text-muted-foreground">
+										The auth model comes with a set of required attributes.
+									</div>
+								</div>
+							)}
+
+							<PanelRow label="Name" hint="The name of the model used for...">
+								<Input
+									value={name}
+									onChange={(e) => {
+										setName(e.currentTarget.value.replace(/\s/g, ''))
+									}}
+									size="sm"
+									autoFocus
+								/>
+							</PanelRow>
+
+							<PanelRow label="Key" hint="The name of the model used in code">
+								<Input
+									value={key}
+									onChange={(e) => {
+										setKey(e.currentTarget.value)
+									}}
+									size="sm"
+									disabled={isModelLocked(data)}
+									placeholder={keyPlaceholder}
+								/>
+							</PanelRow>
+
+							<PanelRow label="Table" hint="The name of the database table">
+								<Input
+									value={tableName}
+									onChange={(e) => setTableName(e.currentTarget.value)}
+									placeholder={tablePlaceholder}
+									size="sm"
+								/>
+							</PanelRow>
+
+							<PanelRow label="Audit Dates" hint="Whether to include createdAt, etc">
+								<Switch
+									checked={data.auditDates}
+									onCheckedChange={(val) => updateModelField('auditDates', val)}
+								/>
+							</PanelRow>
+
+							<PanelRow
+								label="Enabled"
+								hint="If set to false, this model will be omitted from the generated app and db schema"
+							>
+								<Switch
+									checked={data.enabled}
+									onCheckedChange={(val) => updateModelField('enabled', val)}
+									disabled={isUserModel}
+								/>
+							</PanelRow>
+						</div>
+					</PopoverContent>
+				</Popover>
+			</div>
+
+			{attrs.length > 0 && (
+				<div className="flex flex-col gap-1">
+					<div className="flex flex-row justify-between px-3">
+						<div className="text-xs font-medium text-muted-foreground/50">Fields</div>
+						<Button variant="ghost" size="xs" className="h-5 w-5 px-0" onClick={() => addAttribute()}>
+							<PlusIcon className="h-3 w-3" />
+						</Button>
+					</div>
 					<Attributes
 						model={data}
 						detailed={detailed}
@@ -317,91 +315,39 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 						updateAttributes={(attrs) => updateModel({ ...data, attributes: attrs })}
 						updateAttributeField={updateAttributeField}
 					/>
-				)}
+				</div>
+			)}
 
-				{sourceRelations.length + targetRelations.length > 0 && (
-					<>
-						{attrs.length > 0 && <Separator />}
-
-						<div className={cn(attrs.length > 0 && '-mt-px')}>
-							<Relations
-								model={data}
-								sourceRelations={sourceRelations.map((x) => ({ ...x, dir: 'source' }))}
-								targetRelations={targetRelations.map((x) => ({ ...x, dir: 'target' }))}
-								updateRelations={setRelations}
-							/>
-						</div>
-					</>
-				)}
-
-				{!detailed && attrs.length + sourceRelations.length + targetRelations.length === 0 && (
-					<div className="flex flex-1 items-center justify-center">
-						<SparklesIcon className="h-10 w-10 opacity-10" />
-					</div>
-				)}
-
-				{data.auditDates && detailed && (
-					<>
-						<Separator />
-
-						<div className="flex flex-col px-2">
-							<FieldRow title="createdAt" type="datetime" icon={CalendarIcon} />
-							<FieldRow title="updatedAt?" type="datetime" icon={CalendarIcon} />
-							<FieldRow title="deletedAt?" type="datetime" icon={CalendarIcon} />
-						</div>
-					</>
-				)}
-			</div>
-
-			<div className="mt-[10px] flex h-[34px] items-center justify-between gap-2 border-t px-2">
-				<div className="flex gap-2">
-					<Tooltip content="Add Attribute" delayDuration={0} side="bottom">
-						<Button
-							variant="outline"
-							size="xs"
-							className="h-6 w-6 rounded-full px-0"
-							onClick={() => addAttribute()}
-						>
+			{sourceRelations.length + targetRelations.length > 0 && (
+				<div className="flex flex-col gap-1">
+					<div className="flex flex-row justify-between px-3">
+						<div className="text-xs font-medium text-muted-foreground/50">Relationships</div>
+						<Button variant="ghost" size="xs" className="h-5 w-5 px-0" onClick={() => addRelation()}>
 							<PlusIcon className="h-3 w-3" />
 						</Button>
-					</Tooltip>
-
-					<Tooltip content="Add Relationship" delayDuration={0} side="bottom">
-						<Button
-							variant="outline"
-							size="xs"
-							className="h-6 w-6 rounded-full px-0"
-							onClick={() => addRelation()}
-						>
-							<LinkIcon className="h-3 w-3" />
-						</Button>
-					</Tooltip>
-				</div>
-
-				{/* <Tooltip
-					content={<span className="text-indigo-500 dark:text-amber-500">AI Suggestions</span>}
-					delayDuration={0}
-					side="bottom"
-				>
-					<div>
-						<SuggestionPopover
-							modelName={data.name}
-							attributeNames={data.attributes.map((x) => x.name)}
-							onAcceptSuggestion={(suggestion) => {
-								return addAttribute(suggestion)
-							}}
-						>
-							<Button
-								variant="outline"
-								size="xs"
-								className="h-6 w-6 rounded-full px-0 hover:text-indigo-500 dark:hover:text-amber-500"
-							>
-								<LightbulbIcon className="h-3 w-3" />
-							</Button>
-						</SuggestionPopover>
 					</div>
-				</Tooltip> */}
-			</div>
+					<Relations
+						model={data}
+						sourceRelations={sourceRelations.map((x) => ({ ...x, dir: 'source' }))}
+						targetRelations={targetRelations.map((x) => ({ ...x, dir: 'target' }))}
+						updateRelations={setRelations}
+					/>
+				</div>
+			)}
+
+			{!detailed && attrs.length + sourceRelations.length + targetRelations.length === 0 && (
+				<div className="flex flex-1 items-center justify-center">
+					<SparklesIcon className="h-10 w-10 opacity-10" />
+				</div>
+			)}
+
+			{data.auditDates && detailed && (
+				<div className="flex flex-col px-2">
+					<FieldRow title="createdAt" type="datetime" icon={CalendarIcon} />
+					<FieldRow title="updatedAt?" type="datetime" icon={CalendarIcon} />
+					<FieldRow title="deletedAt?" type="datetime" icon={CalendarIcon} />
+				</div>
+			)}
 		</div>
 	)
 }

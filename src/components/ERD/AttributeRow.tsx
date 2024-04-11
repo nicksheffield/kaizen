@@ -4,7 +4,7 @@ import { type ElementType, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
 	CalendarIcon,
-	CheckSquareIcon,
+	CheckIcon,
 	ClockIcon,
 	FileIcon,
 	FingerprintIcon,
@@ -66,7 +66,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 			case AttributeType.float:
 				return HashIcon
 			case AttributeType.boolean:
-				return CheckSquareIcon
+				return CheckIcon
 			case AttributeType.datetime:
 			case AttributeType.date:
 				return CalendarIcon
@@ -124,35 +124,44 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 						variant="ghost"
 						size="xs"
 						className={cn(
-							'flex h-[24px] items-center justify-between gap-3 py-0',
+							'flex h-[24px] items-center justify-between gap-6 px-1 py-0',
 							open && 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
 						)}
 					>
 						<div className="flex items-center gap-2">
 							<AttrIcon
-								className="-ml-1 h-4 w-4 cursor-grab opacity-25 active:cursor-grabbing"
+								className={cn(
+									'h-4 w-4 cursor-grab opacity-25 active:cursor-grabbing',
+									open && 'opacity-75'
+								)}
 								{...(attr.name !== 'id' ? { ...attributes, ...listeners } : {})}
 							/>
 							{attr.name ? (
 								<div
 									className={cn(
-										'font-mono text-xs',
+										'text-xs',
 										nameConflicted && 'text-destructive',
 										!attr.enabled && 'text-muted-foreground'
 									)}
 								>{`${attr.name}${attr.nullable ? '?' : ''}`}</div>
 							) : (
-								<div className="font-mono text-xs italic text-destructive">New Attribute</div>
+								<div
+									className={cn('text-xs italic text-destructive', open && 'text-primary-foreground')}
+								>
+									New Field
+								</div>
 							)}
 						</div>
-						<div className="font-mono text-xs opacity-50">{attr.type}</div>
+						<div className={cn('translate-y-px font-mono text-xs opacity-50', open && 'opacity-100')}>
+							{attr.type}
+						</div>
 					</Button>
 				</PopoverTrigger>
 
 				<PopoverContent align="center" side="right">
 					<div className="grid auto-rows-fr grid-cols-1">
 						<div className="flex items-center justify-between pb-3">
-							<div>Attribute Settings</div>
+							<div>Field Settings</div>
 							{isLocked ? (
 								<Button variant="ghost" size="xs">
 									<LockIcon className="h-4 w-4" />
@@ -166,7 +175,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 
 						{isUserAttr && (
 							<div className="mb-1 flex items-center justify-center rounded-md bg-muted p-2 text-sm text-muted-foreground">
-								This is an Auth attribute.
+								This is an Auth field.
 							</div>
 						)}
 
@@ -307,7 +316,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 
 								<PanelRow
 									label="Enabled"
-									hint="If set to false, this attribute will be omitted from the generated app and db schema"
+									hint="If set to false, this field will be omitted from the generated app and db schema"
 								>
 									<Switch
 										checked={attr.enabled}

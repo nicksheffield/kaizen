@@ -143,6 +143,8 @@ export const getIsUserAttr = (id: string) => {
 	return userModelFields.some((x) => x.id === id)
 }
 
+export const roundToNearest = (n: number, t: number) => Math.round(n / t) * t
+
 export const format = async (content: string, settings: Partial<prettier.Options> = {}) => {
 	try {
 		const result = await prettier.format(content, {

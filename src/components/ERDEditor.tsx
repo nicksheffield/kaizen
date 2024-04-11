@@ -10,7 +10,7 @@ import ReactFlow, {
 } from 'reactflow'
 import { ERDProvider } from './ERDProvider'
 import { getAttrTypeRecommends, getSourceName, getTargetName, isReservedKeyword } from '@/lib/ERDHelpers'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { AttributeType, Model, Relation } from '@/lib/projectSchemas'
 import { ERDMarkers } from '@/components/ERDMarkers'
 import { useApp } from '@/lib/AppContext'
@@ -22,6 +22,8 @@ import { RevealButton } from '@/components/RevealButton'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn, generateId, getUserModelFields } from '@/lib/utils'
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+
+const snapSize = 24
 
 export const Editor = () => {
 	const project = useApp((v) => v.project)
@@ -56,6 +58,10 @@ export const Editor = () => {
 		flow.fitView()
 		flow.zoomTo(zoom)
 	}
+
+	const wrapperRef = useRef<HTMLDivElement>(null)
+	// @ts-ignore
+	window.wrapperRef = wrapperRef
 
 	const [relations, setRelations] = useState<Relation[]>(draft?.content.relations || [])
 	const edges = useMemo(() => {
@@ -123,15 +129,32 @@ export const Editor = () => {
 			],
 		}
 
+		const rect = wrapperRef.current?.getBoundingClientRect()
+
+		const position = flow.screenToFlowPosition({
+			x: (rect?.x || 0) + (rect?.width || 0) / 2,
+			y: (rect?.y || 0) + (rect?.height || 0) / 3,
+		})
+
+		position.x = position.x - 214 / 2
+
+		let foundSamePos = nodes.find((x) => x.position.x === position.x && x.position.y === position.y)
+		while (foundSamePos) {
+			position.x += snapSize
+			position.y += snapSize
+			foundSamePos = nodes.find((x) => x.position.x === position.x && x.position.y === position.y)
+		}
+
 		setNodes((nds) => [
 			...nds,
 			{
 				id,
 				type: 'model',
-				position: { x: 0, y: 0 },
+				position,
 				dragHandle: '.drag-handle',
 				data: model,
 				draggable: true,
+				width: 214,
 			},
 		])
 
@@ -355,7 +378,19 @@ export const Editor = () => {
 				setUserModelId: updateUserModelId,
 			}}
 		>
-			<div className={cn('relative flex flex-1 flex-col bg-background', max && 'fixed inset-0 z-50')}>
+			<div
+				ref={wrapperRef}
+				className={cn('relative flex flex-1 flex-col bg-background', max && 'fixed inset-0 z-50')}
+				onMouseMove={(e) => {
+					const rect = wrapperRef?.current?.getBoundingClientRect()
+					console.log({
+						x: e.clientX,
+						y: e.clientY,
+						x2: e.clientX - (rect?.x || 0),
+						y2: e.clientY - (rect?.y || 0),
+					})
+				}}
+			>
 				<div className="pointer-events-none absolute left-0 top-0 z-10 flex w-full flex-col items-center gap-2">
 					<div className="grid w-full grid-cols-[40px,1fr,40px]">
 						<div>
@@ -465,36 +500,13 @@ export const Editor = () => {
 					</div>
 				</div>
 
-				{/* {hasNewChanges && (
-					<div
-						className="absolute top-0 right-0 bg-yellow-100 text-yellow-800 p-2"
-						onClick={() => {
-							setDefaultModels(project.models)
-							setDefaultRelations(project.relations)
-							setNodes(
-								project.models.map((model) => ({
-									id: model.id,
-									type: 'model',
-									position: { x: model.posX, y: model.posY },
-									dragHandle: '.drag-handle',
-									data: model,
-									draggable: true,
-								})) || []
-							)
-							setHasNewChanges(false)
-						}}
-					>
-						You have unsaved changes
-					</div>
-				)} */}
-
 				<ERDMarkers />
 
 				<ReactFlow
 					{...{ nodes, edges, nodeTypes, onNodesChange }}
 					edgeTypes={edgeTypes}
 					snapToGrid
-					snapGrid={[24, 24]}
+					snapGrid={[snapSize, snapSize]}
 					zoomOnDoubleClick={false}
 					edgesUpdatable={false}
 					fitView={true}

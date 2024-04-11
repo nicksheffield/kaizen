@@ -116,7 +116,10 @@ export const ProjectSchema = z.object({
 		devDir: z.string().optional().default('dev'),
 	}),
 	settings: z.object({
-		dev: z.object({}),
+		dev: z.object({
+			customDomain: z.string().optional().default(''),
+			appSrcDir: z.string().optional().default('/app/src'),
+		}),
 		production: z.object({
 			keyPath: z.string().default('/etc/letsencrypt/live/example.com/privkey.pem'),
 			certPath: z.string().default('/etc/letsencrypt/live/example.com/fullchain.pem'),

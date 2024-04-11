@@ -33,6 +33,7 @@ export const getLogicalRecommend = (name: string): AttributeType | undefined => 
 }
 
 export const isReservedKeyword = (keyword: string, isTable: boolean = false) => {
+	return false
 	const keywords = [
 		'ACCESSIBLE',
 		'ADD',

@@ -9,13 +9,7 @@ const tmpl = () => {
 	
 	export const migrate = () => {
 		return nsMigrate(
-			{
-				host: env.DB_HOST,
-				port: +env.DB_PORT,
-				user: env.DB_USER,
-				password: env.DB_PASS,
-				database: env.DB_NAME,
-			},
+			env.DB_URI,
 			JSON.parse(readFileSync(path.join(dirname, '../schema.json'), 'utf8')),
 			{ log: true }
 		)

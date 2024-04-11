@@ -2,31 +2,10 @@ import { ProjectCtx } from '@/generators/hono/types'
 import { stringify } from 'yaml'
 
 const tmpl = ({ project }: { project: ProjectCtx }) => {
-	// 	// const settings = project.project
+	const settings = project.settings
 	const secrets = project.env
 
-	// const node = {
-	// 	image: 'node:18',
-	// 	working_dir: '/home/node/app',
-	// 	volumes: ['./:/home/node/app'],
-	// 	expose: [8000],
-	// 	environment: {
-	// 		VIRTUAL_HOST: `www.${settings.domainName},${settings.domainName}`,
-	// 		VIRTUAL_PORT: 8000,
-	// 	},
-	// 	command: `sh -c "npm install && npm run dev"`,
-	// 	depends_on: ['db'],
-	// 	links: ['db'],
-	// }
-
-	// const nginx = {
-	// 	image: 'nginxproxy/nginx-proxy:1.4',
-	// 	restart: 'always',
-	// 	ports: ['80:80', '443:443'],
-	// 	volumes: ['/var/run/docker.sock:/tmp/docker.sock:ro', '/etc/ssl/nginx:/etc/nginx/certs'],
-	// }
-
-	const db = {
+	const db: Record<string, any> = {
 		image: 'mariadb',
 		restart: 'always',
 		environment: {
@@ -36,13 +15,17 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 			MARIADB_ROOT_PASSWORD: secrets?.MARIADB_ROOT_PASSWORD || '',
 		},
 		volumes: ['database:/var/lib/mysql'],
-		ports: ['3307:3306'],
+		ports: ['3306:3306'],
+	}
+
+	if (settings.dev.customDomain) {
+		db.labels = [`dev.orbstack.domains=db.${settings.dev.customDomain}`]
 	}
 
 	const adminer = {
 		image: 'adminer',
 		restart: 'always',
-		ports: ['9191:8080'],
+		ports: ['8080:8080'],
 		links: ['db'],
 	}
 
@@ -53,6 +36,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 	return stringify(
 		{
 			version: '3.1',
+			name: project.project.name.toLowerCase().replace(/\s/g, '-'),
 			services: {
 				// node,
 				db,

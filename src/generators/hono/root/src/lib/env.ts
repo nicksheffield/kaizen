@@ -6,11 +6,7 @@ const envSchema = z.object({
 	NODE_ENV: z.string().optional(),
 	PORT: z.string().optional(),
 
-	DB_HOST: z.string(),
-	DB_PORT: z.string(),
-	DB_USER: z.string(),
-	DB_PASS: z.string(),
-	DB_NAME: z.string(),
+	DB_URI: z.string(),
 
 	EMAIL_HOST: z.string(),
 	EMAIL_PORT: z.string(),

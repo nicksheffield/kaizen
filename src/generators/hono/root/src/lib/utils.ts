@@ -1,5 +1,6 @@
 const tmpl = () => `import { GraphQLSchema, introspectionFromSchema } from 'graphql'
 import { writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
 
 export const removeDuplicates = <T>(list: T[]): T[] => {
 	return list.filter((x, i, a) => a.indexOf(x) === i)
@@ -7,7 +8,7 @@ export const removeDuplicates = <T>(list: T[]): T[] => {
 
 export const isNotFalse = <T>(x: T | false): x is T => x !== false
 
-export const writeIntrospection = async (schema: GraphQLSchema) => {
+export const writeIntrospection = async (schema: GraphQLSchema, path: string) => {
 	const intro = introspectionFromSchema(schema)
 
 	const str = \`/* eslint-disable */
@@ -31,7 +32,7 @@ declare module 'gql.tada' {
   }
 }\`
 
-	await writeFile('graphql-env.d.ts', str, 'utf-8')
+	await writeFile(join(path, 'graphql-env.d.ts'), str, 'utf-8')
 }
 `
 

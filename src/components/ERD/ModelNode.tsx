@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction } from 'react'
 import { useStore, useUpdateNodeInternals, type NodeProps } from 'reactflow'
 import { camelize, cn, generateId } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { CalendarIcon, LockIcon, PlusIcon, Settings2Icon, SparklesIcon, Trash2Icon } from 'lucide-react'
+import { CalendarIcon, LockIcon, PlusIcon, Settings2Icon, Trash2Icon } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Switch } from '@/components/ui/switch'
 import { Input } from '@/components/ui/input'
@@ -165,8 +165,6 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 		})
 	}
 
-	const attrs = data.attributes.filter((x) => detailed || x.name !== 'id')
-
 	const nameConflicted =
 		nodes
 			.map((x) => x.data)
@@ -300,46 +298,42 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 				</Popover>
 			</div>
 
-			{attrs.length > 0 && (
-				<div className="flex flex-col gap-1">
-					<div className="flex flex-row justify-between px-3">
-						<div className="text-xs font-medium text-muted-foreground/50">Fields</div>
-						<Button variant="ghost" size="xs" className="h-5 w-5 px-0" onClick={() => addAttribute()}>
-							<PlusIcon className="h-3 w-3" />
-						</Button>
-					</div>
-					<Attributes
-						model={data}
-						detailed={detailed}
-						remove={(id) => removeAttribute(id)}
-						updateAttributes={(attrs) => updateModel({ ...data, attributes: attrs })}
-						updateAttributeField={updateAttributeField}
-					/>
+			<div className="flex flex-col gap-1">
+				<div className="flex flex-row justify-between px-3">
+					<div className="text-xs font-medium text-muted-foreground/50">Fields</div>
+					<Button variant="ghost" size="xs" className="h-5 w-5 px-0" onClick={() => addAttribute()}>
+						<PlusIcon className="h-3 w-3" />
+					</Button>
 				</div>
-			)}
+				<Attributes
+					model={data}
+					detailed={detailed}
+					remove={(id) => removeAttribute(id)}
+					updateAttributes={(attrs) => updateModel({ ...data, attributes: attrs })}
+					updateAttributeField={updateAttributeField}
+				/>
+			</div>
 
-			{sourceRelations.length + targetRelations.length > 0 && (
-				<div className="flex flex-col gap-1">
-					<div className="flex flex-row justify-between px-3">
-						<div className="text-xs font-medium text-muted-foreground/50">Relationships</div>
-						<Button variant="ghost" size="xs" className="h-5 w-5 px-0" onClick={() => addRelation()}>
-							<PlusIcon className="h-3 w-3" />
-						</Button>
-					</div>
-					<Relations
-						model={data}
-						sourceRelations={sourceRelations.map((x) => ({ ...x, dir: 'source' }))}
-						targetRelations={targetRelations.map((x) => ({ ...x, dir: 'target' }))}
-						updateRelations={setRelations}
-					/>
+			<div className="flex flex-col gap-1">
+				<div className="flex flex-row justify-between px-3">
+					<div className="text-xs font-medium text-muted-foreground/50">Relationships</div>
+					<Button variant="ghost" size="xs" className="h-5 w-5 px-0" onClick={() => addRelation()}>
+						<PlusIcon className="h-3 w-3" />
+					</Button>
 				</div>
-			)}
+				<Relations
+					model={data}
+					sourceRelations={sourceRelations.map((x) => ({ ...x, dir: 'source' }))}
+					targetRelations={targetRelations.map((x) => ({ ...x, dir: 'target' }))}
+					updateRelations={setRelations}
+				/>
+			</div>
 
-			{!detailed && attrs.length + sourceRelations.length + targetRelations.length === 0 && (
+			{/* {!detailed && attrs.length + sourceRelations.length + targetRelations.length === 0 && (
 				<div className="flex flex-1 items-center justify-center">
 					<SparklesIcon className="h-10 w-10 opacity-10" />
 				</div>
-			)}
+			)} */}
 
 			{data.auditDates && detailed && (
 				<div className="flex flex-col px-2">

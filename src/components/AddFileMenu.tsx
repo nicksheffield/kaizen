@@ -4,7 +4,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useApp } from '@/lib/AppContext'
 import { getEmptyProject, camelize, uc } from '@/lib/utils'
-import { Link2Icon, MailPlusIcon, PlusCircleIcon, PlusSquareIcon } from 'lucide-react'
+import { Link2Icon, MailPlusIcon, PlusCircleIcon, PlusSquareIcon, SproutIcon } from 'lucide-react'
 import emailTemplate from '@/templates/email-template'
 
 export const AddFileMenu = () => {
@@ -12,6 +12,8 @@ export const AddFileMenu = () => {
 	const saveFile = useApp((v) => v.saveFile)
 	const openPath = useApp((v) => v.openPath)
 	const project = useApp((v) => v.project)
+
+	const seeder = files.find((x) => x.path === 'config/seed.ts')
 
 	const projectJson = files.find((x) => x.path === 'project.json')
 
@@ -77,6 +79,39 @@ export const AddFileMenu = () => {
 					<MailPlusIcon className="mr-2 w-4" />
 					<div>Add Email</div>
 				</DropdownMenuItem>
+				{!seeder && (
+					<DropdownMenuItem
+						onClick={() => {
+							saveFile(
+								'config/seed.ts',
+								`import { db } from '@/lib/db.js'
+import { eq, lt } from 'drizzle-orm'
+import * as tables from '@/schema.js'
+import { generateId } from 'lucia'
+import { Argon2id } from 'oslo/password'
+
+export default async () => {
+	// create admin user if it doesn't exist
+	const adminUser = await db.query.users.findFirst({
+		where: eq(tables.users.email, 'admin@example.com'),
+	})
+
+	if (!adminUser) {
+		await db.insert(tables.users).values({
+			id: generateId(15),
+			email: 'admin@example.com',
+			password: await new Argon2id().hash('password'),
+			roles: 'default|admin',
+		})
+	}
+}`
+							)
+						}}
+					>
+						<SproutIcon className="mr-2 w-4" />
+						<div>Add Seeder</div>
+					</DropdownMenuItem>
+				)}
 			</DropdownMenuContent>
 		</DropdownMenu>
 	)

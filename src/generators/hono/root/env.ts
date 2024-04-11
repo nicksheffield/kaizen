@@ -1,16 +1,17 @@
 import { ProjectCtx } from '@/generators/hono/types'
 
 const tmpl = ({ project }: { project: ProjectCtx }) => {
-	const settings = project.project
+	const proj = project.project
 	const secrets = project.env
+	const settings = project.settings
 
 	if (!secrets) return ''
 
-	return `DOMAINS=www.${settings.domainName},${settings.domainName}
-PORT=5556
+	return `DOMAINS=${proj.domainName ? `www.${proj.domainName},${proj.domainName}` : ''}
+PORT=5555
 
 # database connection
-DB_URI=mysql://${secrets.MYSQL_USER}@localhost:3308?password=${secrets.MYSQL_PASSWORD}&database=db
+DB_URI=mysql://${secrets.MYSQL_USER}@${settings.dev.customDomain ? `db.${settings.dev.customDomain}` : 'localhost'}:3306?password=${secrets.MYSQL_PASSWORD}&database=db
 
 # email configuration
 EMAIL_HOST=sandbox.smtp.mailtrap.io

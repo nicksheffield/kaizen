@@ -1,7 +1,8 @@
 import { ModelCtx } from '@/generators/hono/contexts'
+import { ProjectCtx } from '@/generators/hono/types'
 
-const tmpl = (ctx: { models: ModelCtx[] }) => {
-	const models = ctx.models
+const tmpl = (ctx: { models: ModelCtx[]; project: ProjectCtx }) => {
+	const { models, project } = ctx
 
 	return `import { Context, Hono } from 'hono'
 import { g, InferResolvers, buildSchema } from 'garph'
@@ -13,7 +14,7 @@ import { EnvelopArmorPlugin } from '@escape.tech/graphql-armor'
 import { getSession, authDecorate } from '@/middleware/authenticate.js'
 import { User as AuthUser, Session } from 'lucia'
 import { env } from '@/lib/env.js'
-import { isNotFalse } from '@/lib/utils.js'
+import { isNotFalse, writeIntrospection } from '@/lib/utils.js'
 ${models.map((model) => `import * as ${model.name} from './resolvers/${model.drizzleName}.js'`).join('\n')}
 
 const isDev = env.NODE_ENV !== 'production'
@@ -56,6 +57,8 @@ const resolvers = {
 }
 
 const schema = buildSchema({ g, resolvers })
+
+${project.settings.dev.appSrcDir ? `writeIntrospection(schema, '../${project.settings.dev.appSrcDir.replace(/^\//, '')}')` : ''}
 
 const isAuthenticated = rule({ cache: 'contextual' })(
 	async (parent, args, ctx, info) => {

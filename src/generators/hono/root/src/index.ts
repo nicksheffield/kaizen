@@ -5,14 +5,17 @@ import { mountRoutes } from '@/lib/mountRoutes.js'
 import { showRoutes } from 'hono/dev'
 import { cors } from 'hono/cors'
 import { secureHeaders } from 'hono/secure-headers'
-${importSeeder ? `import { seed } from '@/seed.js'` : ''}
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { env } from '@/lib/env.js'
+import { migrate } from '@/migrate.js'
+${importSeeder ? `import seed from '@/seed.js'` : ''}
 
 const app = new Hono()
 
-${importSeeder ? 'seed()' : ''}
+migrate().then(() => {
+	${importSeeder ? 'return seed()' : ''}
+})
 
 app.use(
 	cors({

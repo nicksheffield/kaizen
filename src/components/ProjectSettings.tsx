@@ -18,6 +18,7 @@ export const ProjectSettings = () => {
 			project: project?.project,
 			auth: project?.auth,
 			env: project?.env,
+			settings: project?.settings || { dev: {}, production: {} },
 		},
 		onSubmit: async (values) => {
 			if (!project) return
@@ -27,6 +28,16 @@ export const ProjectSettings = () => {
 				project: {
 					...project.project,
 					...values.project,
+				},
+				settings: {
+					dev: {
+						...project.settings.dev,
+						...values.settings.dev,
+					},
+					production: {
+						...project.settings.production,
+						...values.settings.production,
+					},
 				},
 				auth: {
 					expiresIn: values.auth?.expiresIn ?? '60',
@@ -74,16 +85,26 @@ export const ProjectSettings = () => {
 						Auth
 					</Button>
 				)}
-				{/* <Button
-					variant={tab === 'format' ? 'default' : 'ghost'}
+				<Button
+					variant={tab === 'dev' ? 'default' : 'ghost'}
 					size="pip"
 					className="justify-start"
 					onClick={() => {
-						setTab('format')
+						setTab('dev')
 					}}
 				>
-					Formatting
-				</Button> */}
+					Dev Settings
+				</Button>
+				<Button
+					variant={tab === 'prod' ? 'default' : 'ghost'}
+					size="pip"
+					className="justify-start"
+					onClick={() => {
+						setTab('prod')
+					}}
+				>
+					Production Settings
+				</Button>
 				<Button
 					variant={tab === 'env' ? 'default' : 'ghost'}
 					size="pip"
@@ -104,7 +125,7 @@ export const ProjectSettings = () => {
 								<CardDescription>The general settings for the project</CardDescription>
 							</div>
 
-							<div className="flex w-full flex-col gap-8 px-4 py-4">
+							<div className="flex w-full flex-col gap-6 px-4 py-4">
 								<FormInputRow name="project.name" label="Name" description="The name of the project." />
 								<FormSelectRow
 									name="project.generator"
@@ -158,6 +179,48 @@ export const ProjectSettings = () => {
 									name="auth.bearer"
 									label="Bearer"
 									description="Use Bearer tokens for auth."
+								/>
+							</div>
+						</div>
+					)}
+
+					{tab === 'dev' && (
+						<div className="flex w-full flex-col">
+							<div className="space-y-1.5 border-b bg-muted/50 px-4 py-4">
+								<CardTitle>Dev Settings</CardTitle>
+								<CardDescription>Options for the dev environment</CardDescription>
+							</div>
+							<div className="flex w-full flex-col gap-6 px-4 py-4">
+								<FormInputRow
+									name="settings.dev.customDomain"
+									label="Custom Domain"
+									description={`Use orb stack for custom domains in dev. Must end in .local, eg: ${form.values.project?.name.toLowerCase().replace(/\s/g, '-') || 'my-project'}.local`}
+								/>
+								<FormInputRow
+									name="settings.dev.appSrcDir"
+									label="App Source Directory"
+									description="The path to the react app's 'src' directory"
+								/>
+							</div>
+						</div>
+					)}
+
+					{tab === 'prod' && (
+						<div className="flex w-full flex-col">
+							<div className="space-y-1.5 border-b bg-muted/50 px-4 py-4">
+								<CardTitle>Production Settings</CardTitle>
+								<CardDescription>Options for the production environment</CardDescription>
+							</div>
+							<div className="flex w-full flex-col gap-6 px-4 py-4">
+								<FormInputRow
+									name="settings.production.keyPath"
+									label="Key Path"
+									description="The path to the private key file."
+								/>
+								<FormInputRow
+									name="settings.production.certPath"
+									label="Cert Path"
+									description="The path to the certificate file."
 								/>
 							</div>
 						</div>

@@ -290,7 +290,9 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 
 	const saveProject = useCallback(
 		async (project: Project) => {
-			await saveFile('project.json', JSON.stringify(project, null, 4).replace(/    /g, '\t'))
+			await saveFile('project.json', JSON.stringify(project, null, 4).replace(/    /g, '\t'), {
+				showToast: false,
+			})
 			setDraft({ dirty: false, content: project })
 			await generateProject(project)
 		},

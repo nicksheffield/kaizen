@@ -2,7 +2,7 @@ import { ModelCtx } from '@/generators/hono/contexts'
 import { mapAttrToGQLFilter, mapAttrToGarph } from '@/generators/hono/utils'
 import { ProjectCtx } from '@/generators/hono/types'
 import { isNotNone } from '@/lib/utils'
-import { plural } from 'pluralize'
+import { plural, singular } from 'pluralize'
 
 const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	const nonSelectAttrs = model.attributes.filter((x) => !x.selectable)
@@ -128,7 +128,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 			${model.foreignKeys
 				.map((x) => {
 					// use id or string? lets go with id for now
-					return `${x.name}: g.ref(filters.StringFilter).optional(),`
+					return `${x.name}: g.ref(filters.String).optional(),`
 				})
 				.filter(isNotNone)
 				.join('\n')}
@@ -175,7 +175,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	
 	// the types for the queries
 	export const queryTypes = {
-		${model.drizzleName}: g.ref(types.type).optional().args({
+		${singular(model.drizzleName)}: g.ref(types.type).optional().args({
 			id: g.id(),
 		}),
 	
@@ -190,7 +190,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	
 	// the resolvers for the queries
 	export const queryResolvers: Resolvers['Query'] = {
-		${model.drizzleName}: async (_, args) => {
+		${singular(model.drizzleName)}: async (_, args) => {
 			const item = await db.query.${model.drizzleName}.findFirst({
 				${
 					nonSelectAttrs.length > 0
@@ -283,11 +283,11 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 					isAuthModel
 						? `const { email, password, ...fields} = data
 						const item = await createUser(email, password, fields)`
-						: `const newId = generateId(15)
+						: `const newId = data.id ?? generateId(15)
 	
 					await db.insert(tables.${model.drizzleName}).values({
 						...data,
-						id: data.id ?? newId,
+						id: newId,
 						${model.relatedModels
 							.map((x) => {
 								if (x.otherModel.id !== authModel?.id) return null

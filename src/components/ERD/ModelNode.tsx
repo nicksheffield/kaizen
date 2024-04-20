@@ -1,5 +1,3 @@
-'use client'
-
 import { Dispatch, SetStateAction } from 'react'
 import { useStore, useUpdateNodeInternals, type NodeProps } from 'reactflow'
 import { camelize, cn, generateId } from '@/lib/utils'

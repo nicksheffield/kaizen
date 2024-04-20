@@ -1,5 +1,3 @@
-'use client'
-
 import { type DetailedHTMLProps, type HTMLAttributes, type ElementType, forwardRef } from 'react'
 import { Button } from '@/components/ui/button'
 

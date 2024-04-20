@@ -1,5 +1,3 @@
-'use client'
-
 import { Tooltip } from '@/components/Tooltip'
 import { Switch, SwitchProps } from '@/components/ui/switch'
 import { type PropsWithChildren, type ReactNode } from 'react'

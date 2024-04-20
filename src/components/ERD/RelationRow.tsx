@@ -1,5 +1,3 @@
-'use client'
-
 import { useCallback, useMemo, useState } from 'react'
 import { Handle, Position } from 'reactflow'
 import { alphabetical, camelize, cn, generateId } from '@/lib/utils'

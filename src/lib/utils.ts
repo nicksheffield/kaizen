@@ -182,7 +182,10 @@ export const getEmptyProject = (): Project => {
 			devDir: 'dev',
 		},
 		settings: {
-			dev: {},
+			dev: {
+				useOrbStack: true,
+				appSrcDir: '/app/src',
+			},
 			production: {
 				keyPath: '/etc/letsencrypt/live/example.com/privkey.pem',
 				certPath: '/etc/letsencrypt/live/example.com/fullchain.pem',

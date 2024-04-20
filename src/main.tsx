@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { App } from './App'
 import { AppProvider } from './components/AppProvider'
@@ -14,19 +13,19 @@ import 'reactflow/dist/style.css'
 import { AppThemeProvider } from '@/components/AppThemeProvider'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-	<React.StrictMode>
-		<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-			<AppThemeProvider>
-				<AppProvider>
-					<CommandMenu />
-					<ModalProvider />
-					<AlertProvider />
-					<Toaster />
-					<TooltipProvider>
-						<App />
-					</TooltipProvider>
-				</AppProvider>
-			</AppThemeProvider>
-		</ThemeProvider>
-	</React.StrictMode>
+	// <React.StrictMode>
+	<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+		<AppThemeProvider>
+			<AppProvider>
+				<CommandMenu />
+				<ModalProvider />
+				<AlertProvider />
+				<Toaster />
+				<TooltipProvider>
+					<App />
+				</TooltipProvider>
+			</AppProvider>
+		</AppThemeProvider>
+	</ThemeProvider>
+	//</React.StrictMode>
 )

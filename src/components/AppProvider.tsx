@@ -261,10 +261,10 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 			if (!generate) return
 
 			const generated = await generate(project, {
-				seeder: files.filter(isFile).find((x) => x.path.startsWith('config/seed.ts'))?.content,
+				seeder: files.filter(isFile).find((x) => x.path.startsWith('kaizen/seed.ts'))?.content,
 				emails: files
 					.filter(isFile)
-					.filter((x) => x.path.startsWith('emails'))
+					.filter((x) => x.path.startsWith('kaizen/emails'))
 					.reduce<Record<string, string>>((acc, file) => {
 						acc[file.name] = file.content
 						return acc

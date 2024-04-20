@@ -1,4 +1,4 @@
-const tmpl = () => `import { GraphQLSchema, introspectionFromSchema } from 'graphql'
+const tmpl = () => `import { GraphQLSchema, introspectionFromSchema, printSchema } from 'graphql'
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
@@ -32,7 +32,9 @@ declare module 'gql.tada' {
   }
 }\`
 
-	await writeFile(join(path, 'graphql-env.d.ts'), str, 'utf-8')
+	//await writeFile(join(path, 'graphql-env.d.ts'), str, 'utf-8')
+	await writeFile(join(path, '..', 'schema.graphql'), printSchema(schema), 'utf-8')
+	console.log('Wrote introspection to graphql-env.d.ts')
 }
 `
 

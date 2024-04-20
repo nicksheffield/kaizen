@@ -100,7 +100,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 		update: g.inputType('Update${model.name}', {
 			${model.attributes
 				.map((x) => {
-					if (x.name === 'id') return null
+					if (x.name === 'id') return `id: g.id(),`
 					if (!x.insertable) return null
 
 					return `${x.name}: g.${mapAttrToGarph(x.type)}.optional(),`
@@ -260,7 +260,6 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 			.ref(types.type)
 			.list()
 			.args({
-				id: g.id(),
 				data: g.ref(types.update).list(),
 			}),
 	
@@ -346,7 +345,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 						})
 						.join('\n')}
 				})
-				.where(eq(tables.${model.drizzleName}.id, args.id))`
+				.where(eq(tables.${model.drizzleName}.id, data.id))`
 				}
 	
 				const item = await db.query.${model.drizzleName}.findFirst({
@@ -357,7 +356,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 						},`
 							: ''
 					}
-					where: eq(tables.${model.drizzleName}.id, args.id),
+					where: eq(tables.${model.drizzleName}.id, data.id),
 				})
 	
 				if (item) results.push(item)

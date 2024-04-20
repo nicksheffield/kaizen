@@ -33,7 +33,7 @@ export function UserMenu() {
 					</DropdownMenuSubTrigger>
 					<DropdownMenuSubContent>
 						<DropdownMenuCheckboxItem onClick={() => setAppTheme('')} checked={appTheme === ''}>
-							Grayscale
+							Slate
 						</DropdownMenuCheckboxItem>
 						<DropdownMenuCheckboxItem onClick={() => setAppTheme('blue')} checked={appTheme === 'blue'}>
 							Blue

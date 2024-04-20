@@ -191,10 +191,10 @@ export const ProjectSettings = () => {
 								<CardDescription>Options for the dev environment</CardDescription>
 							</div>
 							<div className="flex w-full flex-col gap-6 px-4 py-4">
-								<FormInputRow
-									name="settings.dev.customDomain"
-									label="Custom Domain"
-									description={`Use orb stack for custom domains in dev. Must end in .local, eg: ${form.values.project?.name.toLowerCase().replace(/\s/g, '-') || 'my-project'}.local`}
+								<FormSwitchRow
+									name="settings.dev.useOrbStack"
+									label="Use Orb Stack"
+									description="Use orb stack instead of docker desktop to enable unique local domains in dev."
 								/>
 								<FormInputRow
 									name="settings.dev.appSrcDir"

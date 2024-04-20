@@ -2,7 +2,7 @@ import { ProjectCtx } from '@/generators/hono/types'
 import { stringify } from 'yaml'
 
 const tmpl = ({ project }: { project: ProjectCtx }) => {
-	const settings = project.settings
+	// const settings = project.settings
 	const secrets = project.env
 
 	const db: Record<string, any> = {
@@ -18,9 +18,9 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 		ports: ['3306:3306'],
 	}
 
-	if (settings.dev.customDomain) {
-		db.labels = [`dev.orbstack.domains=db.${settings.dev.customDomain}`]
-	}
+	// if (settings.dev.customDomain) {
+	// 	db.labels = [`dev.orbstack.domains=db.${settings.dev.customDomain}`]
+	// }
 
 	const adminer = {
 		image: 'adminer',

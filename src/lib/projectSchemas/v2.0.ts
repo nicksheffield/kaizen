@@ -117,7 +117,7 @@ export const ProjectSchema = z.object({
 	}),
 	settings: z.object({
 		dev: z.object({
-			customDomain: z.string().optional().default(''),
+			useOrbStack: z.boolean().optional().default(false),
 			appSrcDir: z.string().optional().default('/app/src'),
 		}),
 		production: z.object({

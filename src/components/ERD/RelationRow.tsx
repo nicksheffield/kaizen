@@ -208,7 +208,8 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 										nameConflicted && 'text-destructive',
 										!rel.enabled && 'text-muted-foreground',
 										!sourceModel?.enabled && 'text-muted-foreground',
-										!targetModel?.enabled && 'text-muted-foreground'
+										!targetModel?.enabled && 'text-muted-foreground',
+										open && 'text-primary-foreground'
 									)}
 								>
 									{name}
@@ -222,7 +223,7 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 							)}{' '}
 						</div>
 						<div
-							className={cn('font-mono text-xs opacity-50 hover:text-primary', open && 'opacity-100')}
+							className={cn('font-mono text-xs opacity-50 hover:underline', open && 'opacity-100')}
 							onClick={(e) => {
 								const n = nodes.find((x) => {
 									if (mode === 'source') {

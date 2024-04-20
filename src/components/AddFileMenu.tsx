@@ -55,8 +55,8 @@ export const AddFileMenu = () => {
 								if (val.startsWith('/')) path = path.slice(1)
 								if (val.startsWith('api/')) path = path.slice(4)
 
-								await saveFile(`api/${path}.json`, '{}')
-								openPath(`api/${path}.json`)
+								await saveFile(`kaizen/api/${path}.json`, '{}')
+								openPath(`kaizen/api/${path}.json`)
 							},
 						})
 					}}
@@ -70,8 +70,11 @@ export const AddFileMenu = () => {
 							title: 'Email name',
 							onSubmit: async (name) => {
 								const fixedName = uc(camelize(name))
-								await saveFile(`emails/${fixedName}.tsx`, emailTemplate({ name: fixedName, project }))
-								openPath(`emails/${fixedName}.tsx`)
+								await saveFile(
+									`kaizen/emails/${fixedName}.tsx`,
+									emailTemplate({ name: fixedName, project })
+								)
+								openPath(`kaizen/emails/${fixedName}.tsx`)
 							},
 						})
 					}}
@@ -83,7 +86,7 @@ export const AddFileMenu = () => {
 					<DropdownMenuItem
 						onClick={() => {
 							saveFile(
-								'config/seed.ts',
+								'kaizen/seed.ts',
 								`import { db } from '@/lib/db.js'
 import { eq, lt } from 'drizzle-orm'
 import * as tables from '@/schema.js'
@@ -106,6 +109,7 @@ export default async () => {
 	}
 }`
 							)
+							openPath(`kaizen/seed.ts`)
 						}}
 					>
 						<SproutIcon className="mr-2 w-4" />

@@ -90,6 +90,7 @@ export const getEdgeParams = (source: Node, target: Node, relId: string) => {
 export const SimpleFloatingEdge = ({ id, source, target, markerEnd, markerStart, style, data }: EdgeProps) => {
 	const sourceNode = useStore(useCallback((store) => store.nodeInternals.get(source), [source]))
 	const targetNode = useStore(useCallback((store) => store.nodeInternals.get(target), [target]))
+	const rel = useStore(useCallback((store) => store.edges.find((x) => x.id === id), [id]))
 
 	if (!sourceNode || !targetNode) {
 		return null
@@ -116,6 +117,7 @@ export const SimpleFloatingEdge = ({ id, source, target, markerEnd, markerStart,
 		targetX: tx,
 		targetY: ty,
 		borderRadius: 5,
+		centerX: (tx + sx) / 2 + (rel?.data.sourceOrder + 1) * -10 + 15,
 	})
 
 	return (

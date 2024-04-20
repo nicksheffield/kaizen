@@ -1,5 +1,6 @@
 import {
 	ActivityIcon,
+	BoxIcon,
 	FileDiffIcon,
 	FileIcon,
 	FileJson2Icon,
@@ -9,6 +10,7 @@ import {
 	FolderOpenIcon,
 	FolderRootIcon,
 	HelpCircleIcon,
+	MailIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useApp } from '@/lib/AppContext'
@@ -51,6 +53,14 @@ export const TreeFileIcon = ({ path, open = true, className }: TreeFileIconProps
 	if (file?.type === 'file') {
 		if (file?.name === 'project.json') {
 			return <ActivityIcon className={classNames} />
+		}
+
+		if (file.path.startsWith('kaizen/emails')) {
+			return <MailIcon className={classNames} />
+		}
+
+		if (file.path.startsWith('kaizen/api')) {
+			return <BoxIcon className={classNames} />
 		}
 
 		const fileType = file?.name.split('.').pop()

@@ -11,7 +11,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 PORT=5555
 
 # database connection
-DB_URI=mysql://${secrets.MYSQL_USER}@${settings.dev.customDomain ? `db.${settings.dev.customDomain}` : 'localhost'}:3306?password=${secrets.MYSQL_PASSWORD}&database=db
+DB_URI=mysql://${secrets.MYSQL_USER}@${settings.dev.useOrbStack ? `db.${proj.name.toLowerCase().replace(/\s/g, '-')}.orb.local` : 'localhost'}:3306?password=${secrets.MYSQL_PASSWORD}&database=db
 
 # email configuration
 EMAIL_HOST=sandbox.smtp.mailtrap.io

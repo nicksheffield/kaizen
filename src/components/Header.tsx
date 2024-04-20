@@ -1,5 +1,5 @@
 import { openConfirm } from '@/components/Alert'
-import { Logo } from '@/components/Logo'
+// import { Logo } from '@/components/Logo'
 import { UserMenu } from '@/components/UserMenu'
 import { Button } from '@/components/ui/button'
 import { useApp } from '@/lib/AppContext'
@@ -8,8 +8,16 @@ import { RefreshCcwDotIcon } from 'lucide-react'
 export const Header = () => {
 	return (
 		<div className="relative flex items-center justify-between overflow-hidden p-4">
-			<div className="pl-[4.5rem]">
-				<Logo />
+			<div className="">
+				{/* <Logo /> */}
+				<div className="group origin-left cursor-default text-2xl font-black tracking-tight transition-transform hover:scale-125">
+					<span className="group-hover:text-indigo-500">K</span>
+					<span className="group-hover:text-purple-500">a</span>
+					<span className="group-hover:text-red-500">i</span>
+					<span className="group-hover:text-orange-500">z</span>
+					<span className="group-hover:text-yellow-500">e</span>
+					<span className="group-hover:text-green-500">n</span>
+				</div>
 			</div>
 			<div className="flex items-center gap-4">
 				<UserMenu />

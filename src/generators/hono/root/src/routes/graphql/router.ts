@@ -60,7 +60,7 @@ const schema = buildSchema({ g, resolvers })
 
 ${
 	project.settings.dev.appDir
-		? `if (env.NODE_ENV === 'dev') {
+		? `if (isDev) {
 	writeIntrospection(schema, '../${project.settings.dev.appDir.replace(/^\//, '')}')
 }`
 		: ''

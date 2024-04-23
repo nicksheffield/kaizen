@@ -58,7 +58,13 @@ const resolvers = {
 
 const schema = buildSchema({ g, resolvers })
 
-${project.settings.dev.appSrcDir ? `writeIntrospection(schema, '../${project.settings.dev.appSrcDir.replace(/^\//, '')}')` : ''}
+${
+	project.settings.dev.appDir
+		? `if (env.NODE_ENV === 'dev') {
+	writeIntrospection(schema, '../${project.settings.dev.appDir.replace(/^\//, '')}')
+}`
+		: ''
+}
 
 const isAuthenticated = rule({ cache: 'contextual' })(
 	async (parent, args, ctx, info) => {
@@ -71,6 +77,7 @@ const isAuthenticated = rule({ cache: 'contextual' })(
 const yoga = createYoga({
 	schema,
 	graphiql: false,
+	graphqlEndpoint: '/api/graphql',
 	plugins: [
 		!isDev && useDisableIntrospection(),
 		EnvelopArmorPlugin(),

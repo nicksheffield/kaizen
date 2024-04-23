@@ -118,12 +118,9 @@ export const ProjectSchema = z.object({
 	settings: z.object({
 		dev: z.object({
 			useOrbStack: z.boolean().optional().default(false),
-			appSrcDir: z.string().optional().default('/app/src'),
+			appDir: z.string().optional().default('/app/src'),
 		}),
-		production: z.object({
-			keyPath: z.string().default('/etc/letsencrypt/live/example.com/privkey.pem'),
-			certPath: z.string().default('/etc/letsencrypt/live/example.com/fullchain.pem'),
-		}),
+		production: z.object({}),
 	}),
 	auth: z
 		.object({
@@ -187,11 +184,11 @@ export const upgrade = (project: V1_0.Project) => {
 			devDir: 'dev',
 		},
 		settings: {
-			dev: {},
-			production: {
-				keyPath: '/etc/letsencrypt/live/example.com/privkey.pem',
-				certPath: '/etc/letsencrypt/live/example.com/fullchain.pem',
+			dev: {
+				useOrbStack: false,
+				appDir: '/app',
 			},
+			production: {},
 		},
 		auth: {
 			expiresIn: '60',

@@ -9,8 +9,8 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 		type: 'module',
 		scripts: {
 			dev: 'tsx --watch src/index.ts',
-			migrate: 'npx drizzle-kit generate:mysql',
 			studio: 'npx drizzle-kit studio',
+			start: 'tsx src/index.ts',
 		},
 		peerDependencies: {
 			typescript: '^5.0.0',

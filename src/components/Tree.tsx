@@ -93,7 +93,7 @@ const DescRow = ({ file, isSelected, onSelect, onDelete, level = 1, isOpen }: De
 			<ContextMenuTrigger asChild>
 				<div
 					className={cn(
-						'flex cursor-pointer items-center gap-2 rounded-lg py-1',
+						'flex cursor-pointer items-center gap-2 rounded-md py-1',
 						isSelected
 							? 'bg-primary text-primary-foreground hover:bg-primary/80'
 							: 'hover:bg-foreground/10',

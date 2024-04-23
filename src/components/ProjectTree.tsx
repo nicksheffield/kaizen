@@ -26,7 +26,7 @@ export const ProjectTree = () => {
 			<div className="flex flex-col gap-2">
 				<div
 					className={cn(
-						'flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm',
+						'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 						selectedPath === 'project.json'
 							? 'bg-primary text-primary-foreground hover:bg-primary/80'
 							: 'hover:bg-foreground/10'
@@ -90,7 +90,7 @@ export const ProjectTree = () => {
 									<div
 										key={file.path}
 										className={cn(
-											'flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm',
+											'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 											selectedPath === file.path
 												? 'bg-primary text-primary-foreground hover:bg-primary/80'
 												: 'hover:bg-foreground/10'
@@ -159,7 +159,7 @@ export const ProjectTree = () => {
 									<div
 										key={file.path}
 										className={cn(
-											'flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm',
+											'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 											selectedPath === file.path
 												? 'bg-primary text-primary-foreground hover:bg-primary/80'
 												: 'hover:bg-foreground/10'

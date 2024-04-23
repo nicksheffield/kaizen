@@ -6,6 +6,8 @@ import { useApp } from '@/lib/AppContext'
 import { getEmptyProject, camelize, uc } from '@/lib/utils'
 import { Link2Icon, MailPlusIcon, PlusCircleIcon, PlusSquareIcon, SproutIcon } from 'lucide-react'
 import emailTemplate from '@/templates/email-template'
+import vscodeSettingsJson from '@/templates/vscode-settings-json'
+import vscodeTasksJson from '@/templates/vscode-tasks-json'
 
 export const AddFileMenu = () => {
 	const files = useApp((v) => v.files)
@@ -26,6 +28,8 @@ export const AddFileMenu = () => {
 						size="pip-icon"
 						onClick={() => {
 							saveFile('project.json', JSON.stringify(getEmptyProject(), null, 4))
+							saveFile('.vscode/settings.json', vscodeSettingsJson())
+							saveFile('.vscode/tasks.json', vscodeTasksJson())
 						}}
 					>
 						<PlusCircleIcon className="h-4 w-4" />

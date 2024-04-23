@@ -15,6 +15,8 @@ export const CodeEditor = () => {
 		return selectedFile?.content !== value
 	}, [selectedFile, value])
 
+	const format = selectedFile?.extension === 'ts'
+
 	if (!selectedFile) return null
 
 	return (
@@ -24,7 +26,7 @@ export const CodeEditor = () => {
 					variant="pip"
 					size="pip"
 					onClick={() => {
-						saveFile(selectedFile.path, value, { showToast: true, format: true })
+						saveFile(selectedFile.path, value, { showToast: true, format })
 					}}
 					disabled={!hasChanges}
 				>

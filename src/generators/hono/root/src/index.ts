@@ -1,5 +1,6 @@
 const tmpl = ({ importSeeder }: { importSeeder: boolean }) => {
 	return `import { serve } from '@hono/node-server'
+import { serveStatic } from '@hono/node-server/serve-static'
 import { Hono } from 'hono'
 import { mountRoutes } from '@/lib/mountRoutes.js'
 import { showRoutes } from 'hono/dev'
@@ -34,7 +35,8 @@ app.use(
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 mountRoutes('', path.join(dirname, 'routes')).then((router) => {
-	app.route('/', router)
+	app.route('/api', router)
+	app.use('*', serveStatic({ root: './public' }))
 
 	if (process.env.NODE_ENV !== 'production') showRoutes(app)
 })

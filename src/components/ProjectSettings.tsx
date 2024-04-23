@@ -197,9 +197,9 @@ export const ProjectSettings = () => {
 									description="Use orb stack instead of docker desktop to enable unique local domains in dev."
 								/>
 								<FormInputRow
-									name="settings.dev.appSrcDir"
-									label="App Source Directory"
-									description="The path to the react app's 'src' directory"
+									name="settings.dev.appDir"
+									label="App Directory"
+									description="The path to the react app projects root directory, where the package.json is located."
 								/>
 							</div>
 						</div>
@@ -211,18 +211,7 @@ export const ProjectSettings = () => {
 								<CardTitle>Production Settings</CardTitle>
 								<CardDescription>Options for the production environment</CardDescription>
 							</div>
-							<div className="flex w-full flex-col gap-6 px-4 py-4">
-								<FormInputRow
-									name="settings.production.keyPath"
-									label="Key Path"
-									description="The path to the private key file."
-								/>
-								<FormInputRow
-									name="settings.production.certPath"
-									label="Cert Path"
-									description="The path to the certificate file."
-								/>
-							</div>
+							<div className="flex w-full flex-col gap-6 px-4 py-4"></div>
 						</div>
 					)}
 

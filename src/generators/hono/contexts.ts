@@ -8,7 +8,7 @@ import {
 	mapAttributeTypeToJs,
 	sortAttrs,
 	vetDefault,
-} from '@/generators/hono/utils'
+} from './utils'
 import { ProjectCtx } from './types'
 import { camelize, isNotNone } from '@/lib/utils'
 import { RelationType } from '@/lib/projectSchemas'

@@ -8,6 +8,7 @@ const tmpl = () => {
 			outDir: 'build',
 			rootDir: 'src',
 			strict: true,
+			skipLibCheck: true,
 			noImplicitAny: true,
 			esModuleInterop: true,
 			emitDecoratorMetadata: true,
@@ -18,7 +19,7 @@ const tmpl = () => {
 				'@/*': ['./*'],
 			},
 		},
-		include: ['**/*.ts'],
+		include: ['src/**/*.ts'],
 	}
 
 	return JSON.stringify(tsConfigJson, null, 4)

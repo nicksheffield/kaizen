@@ -8,11 +8,11 @@ const envSchema = z.object({
 
 	DB_URI: z.string(),
 
-	EMAIL_HOST: z.string(),
-	EMAIL_PORT: z.string(),
-	EMAIL_USER: z.string(),
-	EMAIL_PASS: z.string(),
-	EMAIL_FROM: z.string(),
+	EMAIL_HOST: z.string().optional(),
+	EMAIL_PORT: z.string().optional(),
+	EMAIL_USER: z.string().optional(),
+	EMAIL_PASS: z.string().optional(),
+	EMAIL_FROM: z.string().optional(),
 })
 
 export const env = envSchema.parse(process.env)

@@ -321,10 +321,10 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 			for (const data of args.data) {
 				${
 					isAuthModel
-						? `const { email, password, ...fields} = data
+						? `const { id, email, password, ...fields} = data
 						
 						await updateUser(
-					args.id,
+					id,
 					email ?? undefined,
 					password ?? undefined,
 					fields

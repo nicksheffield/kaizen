@@ -7,6 +7,7 @@ const monacoLang: Record<string, string> = {
 	prettierrc: 'json',
 	js: 'javascript',
 	ts: 'typescript',
+	tsx: 'typescript',
 	yml: 'yaml',
 	html: 'html',
 	css: 'css',

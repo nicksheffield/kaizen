@@ -39,7 +39,7 @@ export const Sidebar = () => {
 			) : (
 				<>
 					<div className="flex min-h-0 flex-1 flex-col divide-y">
-						<div className="flex h-10 shrink-0 flex-row items-center justify-between px-1">
+						<div className="flex h-10 shrink-0 flex-row items-center justify-between px-2">
 							<div className="flex flex-row items-center gap-1">
 								<PipTabs
 									value={tab}

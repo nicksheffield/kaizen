@@ -1,9 +1,12 @@
 const tmpl = () => `import { env } from '@/lib/env.js'
 import nodemailer from 'nodemailer'
 
+const emailEnabled =
+	env.EMAIL_HOST && env.EMAIL_PORT && env.EMAIL_USER && env.EMAIL_PASS && env.EMAIL_FROM
+
 const transport = nodemailer.createTransport({
 	host: env.EMAIL_HOST,
-	port: +env.EMAIL_PORT,
+	port: +(env.EMAIL_PORT || 0),
 	auth: {
 		user: env.EMAIL_USER,
 		pass: env.EMAIL_PASS,
@@ -11,6 +14,7 @@ const transport = nodemailer.createTransport({
 })
 
 export const send = (address: string, subject: string, body: string) => {
+	if (!emailEnabled) return
 	try {
 		return transport.sendMail({
 			from: env.EMAIL_FROM,

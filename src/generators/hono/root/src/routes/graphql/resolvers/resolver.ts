@@ -10,6 +10,8 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	const authModel = project.models.find((x) => x.id === project.project.userModelId)
 	const isAuthModel = authModel?.id === model.id
 
+	const relatedModels = model.relatedModels
+
 	return `import { db } from '@/lib/db.js'
 	import { Resolvers } from '@/routes/graphql/router.js'
 	import * as tables from '@/schema.js'
@@ -275,7 +277,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	// the resolvers for the mutations
 	export const mutationResolvers: Resolvers['Mutation'] = {
 		create${model.name}: async (_, args, c) => {
-			const results: Omit<Infer<typeof types.type>, ${model.relatedModels.map((x) => `'${x.fieldName}'`).join('|')}>[] = []
+			const results: ${relatedModels.length ? 'Omit<' : ''}Infer<typeof types.type>${relatedModels.length ? `, ${model.relatedModels.map((x) => `'${x.fieldName}'`).join('|')}>` : ''}[] = []
 	
 			for (const data of args.data) {
 				${
@@ -316,7 +318,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 		},
 	
 		update${model.name}: async (_, args) => {
-			const results: Omit<Infer<typeof types.type>, ${model.relatedModels.map((x) => `'${x.fieldName}'`).join('|')}>[] = []
+			const results: ${relatedModels.length ? 'Omit<' : ''}Infer<typeof types.type>${relatedModels.length ? `, ${model.relatedModels.map((x) => `'${x.fieldName}'`).join('|')}>` : ''}[] = []
 	
 			for (const data of args.data) {
 				${

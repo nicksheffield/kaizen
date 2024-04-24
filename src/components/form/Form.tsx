@@ -8,7 +8,6 @@ import {
 	useFormik,
 	type FormikValues,
 } from 'formik'
-import deepEqual from 'deep-equal'
 import { cn } from '@/lib/utils'
 
 type FormikRenderProp<T> = (props: FormikProps<T>) => ReactNode
@@ -48,8 +47,4 @@ export const useForm = <T extends FormikValues>({ onSubmit, ...props }: FormikCo
 	})
 
 	return context
-}
-
-export const useIsFormDirty = <T extends FormikValues>(ctx: ReturnType<typeof useFormik<T>>): boolean => {
-	return !deepEqual(ctx.values, ctx.initialValues)
 }

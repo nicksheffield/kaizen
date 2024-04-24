@@ -49,7 +49,6 @@
     "clsx": "^2.1.0",
     "cmdk": "^0.2.1",
     "date-fns": "^3.3.1",
-    "deep-equal": "^2.2.3",
     "dexie": "^3.2.5",
     "dexie-react-hooks": "^1.1.7",
     "embla-carousel-react": "^8.0.0",
@@ -84,7 +83,6 @@
     "zod-validation-error": "^3.0.3"
   },
   "devDependencies": {
-    "@types/deep-equal": "^1.0.4",
     "@types/ini": "^4.1.0",
     "@types/pluralize": "^0.0.33",
     "@types/react": "^18.2.56",

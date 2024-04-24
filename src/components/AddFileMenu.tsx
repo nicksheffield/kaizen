@@ -12,7 +12,7 @@ import vscodeTasksJson from '@/templates/vscode-tasks-json'
 export const AddFileMenu = () => {
 	const files = useApp((v) => v.files)
 	const saveFile = useApp((v) => v.saveFile)
-	const openPath = useApp((v) => v.openPath)
+	const openFile = useApp((v) => v.openFile)
 	const project = useApp((v) => v.project)
 
 	const seeder = files.find((x) => x.path === 'config/seed.ts')
@@ -60,7 +60,7 @@ export const AddFileMenu = () => {
 								if (val.startsWith('api/')) path = path.slice(4)
 
 								await saveFile(`kaizen/api/${path}.json`, '{}')
-								openPath(`kaizen/api/${path}.json`)
+								openFile(`kaizen/api/${path}.json`)
 							},
 						})
 					}}
@@ -78,7 +78,7 @@ export const AddFileMenu = () => {
 									`kaizen/emails/${fixedName}.tsx`,
 									emailTemplate({ name: fixedName, project })
 								)
-								openPath(`kaizen/emails/${fixedName}.tsx`)
+								openFile(`kaizen/emails/${fixedName}.tsx`)
 							},
 						})
 					}}
@@ -113,7 +113,7 @@ export default async () => {
 	}
 }`
 							)
-							openPath(`kaizen/seed.ts`)
+							openFile(`kaizen/seed.ts`)
 						}}
 					>
 						<SproutIcon className="mr-2 w-4" />

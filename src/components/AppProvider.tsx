@@ -2,6 +2,7 @@ import { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } 
 import {
 	FSDesc,
 	FileDesc,
+	checkFilesChanged,
 	convertGeneratedFilesToDescs,
 	getFileHandle,
 	getHandleTreeFromHandle,
@@ -16,61 +17,64 @@ import { db } from '../lib/db'
 import { format as formatFile } from '@/lib/utils'
 import { useLocalStorage } from 'usehooks-ts'
 import { generators } from '@/generators'
-import deepEqual from 'deep-equal'
 import { GeneratorFn } from '@/generators'
 import { Project, parseProject } from '@/lib/projectSchemas'
 import { toast } from 'sonner'
 
-const checkFilesChanged = (a: FSDesc[], b: FSDesc[]) => {
-	if (a.length !== b.length) return true
-
-	for (let i = 0; i < a.length; i++) {
-		if (a[i].path !== b[i].path) return true
-	}
-
-	for (let i = 0; i < a.length; i++) {
-		const x = a[i]
-		const y = b[i]
-
-		if (isDir(x)) continue
-		if (isDir(y)) continue
-
-		if (x.content !== y.content) return true
-	}
-
-	return false
-}
-
 export const AppProvider = ({ children }: PropsWithChildren) => {
+	/**
+	 * The File System Access handle to the root directory
+	 */
 	const [rootHandle, setRootHandle] = useState<FileSystemDirectoryHandle | null>(null)
+
+	/**
+	 * The files in the root directory
+	 */
 	const [files, setFiles] = useState<FSDesc[]>([])
 
+	/**
+	 * The paths of open files
+	 */
 	const [openPaths, setOpenPaths] = useLocalStorage<string[]>('openPaths', [])
-	const [selectedPath, setSelectedPath] = useLocalStorage<string | undefined>('selectedPath', undefined)
-	const [dirOpenStatus, setDirOpenStatus] = useLocalStorage<Record<string, boolean>>('dirOpenStatus', { '': true })
-	const [loading, setLoading] = useState(false)
 
+	/**
+	 * The path of the selected file
+	 */
+	const [selectedPath, setSelectedPath] = useLocalStorage<string | undefined>('selectedPath', undefined)
+
+	/**
+	 * The open status of directories
+	 */
+	const [dirOpenStatus, setDirOpenStatus] = useLocalStorage<Record<string, boolean>>('dirOpenStatus', { '': true })
+
+	/**
+	 * The paths of files with build errors
+	 */
 	const [buildErrorPaths, setBuildErrorPaths] = useState<string[]>([])
 
+	/**
+	 * An object that contains an in-progress project change
+	 */
 	const [draft, setDraft] = useState<{ dirty: boolean; content: Project } | undefined>(undefined)
-	const [hasNewChanges, setHasNewChanges] = useState(false)
 
+	/**
+	 * A timer for refreshing the files
+	 */
 	const timer = useRef<number | null>(null)
 
+	/**
+	 * The selected file
+	 */
 	const selectedFile = useMemo(() => files.filter(isFile).find((x) => x.path === selectedPath), [files, selectedPath])
+
+	/**
+	 * The root directory
+	 */
 	const root = useMemo(() => files.filter(isDir).find((x) => x.path === ''), [files])
 
-	const openPath = useCallback(
-		(path: string) => {
-			setSelectedPath(path)
-			setOpenPaths((x) => {
-				if (x.includes(path)) return x
-				return [...x, path]
-			})
-		},
-		[openPaths]
-	)
-
+	/**
+	 * Clear the root handle and all files
+	 */
 	const clearRootHandle = useCallback(async () => {
 		await db.dirs.clear()
 		setRootHandle(null)
@@ -80,18 +84,9 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 		setDirOpenStatus({ '': true })
 	}, [])
 
-	const openFile = useCallback(
-		(path: string) => {
-			setSelectedPath(path)
-			setOpenPaths((x) => {
-				if (x.includes(path)) return x
-				return [...x, path]
-			})
-		},
-		[files]
-	)
-
-	// load all the files in the root directory
+	/**
+	 * Load all the files in the root directory
+	 */
 	const loadFiles = useCallback(
 		async (dirHandle: FileSystemDirectoryHandle) => {
 			const loadedFiles = await getHandleTreeFromHandle(dirHandle)
@@ -109,17 +104,20 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 					setDraft({ dirty: false, content: project })
 				}
 			}
+
+			return sortedFiles
 		},
 		[files]
 	)
 
 	/**
-	 * load the root directory from the database if it exists
+	 * Load the root directory from the database if it exists
 	 */
 	useEffect(() => {
 		const init = async () => {
 			const dbDirs = await db.dirs.toArray()
 			if (dbDirs.length) {
+				// get the last directory handle
 				const dbDir = dbDirs.slice(-1)[0]
 				setRootHandle(dbDir.handle)
 				await loadFiles(dbDir.handle)
@@ -130,7 +128,7 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 	}, [])
 
 	/**
-	 * open the directory picker and set the root handle
+	 * Open the directory picker and set the root handle
 	 */
 	const getRootHandle = useCallback(async () => {
 		const handle = await window.showDirectoryPicker({ id: 'kaizen', mode: 'readwrite' })
@@ -145,9 +143,14 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 			await db.dirs.update(dbDirs.slice(-1)[0].id || 1, { handle })
 		}
 
-		setLoading(true)
-		await loadFiles(handle)
-		setLoading(false)
+		const files = await loadFiles(handle)
+
+		const projectFile = files.filter(isFile).find((x) => x.path === 'project.json')
+
+		if (projectFile) {
+			setSelectedPath('project.json')
+			setOpenPaths(['project.json'])
+		}
 	}, [loadFiles])
 
 	/**
@@ -167,6 +170,23 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 			refreshFiles()
 		}, 1000 * 2)
 	}, [refreshFiles])
+
+	/**
+	 * Open a file by path
+	 */
+	const openFile = useCallback(
+		(path: string) => {
+			const file = files.find((x) => x.path === path)
+			if (!file) return
+
+			setSelectedPath(path)
+			setOpenPaths((x) => {
+				if (x.includes(path)) return x
+				return [...x, path]
+			})
+		},
+		[files]
+	)
 
 	/**
 	 * save any file to the file system
@@ -196,6 +216,23 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 		[rootHandle, files, getFileHandle, loadFiles]
 	)
 
+	/**
+	 * Delete a file by path
+	 */
+	const deleteFile = useCallback(
+		async (path: string) => {
+			const parent = files.filter(isDir).find((x) => x.path === path.split('/').slice(0, -1).join('/'))
+
+			if (!parent || !parent.handle) return
+
+			await rm(parent.handle, path.split('/').pop() || '')
+		},
+		[files]
+	)
+
+	/**
+	 * The content of the project.json file, if it exits in the files
+	 */
 	const project = useMemo(() => {
 		const file = files.find((x) => x.path === 'project.json')
 		if (!file || isDir(file)) return undefined
@@ -203,11 +240,12 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 		return parseProject(file.content)
 	}, [files])
 
-	const [isGenerating, setIsGenerating] = useState(false)
+	/**
+	 * Generate the project files, and write them to the devDir
+	 */
 	const generateProject = useCallback(
 		async (project?: Project) => {
 			if (!project || !rootHandle || !project.project.generator) return
-			setIsGenerating(true)
 
 			const generate: GeneratorFn | undefined = generators[project.project.generator as keyof typeof generators]
 
@@ -235,12 +273,13 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 				generatedDescs,
 				rootHandle
 			)
-
-			setIsGenerating(false)
 		},
 		[getFileHandle, files]
 	)
 
+	/**
+	 * Save the project to the file system and generate the project files
+	 */
 	const saveProject = useCallback(
 		async (project: Project) => {
 			await saveFile('project.json', JSON.stringify(project, null, 4).replace(/    /g, '\t'), {
@@ -252,93 +291,61 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 		[saveFile]
 	)
 
-	const deleteFile = useCallback(
-		async (file: string | FSDesc) => {
-			const path = typeof file === 'string' ? file : file.path
-			const parent = files.filter(isDir).find((x) => x.path === path.split('/').slice(0, -1).join('/'))
-
-			if (!parent || !parent.handle) return
-
-			await rm(parent.handle, path.split('/').pop() || '')
-		},
-		[files]
-	)
-
-	// detect if the underlying project changes, and if so, just notify that there are new changes
-	useEffect(() => {
-		if (!project || !draft?.content) return
-
-		if (!deepEqual(project, draft?.content)) {
-			setHasNewChanges(true)
-		}
-	}, [project])
-
+	/**
+	 * Memoize the context object to prevent unnecessary re-renders
+	 */
 	const value = useMemo(
 		() => ({
+			root,
+			getRootHandle,
+			clearRootHandle,
+
 			files,
 			setFiles,
-			openFile,
 			openPaths,
 			setOpenPaths,
 			dirOpenStatus,
 			setDirOpenStatus,
 			selectedPath,
 			setSelectedPath,
-			loading,
-			setLoading,
-			hasNewChanges,
-			setHasNewChanges,
-			openPath,
-
 			selectedFile,
-			root,
+
+			openFile,
+			saveFile,
+			deleteFile,
 
 			project,
 			saveProject,
 			generateProject,
-			isGenerating,
 			buildErrorPaths,
 			draft,
 			setDraft,
-
-			getRootHandle,
-			clearRootHandle,
-			refreshFiles,
-			saveFile,
-			deleteFile,
 		}),
 		[
+			root,
+			getRootHandle,
+			clearRootHandle,
+
 			files,
 			setFiles,
-			openFile,
 			openPaths,
 			setOpenPaths,
 			dirOpenStatus,
 			setDirOpenStatus,
 			selectedPath,
 			setSelectedPath,
-			loading,
-			setLoading,
-			hasNewChanges,
-			setHasNewChanges,
-			openPath,
-
 			selectedFile,
-			root,
+
+			openFile,
+			saveFile,
+			deleteFile,
 
 			project,
 			saveProject,
 			generateProject,
-			isGenerating,
 			buildErrorPaths,
 			draft,
 			setDraft,
-
-			getRootHandle,
-			clearRootHandle,
-			refreshFiles,
-			saveFile,
-			deleteFile,
 		]
 	)
 

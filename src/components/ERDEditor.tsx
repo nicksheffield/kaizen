@@ -60,8 +60,6 @@ export const Editor = () => {
 	}
 
 	const wrapperRef = useRef<HTMLDivElement>(null)
-	// @ts-ignore
-	window.wrapperRef = wrapperRef
 
 	const [relations, setRelations] = useState<Relation[]>(draft?.content.relations || [])
 	const edges = useMemo(() => {

@@ -1,3 +1,6 @@
+/**
+ * Type describing a directory
+ */
 export type DirDesc = {
 	type: 'directory'
 	name: string
@@ -5,6 +8,9 @@ export type DirDesc = {
 	handle?: FileSystemDirectoryHandle | null
 }
 
+/**
+ * Type describing a file
+ */
 export type FileDesc = {
 	type: 'file'
 	name: string
@@ -14,21 +20,39 @@ export type FileDesc = {
 	handle?: FileSystemFileHandle | null
 }
 
+/**
+ * Type describing a file or directory
+ */
 export type FSDesc = DirDesc | FileDesc
 
+/**
+ * Check if an object is a FileDesc
+ */
 export const isFile = (x: any): x is FileDesc => typeof x === 'object' && x.hasOwnProperty('type') && x.type === 'file'
+
+/**
+ * Check if a file is a DirDesc
+ */
 export const isDir = (x: any): x is DirDesc =>
 	typeof x === 'object' && x.hasOwnProperty('type') && x.type === 'directory'
 
+/**
+ * A sorter function that puts directories before files, and after that sorts by path alphabetically
+ */
 export const sortFilesByPath = (a: FSDesc, b: FSDesc) => {
 	if (a.type === 'directory' && b.type === 'file') return -1
 	if (a.type === 'file' && b.type === 'directory') return 1
 	return a.path.localeCompare(b.path)
 }
 
-const skip = ['node_modules', '.next', '.vscode', '.DS_Store', 'objects']
+/**
+ * file or folder names to skip when traversing a directory
+ */
+const skip = ['node_modules', '.next', '.vscode', '.DS_Store', '.git']
 
-// Get a tree of Desc objects by recursively traversing a directory handle
+/**
+ * Get a tree of Desc objects by recursively traversing a directory handle
+ */
 export const getHandleTreeFromHandle = async (
 	dirHandle: FileSystemDirectoryHandle,
 	path: string = ''
@@ -71,6 +95,9 @@ export const getHandleTreeFromHandle = async (
 	]
 }
 
+/**
+ * Get a directory handle from a path
+ */
 export const getDirHandle = async (
 	path: string,
 	rootHandle: FileSystemDirectoryHandle
@@ -83,6 +110,9 @@ export const getDirHandle = async (
 	return getDirHandle(parts.slice(1).join('/'), nextDir)
 }
 
+/**
+ * Get a file handle from a path
+ */
 export const getFileHandle = async (path: string, rootHandle: FileSystemDirectoryHandle) => {
 	if (!rootHandle) return null
 
@@ -102,20 +132,32 @@ export const getFileHandle = async (path: string, rootHandle: FileSystemDirector
 	return newHandle
 }
 
+/**
+ * Write content to a file handle
+ */
 export const write = async (fileHandle: FileSystemFileHandle, content: string) => {
 	const writable = await fileHandle.createWritable({ keepExistingData: false })
 	await writable.write(content)
 	await writable.close()
 }
 
+/**
+ * Create a directory and return the handle
+ */
 export const mkdir = async (dirHandle: FileSystemDirectoryHandle, name: string) => {
 	await dirHandle.getDirectoryHandle(name, { create: true })
 }
 
+/**
+ * Delete a file from a directory
+ */
 export const rm = async (dirHandle: FileSystemDirectoryHandle, name: string) => {
 	await dirHandle.removeEntry(name, { recursive: true })
 }
 
+/**
+ * Convert an object of type Record<fileName, fileContent> to an array of FileDesc objects
+ */
 export const convertGeneratedFilesToDescs = async (
 	generated: Record<string, string>,
 	rootHandle: FileSystemDirectoryHandle,
@@ -139,6 +181,9 @@ export const convertGeneratedFilesToDescs = async (
 	return items
 }
 
+/**
+ * Sync two arrays of FileDesc's, deleting, adding and updating as necessary
+ */
 export const syncFiles = async (files: FileDesc[], newFiles: FileDesc[], rootHandle: FileSystemDirectoryHandle) => {
 	const sortedFiles = files.sort(sortFilesByPath)
 	const sortedNewFiles = newFiles.sort(sortFilesByPath)
@@ -209,4 +254,27 @@ export const syncFiles = async (files: FileDesc[], newFiles: FileDesc[], rootHan
 		}
 	}
 	console.groupEnd()
+}
+
+/**
+ * Check if two arrays of FSDesc's are different
+ */
+export const checkFilesChanged = (a: FSDesc[], b: FSDesc[]) => {
+	if (a.length !== b.length) return true
+
+	for (let i = 0; i < a.length; i++) {
+		if (a[i].path !== b[i].path) return true
+	}
+
+	for (let i = 0; i < a.length; i++) {
+		const x = a[i]
+		const y = b[i]
+
+		if (isDir(x)) continue
+		if (isDir(y)) continue
+
+		if (x.content !== y.content) return true
+	}
+
+	return false
 }

@@ -1,5 +1,11 @@
 import Dexie, { Table } from 'dexie'
 
+/**
+ * We use dexie to access the indexedDB database.
+ * This is a simple database with a single table to store the directory handle.
+ * It's like localstorage but capable of storing more complex data, such as FSA handles.
+ */
+
 export interface DbDir {
 	id?: number
 	handle: FileSystemDirectoryHandle

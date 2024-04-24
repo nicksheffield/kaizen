@@ -13,7 +13,7 @@ export const ProjectTree = () => {
 	const project = useApp((v) => v.project)
 	const files = useApp((v) => v.files)
 	const saveFile = useApp((v) => v.saveFile)
-	const openPath = useApp((v) => v.openPath)
+	const openFile = useApp((v) => v.openFile)
 	const selectedPath = useApp((v) => v.selectedPath)
 
 	const [apiOpen, setApiOpen] = useLocalStorage('sidebar-api-open', true)
@@ -32,7 +32,7 @@ export const ProjectTree = () => {
 							: 'hover:bg-foreground/10'
 					)}
 					onClick={() => {
-						openPath('project.json')
+						openFile('project.json')
 					}}
 				>
 					<TreeFileIcon path={'project.json'} className="opacity-50" />
@@ -66,7 +66,7 @@ export const ProjectTree = () => {
 									if (val.startsWith('api/')) path = path.slice(4)
 
 									await saveFile(`kaizen/api/${path}.json`, '{}')
-									openPath(`kaizen/api/${path}.json`)
+									openFile(`kaizen/api/${path}.json`)
 								},
 							})
 						}}
@@ -96,7 +96,7 @@ export const ProjectTree = () => {
 												: 'hover:bg-foreground/10'
 										)}
 										onClick={() => {
-											openPath(file.path)
+											openFile(file.path)
 										}}
 									>
 										<TreeFileIcon path={file.path} className="opacity-50" />
@@ -135,7 +135,7 @@ export const ProjectTree = () => {
 										`kaizen/emails/${fixedName}.tsx`,
 										emailTemplate({ name: fixedName, project })
 									)
-									openPath(`kaizen/emails/${fixedName}.tsx`)
+									openFile(`kaizen/emails/${fixedName}.tsx`)
 								},
 							})
 						}}
@@ -165,7 +165,7 @@ export const ProjectTree = () => {
 												: 'hover:bg-foreground/10'
 										)}
 										onClick={() => {
-											openPath(file.path)
+											openFile(file.path)
 										}}
 									>
 										<TreeFileIcon path={file.path} className="opacity-50" />

@@ -1,4 +1,4 @@
-import { AlertOctagonIcon, FolderSearchIcon, Loader2Icon } from 'lucide-react'
+import { AlertOctagonIcon, FolderSearchIcon } from 'lucide-react'
 import { Tree } from './Tree'
 import { Button } from './ui/button'
 import { useApp } from '../lib/AppContext'
@@ -13,7 +13,6 @@ export const Sidebar = () => {
 	const files = useApp((v) => v.files)
 	const root = useApp((v) => v.root)
 	const getRootHandle = useApp((v) => v.getRootHandle)
-	const loading = useApp((v) => v.loading)
 	const buildErrorPaths = useApp((v) => v.buildErrorPaths)
 	const selectedPath = useApp((v) => v.selectedPath)
 	const setSelectedPath = useApp((v) => v.setSelectedPath)
@@ -28,11 +27,7 @@ export const Sidebar = () => {
 			{!root ? (
 				<div className="flex flex-col p-4">
 					<Button onClick={getRootHandle} variant="default">
-						{loading ? (
-							<Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-						) : (
-							<FolderSearchIcon className="mr-2 h-4 w-4" />
-						)}
+						<FolderSearchIcon className="mr-2 h-4 w-4" />
 						Open Project
 					</Button>
 				</div>

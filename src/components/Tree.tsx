@@ -15,7 +15,7 @@ type TreeProps = {
 export const Tree = ({ path, level = 0 }: TreeProps) => {
 	const files = useApp((v) => v.files)
 	const selectedPath = useApp((v) => v.selectedPath)
-	const openPath = useApp((v) => v.openPath)
+	const openFile = useApp((v) => v.openFile)
 	const dirOpenStatus = useApp((v) => v.dirOpenStatus)
 	const setDirOpenStatus = useApp((v) => v.setDirOpenStatus)
 	const deleteFile = useApp((v) => v.deleteFile)
@@ -41,13 +41,13 @@ export const Tree = ({ path, level = 0 }: TreeProps) => {
 				isSelected={selectedPath === path}
 				onSelect={() => {
 					if (isFile(file)) {
-						openPath(file.path)
+						openFile(file.path)
 					} else {
 						toggleOpen()
 					}
 				}}
 				onDelete={async () => {
-					await deleteFile(file)
+					await deleteFile(file.path)
 				}}
 				level={level}
 				isOpen={open}

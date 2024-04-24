@@ -31,7 +31,7 @@ const statusSymbol: Record<string, [string, string]> = {
 	'*absent': ['text-grey-500', '?'],
 	'*undeleted': ['text-grey-500', '?'],
 	'*undeletemodified': ['text-grey-500', '?'],
-} as const
+}
 
 export const VersionControl = () => {
 	const git = useApp((v) => v.git)

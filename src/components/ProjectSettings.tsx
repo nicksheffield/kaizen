@@ -1,11 +1,9 @@
-import { Form, FormInputRow, FormInputRowProps, FormSelectRow, FormSwitchRow, useForm } from '@/components/form'
+import { Form, FormInputRow, FormSelectRow, FormSwitchRow, useForm } from '@/components/form'
 import { Button } from '@/components/ui/button'
 import { CardDescription, CardTitle } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { generatorNames } from '@/generators'
 import { useApp } from '@/lib/AppContext'
-import { EyeIcon, EyeOffIcon } from 'lucide-react'
-import { useState } from 'react'
 import { toast } from 'sonner'
 import { useLocalStorage } from 'usehooks-ts'
 
@@ -253,27 +251,27 @@ export const ProjectSettings = () => {
 							<div className="flex w-full flex-col gap-6 px-4 py-4">
 								{gen === 'express' && (
 									<>
-										<InputRow
+										<FormInputRow
 											name="env.ACCESS_TOKEN_SECRET"
 											label="ACCESS_TOKEN_SECRET"
 											description="The secret used to sign JWTs."
 										/>
-										<InputRow
+										<FormInputRow
 											name="env.REFRESH_TOKEN_SECRET"
 											label="REFRESH_TOKEN_SECRET"
 											description="The secret used to sign JWTs."
 										/>
-										<InputRow
+										<FormInputRow
 											name="env.MARIADB_ROOT_PASSWORD"
 											label="MARIADB_ROOT_PASSWORD"
 											description="The password of the db's root account."
 										/>
-										<InputRow
+										<FormInputRow
 											name="env.MYSQL_USER"
 											label="MYSQL_USER"
 											description="The name of the main db user."
 										/>
-										<InputRow
+										<FormInputRow
 											name="env.MYSQL_PASSWORD"
 											label="MYSQL_PASSWORD"
 											description="The password of the main db user."
@@ -283,50 +281,50 @@ export const ProjectSettings = () => {
 
 								{gen === 'hono' && (
 									<>
-										<InputRow
+										<FormInputRow
 											name="env.MARIADB_ROOT_PASSWORD"
 											label="MARIADB_ROOT_PASSWORD"
 											description="The password of the db's root account."
 										/>
-										<InputRow
+										<FormInputRow
 											name="env.MYSQL_USER"
 											label="MYSQL_USER"
 											description="The name of the main db user."
 										/>
-										<InputRow
+										<FormInputRow
 											name="env.MYSQL_PASSWORD"
 											label="MYSQL_PASSWORD"
 											description="The password of the main db user."
 										/>
-										<InputRow
+										<FormInputRow
 											name="env.EMAIL_HOST"
 											label="EMAIL_HOST"
 											description="The url of the email server."
 										/>
-										<InputRow
+										<FormInputRow
 											name="env.EMAIL_PORT"
 											label="EMAIL_PORT"
 											description="The port of the email server."
 										/>
-										<InputRow
+										<FormInputRow
 											name="env.EMAIL_USER"
 											label="EMAIL_USER"
 											description="The username for connecting to the email server."
 										/>
-										<InputRow
+										<FormInputRow
 											name="env.EMAIL_PASS"
 											label="EMAIL_PASS"
 											description="The password that goes with the username."
 										/>
-										<InputRow
+										<FormInputRow
 											name="env.EMAIL_FROM"
 											label="EMAIL_FROM"
 											description="The address to use as the 'from' field of an email."
 										/>
-										<InputRow
+										<FormInputRow
 											name="env.RESEND_API_KEY"
 											label="RESEND_API_KEY"
-											description="The API key taken from resend.com"
+											description="The API key taken from resend.com."
 										/>
 									</>
 								)}
@@ -342,22 +340,22 @@ export const ProjectSettings = () => {
 	)
 }
 
-const InputRow = (props: FormInputRowProps) => {
-	const [show, setShow] = useState(false)
+// const TogglePasswordInputRow = (props: FormInputRowProps) => {
+// 	const [show, setShow] = useState(false)
 
-	return (
-		<div className="relative">
-			<FormInputRow {...props} type={show ? 'text' : 'password'} inputClassName="pr-10" />
-			<div className="absolute bottom-0 right-0 mb-2 flex flex-col items-center pr-3">
-				{show ? (
-					<EyeOffIcon
-						className="w-4 cursor-pointer hover:opacity-80"
-						onClick={() => setShow((prev) => !prev)}
-					/>
-				) : (
-					<EyeIcon className="w-4 cursor-pointer hover:opacity-80" onClick={() => setShow((prev) => !prev)} />
-				)}
-			</div>
-		</div>
-	)
-}
+// 	return (
+// 		<div className="relative">
+// 			<FormInputRow {...props} type={show ? 'text' : 'password'} inputClassName="pr-10" />
+// 			<div className="absolute bottom-0 right-0 mb-2 flex flex-col items-center pr-3">
+// 				{show ? (
+// 					<EyeOffIcon
+// 						className="w-4 cursor-pointer hover:opacity-80"
+// 						onClick={() => setShow((prev) => !prev)}
+// 					/>
+// 				) : (
+// 					<EyeIcon className="w-4 cursor-pointer hover:opacity-80" onClick={() => setShow((prev) => !prev)} />
+// 				)}
+// 			</div>
+// 		</div>
+// 	)
+// }

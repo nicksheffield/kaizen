@@ -13,6 +13,7 @@ const envSchema = z.object({
 	EMAIL_USER: z.string().optional(),
 	EMAIL_PASS: z.string().optional(),
 	EMAIL_FROM: z.string().optional(),
+	RESEND_API_KEY: z.string().optional(),
 })
 
 export const env = envSchema.parse(process.env)
@@ -22,6 +23,8 @@ declare global {
 		interface ProcessEnv extends z.infer<typeof envSchema> {}
 	}
 }
+
+export const isDev = env.NODE_ENV !== 'production'
 `
 
 export default tmpl

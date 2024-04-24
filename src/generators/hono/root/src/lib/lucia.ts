@@ -3,7 +3,7 @@ import { ProjectCtx } from '@/generators/hono/types'
 const tmpl = ({ project }: { project: ProjectCtx }) => {
 	return `import { Lucia, TimeSpan } from 'lucia'
 	import { adapter } from './db.js'
-	import { env } from '@/lib/env.js'
+	import { isDev } from '@/lib/env.js'
 	
 	export const sessionExpiresIn = new TimeSpan(${project.auth?.expiresIn ?? 60}, 'm')
 	
@@ -15,7 +15,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 		sessionCookie: {
 			attributes: {
 				// set to \`true\` when using HTTPS
-				secure: env.NODE_ENV === 'production',
+				secure: !isDev,
 			},
 		},
 		`

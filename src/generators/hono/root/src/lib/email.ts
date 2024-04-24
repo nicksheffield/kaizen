@@ -1,8 +1,17 @@
 const tmpl = () => `import { env } from '@/lib/env.js'
 import nodemailer from 'nodemailer'
+import { Resend } from 'resend'
+
+const resend = new Resend(env.RESEND_API_KEY)
+
+const resendEnabled = env.RESEND_API_KEY && env.EMAIL_FROM
 
 const emailEnabled =
-	env.EMAIL_HOST && env.EMAIL_PORT && env.EMAIL_USER && env.EMAIL_PASS && env.EMAIL_FROM
+	env.EMAIL_HOST &&
+	env.EMAIL_PORT &&
+	env.EMAIL_USER &&
+	env.EMAIL_PASS &&
+	env.EMAIL_FROM
 
 const transport = nodemailer.createTransport({
 	host: env.EMAIL_HOST,
@@ -14,14 +23,22 @@ const transport = nodemailer.createTransport({
 })
 
 export const send = (address: string, subject: string, body: string) => {
-	if (!emailEnabled) return
 	try {
-		return transport.sendMail({
-			from: env.EMAIL_FROM,
-			to: address,
-			subject,
-			html: body,
-		})
+		if (resendEnabled) {
+			return resend.emails.send({
+				from: env.EMAIL_FROM!, // we know this is fine because of the emailEnabled check
+				to: address,
+				subject,
+				html: body,
+			})
+		} else if (emailEnabled) {
+			return transport.sendMail({
+				from: env.EMAIL_FROM,
+				to: address,
+				subject,
+				html: body,
+			})
+		}
 	} catch (error) {
 		console.log(error)
 	}

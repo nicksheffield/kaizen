@@ -183,7 +183,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	
 		${plural(model.drizzleName)}: g.ref(types.collection).args({
 			page: g.int().default(1),
-			limit: g.int().default(10),
+			limit: g.int().default(0),
 			orderBy: g.ref(OrderBys).default('createdAt'),
 			orderDir: g.ref(OrderDir).default('ASC'),
 			where: g.ref(types.filter).optional(),
@@ -227,8 +227,8 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 					},`
 						: ''
 				}
-				offset: (args.page - 1) * Math.min(args.limit, 100),
-				limit: Math.min(args.limit, 100),
+				offset: args.limit ? (args.page - 1) * args.limit : undefined,
+				limit: args.limit || undefined,
 				orderBy: dir(
 					tables.${model.drizzleName}[
 						args.orderBy as keyof typeof tables.${model.drizzleName}

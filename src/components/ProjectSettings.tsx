@@ -253,27 +253,27 @@ export const ProjectSettings = () => {
 							<div className="flex w-full flex-col gap-6 px-4 py-4">
 								{gen === 'express' && (
 									<>
-										<TogglePasswordInputRow
+										<InputRow
 											name="env.ACCESS_TOKEN_SECRET"
 											label="ACCESS_TOKEN_SECRET"
 											description="The secret used to sign JWTs."
 										/>
-										<TogglePasswordInputRow
+										<InputRow
 											name="env.REFRESH_TOKEN_SECRET"
 											label="REFRESH_TOKEN_SECRET"
 											description="The secret used to sign JWTs."
 										/>
-										<TogglePasswordInputRow
+										<InputRow
 											name="env.MARIADB_ROOT_PASSWORD"
 											label="MARIADB_ROOT_PASSWORD"
 											description="The password of the db's root account."
 										/>
-										<TogglePasswordInputRow
+										<InputRow
 											name="env.MYSQL_USER"
 											label="MYSQL_USER"
 											description="The name of the main db user."
 										/>
-										<TogglePasswordInputRow
+										<InputRow
 											name="env.MYSQL_PASSWORD"
 											label="MYSQL_PASSWORD"
 											description="The password of the main db user."
@@ -283,45 +283,50 @@ export const ProjectSettings = () => {
 
 								{gen === 'hono' && (
 									<>
-										<TogglePasswordInputRow
+										<InputRow
 											name="env.MARIADB_ROOT_PASSWORD"
 											label="MARIADB_ROOT_PASSWORD"
 											description="The password of the db's root account."
 										/>
-										<TogglePasswordInputRow
+										<InputRow
 											name="env.MYSQL_USER"
 											label="MYSQL_USER"
 											description="The name of the main db user."
 										/>
-										<TogglePasswordInputRow
+										<InputRow
 											name="env.MYSQL_PASSWORD"
 											label="MYSQL_PASSWORD"
 											description="The password of the main db user."
 										/>
-										<TogglePasswordInputRow
+										<InputRow
 											name="env.EMAIL_HOST"
 											label="EMAIL_HOST"
 											description="The url of the email server."
 										/>
-										<TogglePasswordInputRow
+										<InputRow
 											name="env.EMAIL_PORT"
 											label="EMAIL_PORT"
 											description="The port of the email server."
 										/>
-										<TogglePasswordInputRow
+										<InputRow
 											name="env.EMAIL_USER"
 											label="EMAIL_USER"
 											description="The username for connecting to the email server."
 										/>
-										<TogglePasswordInputRow
+										<InputRow
 											name="env.EMAIL_PASS"
 											label="EMAIL_PASS"
 											description="The password that goes with the username."
 										/>
-										<TogglePasswordInputRow
+										<InputRow
 											name="env.EMAIL_FROM"
 											label="EMAIL_FROM"
 											description="The address to use as the 'from' field of an email."
+										/>
+										<InputRow
+											name="env.RESEND_API_KEY"
+											label="RESEND_API_KEY"
+											description="The API key taken from resend.com"
 										/>
 									</>
 								)}
@@ -337,7 +342,7 @@ export const ProjectSettings = () => {
 	)
 }
 
-const TogglePasswordInputRow = (props: FormInputRowProps) => {
+const InputRow = (props: FormInputRowProps) => {
 	const [show, setShow] = useState(false)
 
 	return (

@@ -17,10 +17,6 @@ import { format as formatFile } from '@/lib/utils'
 import { useLocalStorage } from 'usehooks-ts'
 import { generators } from '@/generators'
 import deepEqual from 'deep-equal'
-import ini from 'ini'
-import { FsaNodeFs } from 'memfs/lib/fsa-to-node'
-import type * as fsa from 'memfs/lib/fsa/types'
-import { createGitInstance } from '@/lib/git'
 import { GeneratorFn } from '@/generators'
 import { Project, parseProject } from '@/lib/projectSchemas'
 import { toast } from 'sonner'
@@ -64,8 +60,6 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 	const selectedFile = useMemo(() => files.filter(isFile).find((x) => x.path === selectedPath), [files, selectedPath])
 	const root = useMemo(() => files.filter(isDir).find((x) => x.path === ''), [files])
 
-	const [gitConfig, setGitConfig] = useState<Record<string, string> | null>(null)
-
 	const openPath = useCallback(
 		(path: string) => {
 			setSelectedPath(path)
@@ -97,41 +91,6 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 		[files]
 	)
 
-	// the current branch according to the .git/HEAD file
-	const head =
-		files
-			.filter(isFile)
-			.find((x) => x.path === '.git/HEAD')
-			?.content.replace('ref: refs/heads/', '')
-			.trim() || ''
-
-	// all the branches in the .git/refs/heads directory
-	const localBranches = useMemo(() => {
-		const branches = files
-			.filter((x) => x.type === 'file' && x.path.startsWith('.git/refs/heads'))
-			.map((x) => x.path.replace('.git/refs/heads/', '').trim())
-
-		return branches
-	}, [files])
-
-	const remoteBranches = useMemo(
-		() =>
-			files
-				.filter((x) => x.type === 'file' && x.path.startsWith('.git/refs/remotes'))
-				.map((x) => x.path.replace('.git/refs/remotes/', '').trim()),
-		[files]
-	)
-
-	const fs = useMemo(() => {
-		if (!root) return null
-		return new FsaNodeFs(root.handle as unknown as fsa.IFileSystemDirectoryHandle)
-	}, [root])
-
-	const git = useMemo(() => {
-		if (!fs) return null
-		return createGitInstance(fs)
-	}, [fs])
-
 	// load all the files in the root directory
 	const loadFiles = useCallback(
 		async (dirHandle: FileSystemDirectoryHandle) => {
@@ -148,12 +107,6 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 				if (projectFile) {
 					const project = parseProject(projectFile.content)
 					setDraft({ dirty: false, content: project })
-				}
-
-				const gitconf = sortedFiles.filter(isFile).find((x) => x.path === '.git/config')
-
-				if (gitconf) {
-					setGitConfig(ini.parse(gitconf.content || ''))
 				}
 			}
 		},
@@ -337,13 +290,6 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 			setHasNewChanges,
 			openPath,
 
-			gitConfig,
-
-			fs,
-			git,
-			head,
-			localBranches,
-			remoteBranches,
 			selectedFile,
 			root,
 
@@ -377,13 +323,6 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 			setHasNewChanges,
 			openPath,
 
-			gitConfig,
-
-			fs,
-			git,
-			head,
-			localBranches,
-			remoteBranches,
 			selectedFile,
 			root,
 

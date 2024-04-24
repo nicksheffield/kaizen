@@ -16,13 +16,7 @@ export const Project = () => {
 				</div>
 
 				<EditorFrame key={selectedPath} />
-
-				{/* <div className="w-[300px] shrink-0 flex flex-col">
-					<VersionControl />
-				</div> */}
 			</div>
-
-			{/* <StatusBar /> */}
 		</div>
 	)
 }

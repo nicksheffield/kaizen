@@ -1,6 +1,7 @@
 import { getEmptyProject } from '@/lib/utils'
 import isoGit from 'isomorphic-git'
 import { FsaNodeFs } from 'memfs/lib/fsa-to-node'
+import { IDirent, TDataOut } from 'memfs/lib/node/types/misc'
 
 export type GitFileStatus = keyof typeof GitFileStatus
 export const GitFileStatus = {
@@ -92,7 +93,7 @@ export const git = {
 	},
 	checkout: (fs: FsaNodeFs) => async (ref: string) => {
 		try {
-			const files = (await fs.promises.readdir('')).filter((x) => x !== '.git')
+			const files = (await fs.promises.readdir('')).filter((x: TDataOut | IDirent) => x !== '.git')
 			for (const path of files) {
 				await fs.promises.unlink(path as string)
 			}

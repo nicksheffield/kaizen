@@ -1,7 +1,7 @@
 import { getEmptyProject } from '@/lib/utils'
 import isoGit from 'isomorphic-git'
 import { FsaNodeFs } from 'memfs/lib/fsa-to-node'
-import { IDirent, TDataOut } from 'memfs/lib/node/types/misc'
+// import { IDirent, TDataOut } from 'memfs/lib/node/types/misc'
 
 export type GitFileStatus = keyof typeof GitFileStatus
 export const GitFileStatus = {
@@ -91,17 +91,19 @@ export const git = {
 			console.log(error)
 		}
 	},
-	checkout: (fs: FsaNodeFs) => async (ref: string) => {
-		try {
-			const files = (await fs.promises.readdir('')).filter((x: TDataOut | IDirent) => x !== '.git')
-			for (const path of files) {
-				await fs.promises.unlink(path as string)
-			}
-			await isoGit.checkout({ fs, dir, ref, force: true })
-		} catch (error) {
-			console.dir(error)
-		}
-	},
+	// checkout: (fs: FsaNodeFs) => async (ref: string) => {
+	// 	try {
+	// 		const dirFiles = await fs.promises.readdir('')
+
+	// 		const files = dirFiles.filter((x: TDataOut | IDirent) => x !== '.git')
+	// 		for (const path of files) {
+	// 			await fs.promises.unlink(path as string)
+	// 		}
+	// 		await isoGit.checkout({ fs, dir, ref, force: true })
+	// 	} catch (error) {
+	// 		console.dir(error)
+	// 	}
+	// },
 	add: (fs: FsaNodeFs) => async (filepath: string) => {
 		try {
 			return await isoGit.add({ fs, dir, filepath })
@@ -165,7 +167,7 @@ export const createGitInstance = (fs: FsaNodeFs) => {
 	return {
 		init: git.init(fs),
 		branch: git.branch(fs),
-		checkout: git.checkout(fs),
+		// checkout: git.checkout(fs),
 		add: git.add(fs),
 		remove: git.remove(fs),
 		commit: git.commit(fs),

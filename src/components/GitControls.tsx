@@ -42,7 +42,7 @@ export const GitControls = () => {
 									onClick={() => {
 										if (git) {
 											console.log('checkout', x)
-											git.checkout(x)
+											// git.checkout(x)
 										} else {
 											console.log('no fs')
 										}

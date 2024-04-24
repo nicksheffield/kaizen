@@ -3,7 +3,6 @@ import { EditorTabs } from './EditorTabs'
 import { CodeEditor } from './FileViews/CodeEditor'
 import { ReadonlyCodeView } from './FileViews/ReadonlyView'
 import { ProjectView } from './FileViews/ProjectView'
-import { DiffView } from './FileViews/DiffView'
 import { Welcome } from './Welcome'
 
 export const EditorFrame = () => {
@@ -12,8 +11,6 @@ export const EditorFrame = () => {
 
 	const Editor = !selectedPath ? (
 		<Welcome />
-	) : selectedPath?.startsWith('diff:') ? (
-		<DiffView key={selectedPath} />
 	) : selectedPath === 'project.json' ? (
 		<ProjectView key={project?.project.id} />
 	) : project && selectedPath.startsWith(project.project.devDir) ? (

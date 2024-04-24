@@ -1,7 +1,6 @@
 import {
 	ActivityIcon,
 	BoxIcon,
-	FileDiffIcon,
 	FileIcon,
 	FileJson2Icon,
 	FolderCogIcon,
@@ -33,10 +32,6 @@ export const TreeFileIcon = ({ path, open = true, className }: TreeFileIconProps
 			return <FolderGit2Icon className={classNames} />
 		case '.vscode':
 			return <FolderCogIcon className={classNames} />
-	}
-
-	if (path?.includes('diff:')) {
-		return <FileDiffIcon className={classNames} />
 	}
 
 	if (file?.path === '') {

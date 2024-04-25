@@ -1,7 +1,7 @@
 import { openConfirm } from '@/components/Alert'
 import { Button } from '@/components/ui/button'
 import { useApp } from '@/lib/AppContext'
-import { PackageOpenIcon, RefreshCcwDotIcon, RocketIcon } from 'lucide-react'
+import { PackageOpenIcon, RefreshCcwDotIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 export const ProjectHeader = () => {

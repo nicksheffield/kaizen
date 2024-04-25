@@ -179,7 +179,7 @@ export const getEmptyProject = (): Project => {
 			maxBodySize: '2mb',
 			connectionTimeout: 10000,
 			userModelId: '',
-			devDir: 'dev',
+			devDir: 'api',
 		},
 		settings: {
 			dev: {

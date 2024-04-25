@@ -128,9 +128,9 @@ export const mapAttrToDrizzleTypeFn = (attr: { name: string; type: string }) => 
 
 	switch (attr.type) {
 		case 'id':
-			return `varchar('${name}', { length: 15 }).primaryKey()`
+			return `varchar('${name}', { length: 15 })`
 		case 'a_i':
-			return `int('${name}').primaryKey().autoincrement()`
+			return `int('${name}').autoincrement()`
 		case 'varchar':
 			return `varchar('${name}', { length: 255 })`
 		case 'text':

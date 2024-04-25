@@ -2,10 +2,10 @@
 
 // const tmpl = ({ project }: { project: ProjectCtx }) => {
 const tmpl = () => {
-	const port = 5556
+	const port = 3000
 
 	return `### @name Login
-POST http://localhost:${port}/auth/login
+POST http://localhost:${port}/api/auth/login
 Content-Type: application/json
 
 {
@@ -15,10 +15,10 @@ Content-Type: application/json
 }
 
 ### @name Logout
-POST http://localhost:${port}/auth/logout
+POST http://localhost:${port}/api/auth/logout
 
 ### @name ConfirmAccount
-POST http://localhost:${port}/auth/confirm-account
+POST http://localhost:${port}/api/auth/confirm-account
 Content-Type: application/json
 
 {
@@ -27,19 +27,19 @@ Content-Type: application/json
 }
 
 ### @name Setup2FA
-POST http://localhost:${port}/auth/setup-twofactor
+POST http://localhost:${port}/api/auth/setup-twofactor
 
 ### @name Confirm2FA
-POST http://localhost:${port}/auth/confirm-twofactor
+POST http://localhost:${port}/api/auth/confirm-twofactor
 
 ### @name Disable2FA
-POST http://localhost:${port}/auth/disable-twofactor
+POST http://localhost:${port}/api/auth/disable-twofactor
 
 ### @name Profile
-GET http://localhost:${port}/auth/profile
+GET http://localhost:${port}/api/auth/profile
 
 ### @name ResetPassword
-POST http://localhost:${port}/auth/reset-password
+POST http://localhost:${port}/api/auth/reset-password
 Content-Type: application/json
 
 {
@@ -47,7 +47,7 @@ Content-Type: application/json
 }
 
 ### @name ResetPasswordWithCode
-POST http://localhost:${port}/auth/reset-password/bydmrkqn8u71o6k7qmay17rir4k9nigzrj5kfemt
+POST http://localhost:${port}/api/auth/reset-password/bydmrkqn8u71o6k7qmay17rir4k9nigzrj5kfemt
 Content-Type: application/json
 
 {
@@ -55,16 +55,20 @@ Content-Type: application/json
 }
 
 ### @name GetUsers
-GET http://localhost:${port}/api/users
-
-### @name CreateUser
-POST http://localhost:${port}/api/users
+POST http://localhost:${port}/api/graphql
 Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
 
-{
-  "email": "user@example.com",
-  "password": "1f64f903"
-}`
+query {
+  users {
+    items {
+      id
+      email
+    }
+    totalCount
+  }
+}
+`
 }
 
 export default tmpl

@@ -20,6 +20,7 @@ import src_schema from './root/src/schema'
 import src_lib_db from './root/src/lib/db'
 import src_lib_email from './root/src/lib/email'
 import src_lib_env from './root/src/lib/env'
+import src_lib_history from './root/src/lib/history'
 import src_lib_lucia from './root/src/lib/lucia'
 import src_lib_manageUser from './root/src/lib/manageUser'
 import src_lib_mountRoutes from './root/src/lib/mountRoutes'
@@ -67,6 +68,7 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['/src/lib/db.ts'] = await format(src_lib_db())
 	dir['/src/lib/email.ts'] = await format(src_lib_email())
 	dir['/src/lib/env.ts'] = await format(src_lib_env())
+	dir['/src/lib/history.ts'] = await format(src_lib_history())
 	dir['/src/lib/lucia.ts'] = await format(src_lib_lucia({ project }))
 	dir['/src/lib/manageUser.ts'] = await format(src_lib_manageUser({ models, project }))
 	dir['/src/lib/mountRoutes.ts'] = await format(src_lib_mountRoutes())

@@ -10,7 +10,7 @@ const tmpl = (ctx: { models: ModelCtx[]; project: ProjectCtx }) => {
 
 	const models = ctx.models
 
-	return `import { relations } from 'drizzle-orm'
+	return `import { relations, sql } from 'drizzle-orm'
 import { ${drizzleTypeImports.join(', ')} } from 'drizzle-orm/mysql-core'
 
 const auditDates = {
@@ -53,6 +53,19 @@ export const recoveryCodes = mysqlTable('_recovery_codes', {
 	userId: varchar('userId', { length: 15 })
 		.notNull()
 		.references(() => users.id),
+})
+
+export const history = mysqlTable('_history', {
+	id: varchar('id', { length: 15 }).primaryKey(),
+	table: varchar('table', { length: 255 }).notNull(),
+	column: varchar('column', { length: 255 }).notNull(),
+	value: mediumtext('value').notNull(),
+	rowId: varchar('rowId', { length: 15 }).notNull(),
+	operation: mediumtext('operation').notNull(),
+	date: datetime('date')
+		.default(sql\`'CURRENT_TIMESTAMP'\`)
+		.notNull(),
+	userId: varchar('userId', { length: 15 }).notNull(),
 })
 
 /**
@@ -102,7 +115,12 @@ ${models
 	${model.attributes
 		.map((attr) => {
 			if (attr.name === 'id') return
-			return `${attr.name}: ${mapAttrToDrizzleTypeFn(attr)}${attr.default !== null ? `.default(${attr.default})` : ''}${!attr.optional ? '.notNull()' : ''},`
+
+			// const isDateType = ['date', 'datetime', 'time'].includes(attr.type)
+			// const def = isDateType && attr.default === "'CURRENT_TIMESTAMP'" ? 'sql`CURRENT_TIMESTAMP`' : attr.default
+			const def = attr.default
+
+			return `${attr.name}: ${mapAttrToDrizzleTypeFn(attr)}${def !== null ? `.default(sql\`${def}\`)` : ''}${!attr.optional ? '.notNull()' : ''},`
 		})
 		.filter((x) => x !== undefined)
 		.join('\n\t')}
@@ -115,7 +133,7 @@ ${models
 		.filter((x) => x !== undefined)
 		.join('\n\t')}
 		
-	...auditDates,
+	${model.auditDates ? '...auditDates' : ''}
 })
 `
 	})

@@ -379,15 +379,6 @@ export const Editor = () => {
 			<div
 				ref={wrapperRef}
 				className={cn('relative flex flex-1 flex-col bg-background', max && 'fixed inset-0 z-50')}
-				onMouseMove={(e) => {
-					const rect = wrapperRef?.current?.getBoundingClientRect()
-					console.log({
-						x: e.clientX,
-						y: e.clientY,
-						x2: e.clientX - (rect?.x || 0),
-						y2: e.clientY - (rect?.y || 0),
-					})
-				}}
 			>
 				<div className="pointer-events-none absolute left-0 top-0 z-10 flex w-full flex-col items-center gap-2">
 					<div className="grid w-full grid-cols-[40px,1fr,40px]">

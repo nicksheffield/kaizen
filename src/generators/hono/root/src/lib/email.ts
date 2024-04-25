@@ -2,9 +2,9 @@ const tmpl = () => `import { env } from '@/lib/env.js'
 import nodemailer from 'nodemailer'
 import { Resend } from 'resend'
 
-const resend = new Resend(env.RESEND_API_KEY)
-
 const resendEnabled = env.RESEND_API_KEY && env.EMAIL_FROM
+
+const resend = resendEnabled ? new Resend(env.RESEND_API_KEY) : null
 
 const emailEnabled =
 	env.EMAIL_HOST &&
@@ -25,7 +25,7 @@ const transport = nodemailer.createTransport({
 export const send = (address: string, subject: string, body: string) => {
 	try {
 		if (resendEnabled) {
-			return resend.emails.send({
+			return resend!.emails.send({
 				from: env.EMAIL_FROM!, // we know this is fine because of the emailEnabled check
 				to: address,
 				subject,

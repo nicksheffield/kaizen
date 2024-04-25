@@ -15,6 +15,7 @@ import { getSession, authDecorate } from '@/middleware/authenticate.js'
 import { User as AuthUser, Session } from 'lucia'
 import { env, isDev } from '@/lib/env.js'
 import { isNotFalse, writeIntrospection } from '@/lib/utils.js'
+import { existsSync } from 'node:fs'
 ${models.map((model) => `import * as ${model.name} from './resolvers/${model.drizzleName}.js'`).join('\n')}
 
 export const router = new Hono()
@@ -58,7 +59,7 @@ const schema = buildSchema({ g, resolvers })
 
 ${
 	project.settings.dev.appDir
-		? `if (isDev) {
+		? `if (isDev && existsSync('../app')) {
 	writeIntrospection(schema, '../${project.settings.dev.appDir.replace(/^\//, '')}')
 }`
 		: ''

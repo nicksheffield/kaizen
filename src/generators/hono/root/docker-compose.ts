@@ -2,7 +2,7 @@ import { ProjectCtx } from '@/generators/hono/types'
 import { stringify } from 'yaml'
 
 const tmpl = ({ project }: { project: ProjectCtx }) => {
-	// const settings = project.settings
+	const settings = project.settings
 	const secrets = project.env
 
 	const db: Record<string, any> = {
@@ -15,18 +15,21 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 			MARIADB_ROOT_PASSWORD: secrets?.MARIADB_ROOT_PASSWORD || '',
 		},
 		volumes: ['database:/var/lib/mysql'],
-		ports: ['3306:3306'],
 	}
 
 	// if (settings.dev.customDomain) {
 	// 	db.labels = [`dev.orbstack.domains=db.${settings.dev.customDomain}`]
 	// }
 
-	const adminer = {
+	const adminer: Record<string, any> = {
 		image: 'adminer',
 		restart: 'always',
-		ports: ['8080:8080'],
 		links: ['db'],
+	}
+
+	if (!settings.dev.useOrbStack) {
+		db.ports = ['3306:3306']
+		adminer.ports = ['8080:8080']
 	}
 
 	const volumes = {

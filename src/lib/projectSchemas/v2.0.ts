@@ -182,7 +182,7 @@ export const upgrade = (project: V1_0.Project) => {
 			id: generateId(),
 			generator: 'hono',
 			userModelId: models.find((x) => x.name === 'User')?.id,
-			devDir: 'dev',
+			devDir: 'api',
 		},
 		settings: {
 			dev: {

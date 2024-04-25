@@ -35,6 +35,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	import { removeDuplicates } from '@/lib/utils.js'
 	import { OrderDir, DateType } from './_utils.js'
 	import * as filters from './_filters.js'
+	import * as history from '@/lib/history.js'
 	
 	const OrderBys = g.enumType('${model.name}OrderBy', [
 		${model.attributes
@@ -308,7 +309,14 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 								: ''
 						}
 						where: eq(tables.${model.drizzleName}.id, newId),
-					})`
+					})
+					
+					await history.create(
+						'${model.tableName}',
+						newId,
+						data,
+						c.get('user').id
+					)`
 				}
 	
 				if (item) results.push(item)
@@ -317,10 +325,21 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 			return results
 		},
 	
-		update${model.name}: async (_, args) => {
+		update${model.name}: async (_, args, c) => {
 			const results: ${relatedModels.length ? 'Omit<' : ''}Infer<typeof types.type>${relatedModels.length ? `, ${model.relatedModels.map((x) => `'${x.fieldName}'`).join('|')}>` : ''}[] = []
 	
 			for (const data of args.data) {
+				const original = await db.query.${model.drizzleName}.findFirst({
+					${
+						nonSelectAttrs.length > 0
+							? `columns: {
+						${nonSelectAttrs.map((x) => `${x.name}: false`).join(',\n')}
+						},`
+							: ''
+					}
+					where: eq(tables.${model.drizzleName}.id, data.id),
+				})
+
 				${
 					isAuthModel
 						? `const { id, email, password, ...fields} = data
@@ -360,6 +379,16 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 					}
 					where: eq(tables.${model.drizzleName}.id, data.id),
 				})
+
+				if (original) {
+					await history.update(
+						'${model.tableName}',
+						data.id,
+						original,
+						data,
+						c.get('user').id
+					)
+				}
 	
 				if (item) results.push(item)
 			}

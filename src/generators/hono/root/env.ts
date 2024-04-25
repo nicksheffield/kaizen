@@ -16,10 +16,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 
 	if (!secrets) return ''
 
-	return `DOMAINS=${proj.domainName ? `www.${proj.domainName},${proj.domainName}` : ''}
-PORT=5555
-
-# database connection
+	return `# database connection
 DB_URI=mysql://${secrets.MYSQL_USER}@${settings.dev.useOrbStack ? `db.${proj.name.toLowerCase().replace(/\s/g, '-')}.orb.local` : 'localhost'}:3306?password=${secrets.MYSQL_PASSWORD}&database=db
 
 # email configuration

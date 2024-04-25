@@ -18,6 +18,7 @@ import { format as formatFile } from '@/lib/utils'
 import { useLocalStorage } from 'usehooks-ts'
 import { generators } from '@/generators'
 import { GeneratorFn } from '@/generators'
+import { workspaceFiles, generate as workspaceGenerator } from '@/generators/workspace'
 import { Project, parseProject } from '@/lib/projectSchemas'
 import { toast } from 'sonner'
 
@@ -291,6 +292,30 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 		[saveFile]
 	)
 
+	const workspaceIsMissingFiles = useMemo(() => {
+		return workspaceFiles.some((x) => !files.find((y) => y.path === x))
+	}, [files])
+
+	/**
+	 * Generate the workspace files, and write them to the root directory
+	 */
+	const generateWorkspace = useCallback(async () => {
+		if (!root || !root.handle) return
+
+		const workspace = await workspaceGenerator({ project })
+		const filteredWorkspace = Object.fromEntries(
+			Object.entries(workspace).filter(([path, _]) => {
+				return !files.find((x) => x.path === path.slice(1))
+			})
+		)
+
+		const workspaceDescs = await convertGeneratedFilesToDescs(filteredWorkspace, root.handle, '')
+
+		for (const desc of workspaceDescs) {
+			saveFile(desc, desc.content, { showToast: false })
+		}
+	}, [files])
+
 	/**
 	 * Memoize the context object to prevent unnecessary re-renders
 	 */
@@ -313,6 +338,9 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 			openFile,
 			saveFile,
 			deleteFile,
+
+			workspaceIsMissingFiles,
+			generateWorkspace,
 
 			project,
 			saveProject,
@@ -339,6 +367,9 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 			openFile,
 			saveFile,
 			deleteFile,
+
+			workspaceIsMissingFiles,
+			generateWorkspace,
 
 			project,
 			saveProject,

@@ -1,4 +1,3 @@
-import { secrets } from '@/lib/settings'
 import { type ClassValue, clsx } from 'clsx'
 import { singular } from 'pluralize'
 import { twMerge } from 'tailwind-merge'
@@ -6,8 +5,7 @@ import { alphabet, generateRandomString } from 'oslo/crypto'
 import prettier from 'prettier'
 import typescriptPlugin from 'prettier/plugins/typescript'
 import estreePlugin from 'prettier/plugins/estree'
-
-import { Attribute, Project } from '@/lib/projectSchemas'
+import { Attribute } from '@/lib/projectSchemas'
 
 export const generateId = (length: number = 5) => generateRandomString(length, alphabet('0-9', 'a-z'))
 
@@ -164,48 +162,5 @@ export const format = async (content: string, settings: Partial<prettier.Options
 		console.log(e)
 		return `/* unformatted */
 ${content}`
-	}
-}
-
-export const getEmptyProject = (): Project => {
-	return {
-		v: 2,
-		project: {
-			id: generateId(5),
-			name: 'New Project',
-			repoUrl: '',
-			generator: 'hono',
-			domainName: '',
-			maxBodySize: '2mb',
-			connectionTimeout: 10000,
-			userModelId: '',
-			devDir: 'api',
-		},
-		settings: {
-			dev: {
-				useOrbStack: true,
-				appDir: '/app',
-			},
-			production: {},
-		},
-		auth: {
-			cookies: true,
-			bearer: true,
-			expiresIn: '60',
-		},
-		env: {
-			ACCESS_TOKEN_SECRET: secrets.ACCESS_TOKEN_SECRET(),
-			REFRESH_TOKEN_SECRET: secrets.REFRESH_TOKEN_SECRET(),
-			MARIADB_ROOT_PASSWORD: secrets.MARIADB_ROOT_PASSWORD(),
-			MYSQL_USER: secrets.MYSQL_USER(),
-			MYSQL_PASSWORD: secrets.MYSQL_PASSWORD(),
-			EMAIL_HOST: secrets.EMAIL_HOST(),
-			EMAIL_PORT: secrets.EMAIL_PORT(),
-			EMAIL_USER: secrets.EMAIL_USER(),
-			EMAIL_PASS: secrets.EMAIL_PASS(),
-			EMAIL_FROM: secrets.EMAIL_FROM(),
-		},
-		models: [],
-		relations: [],
 	}
 }

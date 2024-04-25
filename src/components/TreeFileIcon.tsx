@@ -10,6 +10,7 @@ import {
 	FolderRootIcon,
 	HelpCircleIcon,
 	MailIcon,
+	SproutIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useApp } from '@/lib/AppContext'
@@ -48,6 +49,10 @@ export const TreeFileIcon = ({ path, open = true, className }: TreeFileIconProps
 	if (file?.type === 'file') {
 		if (file?.name === 'project.json') {
 			return <ActivityIcon className={classNames} />
+		}
+
+		if (file?.path === 'kaizen/seed.ts') {
+			return <SproutIcon className={classNames} />
 		}
 
 		if (file.path.startsWith('kaizen/emails')) {

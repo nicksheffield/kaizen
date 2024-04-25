@@ -48,7 +48,7 @@ export const sortFilesByPath = (a: FSDesc, b: FSDesc) => {
 /**
  * file or folder names to skip when traversing a directory
  */
-const skip = ['node_modules', '.next', '.vscode', '.DS_Store', '.git']
+const skip = ['node_modules', '.next', '.DS_Store', '.git']
 
 /**
  * Get a tree of Desc objects by recursively traversing a directory handle
@@ -181,12 +181,14 @@ export const convertGeneratedFilesToDescs = async (
 	return items
 }
 
+const syncIgnores = ['bun.lockb', 'package-lock.json', 'node_modules']
+
 /**
  * Sync two arrays of FileDesc's, deleting, adding and updating as necessary
  */
 export const syncFiles = async (files: FileDesc[], newFiles: FileDesc[], rootHandle: FileSystemDirectoryHandle) => {
-	const sortedFiles = files.sort(sortFilesByPath)
-	const sortedNewFiles = newFiles.sort(sortFilesByPath)
+	const sortedFiles = files.sort(sortFilesByPath).filter((x) => !syncIgnores.includes(x.name))
+	const sortedNewFiles = newFiles.sort(sortFilesByPath).filter((x) => !syncIgnores.includes(x.name))
 
 	console.group('syncing files')
 

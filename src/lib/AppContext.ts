@@ -28,6 +28,9 @@ export type AppContextType = {
 	) => Promise<void>
 	deleteFile: (path: string) => Promise<void>
 
+	workspaceIsMissingFiles: boolean
+	generateWorkspace: () => Promise<void>
+
 	project?: Project
 	saveProject: (project: Project) => Promise<void>
 	generateProject: (project?: Project) => Promise<void>

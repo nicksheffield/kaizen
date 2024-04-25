@@ -38,6 +38,21 @@ export const ProjectTree = () => {
 					<TreeFileIcon path={'project.json'} className="opacity-50" />
 					Project
 				</div>
+
+				<div
+					className={cn(
+						'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
+						selectedPath === 'kaizen/seed.ts'
+							? 'bg-primary text-primary-foreground hover:bg-primary/80'
+							: 'hover:bg-foreground/10'
+					)}
+					onClick={() => {
+						openFile('kaizen/seed.ts')
+					}}
+				>
+					<TreeFileIcon path={'kaizen/seed.ts'} className="opacity-50" />
+					Seed
+				</div>
 			</div>
 
 			<div className="flex flex-col">

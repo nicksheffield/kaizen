@@ -1,4 +1,4 @@
-import { AlertOctagonIcon, FolderSearchIcon } from 'lucide-react'
+import { AlertOctagonIcon, FolderSearchIcon, RocketIcon } from 'lucide-react'
 import { Tree } from './Tree'
 import { Button } from './ui/button'
 import { useApp } from '../lib/AppContext'
@@ -17,6 +17,9 @@ export const Sidebar = () => {
 	const selectedPath = useApp((v) => v.selectedPath)
 	const setSelectedPath = useApp((v) => v.setSelectedPath)
 	const setOpenPaths = useApp((v) => v.setOpenPaths)
+	const generateWorkspace = useApp((v) => v.generateWorkspace)
+
+	const projectJson = files.find((x) => x.path === 'project.json')
 
 	const firstLevelDescs = files.filter((x) => x.path !== root?.path).filter((x) => !x.path.includes('/'))
 
@@ -70,6 +73,20 @@ export const Sidebar = () => {
 									<AlertOctagonIcon className="mr-2 w-5" />
 									There {buildErrorPaths.length === 1 ? 'is' : 'are'} {buildErrorPaths.length}{' '}
 									{pluralize('file', buildErrorPaths.length)} with build errors
+								</Button>
+							</div>
+						)}
+
+						{!projectJson && (
+							<div className="flex items-center justify-center py-4">
+								<Button
+									variant="default"
+									onClick={() => {
+										generateWorkspace()
+									}}
+								>
+									<RocketIcon className="mr-2 h-4 w-4" />
+									Initiate workspace
 								</Button>
 							</div>
 						)}

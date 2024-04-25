@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url'
 import { env, isDev } from '@/lib/env.js'
 import { migrate } from '@/migrate.js'
 import { readFile } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 import mime from 'mime-types'
 import { fileExtensions } from '@/lib/utils.js'
 ${importSeeder ? `import seed from '@/seed.js'` : ''}
@@ -43,17 +44,20 @@ mountRoutes('', path.join(dirname, 'routes')).then((router) => {
 	app.get('*', async (c) => {
 		const ext = c.req.path.split('.').slice(-1)[0]
 
-		const filePath = fileExtensions.includes(ext)
+		const fileName = fileExtensions.includes(ext)
 			? c.req.path
 			: '/index.html'
 
-		const content = await readFile(
-			path.join(dirname, '../public', filePath),
-			'utf8'
-		)
+		const filePath = path.join(dirname, '../public', fileName)
+
+		if (!existsSync(filePath)) {
+			return c.text('Not Found', 404)
+		}
+
+		const content = await readFile(filePath, 'utf8')
 
 		return c.text(content, 200, {
-			'Content-Type': mime.lookup(filePath) || 'text/plain',
+			'Content-Type': mime.lookup(fileName) || 'text/plain',
 		})
 	})
 

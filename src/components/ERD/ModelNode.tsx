@@ -209,7 +209,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 
 								<div className="flex items-center gap-2">
 									{isModelLocked(data) ? (
-										<Button variant="ghost" size="xs">
+										<Button variant="ghost" size="xs" className="pointer-events-none">
 											<LockIcon className="h-4 w-4" />
 										</Button>
 									) : (

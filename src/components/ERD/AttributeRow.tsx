@@ -160,11 +160,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 					<div className="grid auto-rows-fr grid-cols-1">
 						<div className="flex items-center justify-between pb-3">
 							<div>Field Settings</div>
-							{isLocked ? (
-								<Button variant="ghost" size="xs">
-									<LockIcon className="h-4 w-4" />
-								</Button>
-							) : (
+							{!isLocked && (
 								<Button variant="ghost" size="xs" onClick={remove}>
 									<Trash2Icon className="h-4 w-4" />
 								</Button>

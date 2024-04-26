@@ -292,6 +292,10 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 					await db.insert(tables.${model.drizzleName}).values({
 						...data,
 						id: newId,
+						${model.attributes
+							.filter((x) => x.default !== null)
+							.map((x) => `${x.name}: data.${x.name} ?? undefined`)
+							.join(',\n')}
 						${model.relatedModels
 							.map((x) => {
 								if (x.otherModel.id !== authModel?.id) return null

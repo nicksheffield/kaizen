@@ -11,7 +11,6 @@ import {
 	rm,
 	sortFilesByPath,
 	syncFiles,
-	verifyPermission,
 } from '../lib/handle'
 import { AppContext } from '../lib/AppContext'
 import { db } from '../lib/db'
@@ -119,11 +118,14 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 		const init = async () => {
 			const dbDirs = await db.dirs.toArray()
 			if (dbDirs.length) {
-				// get the last directory handle
-				const dbDir = dbDirs.slice(-1)[0]
-				await verifyPermission(dbDir.handle)
-				setRootHandle(dbDir.handle)
-				await loadFiles(dbDir.handle)
+				try {
+					// get the last directory handle
+					const dbDir = dbDirs.slice(-1)[0]
+					setRootHandle(dbDir.handle)
+					await loadFiles(dbDir.handle)
+				} catch (e) {
+					await db.delete()
+				}
 			}
 		}
 

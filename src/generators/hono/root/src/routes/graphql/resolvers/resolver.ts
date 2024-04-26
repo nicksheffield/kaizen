@@ -87,7 +87,9 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				.map((x) => {
 					if (!x.insertable) return null
 
-					return `${x.name}: g.${mapAttrToGarph(x.type)}${x.optional || x.name === 'id' ? '.optional()' : ''},`
+					console.log(x.name, x.default, x.optional || x.default !== null || x.name === 'id')
+
+					return `${x.name}: g.${mapAttrToGarph(x.type)}${x.optional || x.default !== null || x.name === 'id' ? '.optional()' : ''},`
 				})
 				.filter(isNotNone)
 				.join('\n')}

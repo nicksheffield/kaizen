@@ -125,6 +125,9 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 					await loadFiles(dbDir.handle)
 				} catch (e) {
 					await db.delete()
+					setRootHandle(null)
+					setDraft(undefined)
+					setFiles([])
 				}
 			}
 		}

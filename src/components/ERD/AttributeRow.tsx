@@ -9,7 +9,6 @@ import {
 	HashIcon,
 	HelpCircleIcon,
 	KeyIcon,
-	LockIcon,
 	PlusIcon,
 	TextIcon,
 	Trash2Icon,

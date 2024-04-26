@@ -11,6 +11,7 @@ import {
 	rm,
 	sortFilesByPath,
 	syncFiles,
+	verifyPermission,
 } from '../lib/handle'
 import { AppContext } from '../lib/AppContext'
 import { db } from '../lib/db'
@@ -120,6 +121,7 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 			if (dbDirs.length) {
 				// get the last directory handle
 				const dbDir = dbDirs.slice(-1)[0]
+				await verifyPermission(dbDir.handle)
 				setRootHandle(dbDir.handle)
 				await loadFiles(dbDir.handle)
 			}

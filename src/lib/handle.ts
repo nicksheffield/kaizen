@@ -51,6 +51,24 @@ export const sortFilesByPath = (a: FSDesc, b: FSDesc) => {
 const skip = ['node_modules', '.next', '.DS_Store', '.git']
 
 /**
+ * Verify that a directory handle has the correct permissions
+ * https://stackoverflow.com/a/66500919
+ */
+export const verifyPermission = async (dirHandle: FileSystemDirectoryHandle) => {
+	const options: FileSystemHandlePermissionDescriptor = { mode: 'readwrite' }
+
+	if ((await dirHandle.queryPermission(options)) === 'granted') {
+		return true
+	}
+
+	if ((await dirHandle.requestPermission(options)) === 'granted') {
+		return true
+	}
+
+	return false
+}
+
+/**
  * Get a tree of Desc objects by recursively traversing a directory handle
  */
 export const getHandleTreeFromHandle = async (

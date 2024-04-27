@@ -107,10 +107,10 @@ const yoga = createYoga({
 	},
 })
 
-const methods = isDev ? ['GET', 'POST'] : ['POST']
+router.post('/', authDecorate, async (c) => {
+	const response = await yoga.handle(c.req.raw, c)
 
-router.on(methods, '/', authDecorate, async (context) => {
-	return yoga.handle(context.req.raw, context)
+	return c.json(await response.json())
 })
 `
 }

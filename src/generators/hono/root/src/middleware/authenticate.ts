@@ -60,7 +60,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 			cookies
 				? `// handle refreshing session
 		if (session.fresh) {
-			await setSessionCookies(c, user)
+			await setSessionCookies(c, session)
 		}`
 				: ''
 		}
@@ -83,12 +83,15 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 		c.set('user', user)
 		c.set('session', session)
 
+		// handle refreshing session
+		if (session?.fresh) {
+			await setSessionCookies(c, session)
+		}
+
 		await next()
 	}
 	
-	export const setSessionCookies = async (c: Context, user: { id: string }) => {
-		const session = await lucia.createSession(user.id, {})
-	
+	export const setSessionCookies = async (c: Context, session: Session) => {
 		${
 			cookies
 				? `const newCookie = lucia.createSessionCookie(session.id)
@@ -119,7 +122,8 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 	}
 	
 	export const doLogin = async (c: Context, user: { id: string }) => {
-		const session = await setSessionCookies(c, user)
+		const session = await lucia.createSession(user.id, {})
+		await setSessionCookies(c, session)
 	
 		return c.json({ token: session.id })
 	}

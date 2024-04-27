@@ -400,7 +400,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 			return results
 		},
 	
-		delete${model.name}: async (_, args) => {
+		delete${model.name}: async (_, args, c) => {
 			const items = await db.query.${model.drizzleName}.findMany({
 				${
 					nonSelectAttrs.length > 0
@@ -415,8 +415,10 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 			for (const id of args.id) {
 				if (args.softDelete) {
 					await db.update(tables.${model.drizzleName}).set({ deletedAt: new Date() }).where(eq(tables.${model.drizzleName}.id, id))
+					history.softDelete('${model.tableName}', id, c.get('user').id)
 				} else {
 					await db.delete(tables.${model.drizzleName}).where(eq(tables.${model.drizzleName}.id, id))
+					history.hardDelete('${model.tableName}', id)
 				}
 			}
 	

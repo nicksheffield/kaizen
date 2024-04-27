@@ -1,6 +1,7 @@
 const tmpl = () => {
 	return `import { db } from '@/lib/db.js'
 	import { history } from '@/schema.js'
+	import { and, eq } from 'drizzle-orm'
 	import { generateId } from 'lucia'
 	
 	export const create = async (
@@ -50,6 +51,29 @@ const tmpl = () => {
 				userId,
 			})
 		}
+	}
+
+	export const softDelete = async (table: string, rowId: string, userId: string) => {
+		await db.insert(history).values({
+			id: generateId(15),
+			table: table,
+			column: '',
+			value: '',
+			rowId,
+			operation: 'delete',
+			userId,
+		})
+	}
+	
+	export const hardDelete = async (table: string, rowId: string) => {
+		await db
+			.delete(history)
+			.where(
+				and(
+					eq(history.table, 'venues'),
+					eq(history.rowId, rowId)
+				)
+			)
 	}
 `
 }

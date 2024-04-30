@@ -87,7 +87,6 @@ export const toWhere = (
 	const entries = Object.entries(search || {})
 
 	for (const [field, filters] of entries) {
-		console.log('field', field)
 		if (field === 'and') {
 			let ands: (SQLWrapper | undefined)[] = []
 

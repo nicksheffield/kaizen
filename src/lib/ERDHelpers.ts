@@ -27,6 +27,7 @@ export const getTargetName = (rel: Relation, nodes: Node<Model>[]) => {
 
 export const getLogicalRecommend = (name: string): AttributeType | undefined => {
 	if (name.startsWith('is') && name.length > 3) return 'boolean'
+	if (name.startsWith('has') && name.length > 4) return 'boolean'
 	if (name.endsWith('At')) return 'datetime'
 	if (name.endsWith('Date')) return 'date'
 	if (name.endsWith('Time')) return 'time'

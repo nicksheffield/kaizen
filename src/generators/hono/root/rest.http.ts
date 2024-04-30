@@ -53,21 +53,6 @@ Content-Type: application/json
 {
   "password": "password"
 }
-
-### @name GetUsers
-POST http://localhost:${port}/api/graphql
-Content-Type: application/json
-X-REQUEST-TYPE: GraphQL
-
-query {
-  users {
-    items {
-      id
-      email
-    }
-    totalCount
-  }
-}
 `
 }
 

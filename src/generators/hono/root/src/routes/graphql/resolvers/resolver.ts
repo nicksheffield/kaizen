@@ -70,7 +70,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 			${model.relatedModels
 				.map((x) => {
 					// use id or string? lets go with id for now
-					return `${x.fieldName}: g.ref(() => ${x.otherModel.name}.types.type)${x.isArray ? '.list()' : ''}.omitResolver(),`
+					return `${x.fieldName}: g.ref(() => ${x.otherModel.name}.types.type)${x.isArray ? '.list()' : ''}${x.optional ? '.optional()' : ''}.omitResolver(),`
 				})
 				.filter(isNotNone)
 				.join('\n')}
@@ -284,7 +284,15 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				${
 					isAuthModel
 						? `const { email, password, ...fields} = data
-						const item = await createUser(email, password, fields)`
+						const item = await createUser(email, password, {
+							...fields,
+							id: fields.id ?? undefined,
+							${model.attributes
+								.filter((x) => x.default !== null)
+								.filter((x) => x.insertable)
+								.map((x) => `${x.name}: data.${x.name} ?? undefined`)
+								.join(',\n')}
+						})`
 						: `const newId = data.id ?? generateId(15)
 	
 					await db.insert(tables.${model.drizzleName}).values({

@@ -13,6 +13,8 @@ import tsconfigJson from './root/tsconfig.json'
 import drizzleConfig from './root/drizzle.config'
 import dockerCompose from './root/docker-compose'
 
+import httpTest_test from './root/http-test/test.http'
+
 import src_index from './root/src/index'
 import src_migrate from './root/src/migrate'
 import src_schema from './root/src/schema'
@@ -93,6 +95,8 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 		dir[`/src/routes/graphql/resolvers/${model.drizzleName}.ts`] = await format(
 			src_routes_graphql_resolvers_resolver({ model, project })
 		)
+
+		dir[`/http-test/${model.drizzleName}.http`] = httpTest_test({ model })
 	}
 
 	for (const email in extras.emails) {

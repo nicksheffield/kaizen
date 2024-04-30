@@ -39,13 +39,24 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	}
 
 	type CreateUserFields = {
-		${user?.attributes
+		${user.attributes
 			.map((x) => {
 				if (!x.insertable) return null
 				if (x.name === 'password') return null
 				if (x.name === 'email') return null
 
-				return `${x.name}${x.name === 'id' || x.optional ? '?' : ''}: ${mapAttributeTypeToJs(x.type)} ${x.optional || x.name === 'id' ? '| null | undefined' : ''}`
+				const isOptional = x.optional || x.default !== null || x.name === 'id'
+				const isNullable = x.optional && x.name !== 'id'
+
+				return `${x.name}${isOptional ? '?' : ''}: ${mapAttributeTypeToJs(x.type)} ${isNullable ? '| null' : ''}${isOptional ? '| undefined' : ''}`
+			})
+			.filter(isNotNone)
+			.join('; ')}
+		${user.foreignKeys
+			.map((x) => {
+				// use id or string? lets go with id for now
+				// return `${x.name}: g.id()${x.optional ? '.optional()' : ''},`
+				return `${x.name}${x.optional ? '?' : ''}: string | null | undefined`
 			})
 			.filter(isNotNone)
 			.join('; ')}
@@ -103,6 +114,12 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 			})
 			.filter(isNotNone)
 			.join('; ')}
+		${user.foreignKeys
+			.map((x) => {
+				return `${x.name}${x.optional ? '?' : ''}: string | null | undefined`
+			})
+			.filter(isNotNone)
+			.join('; ')}
 	}
 	
 	export const updateUser = async (
@@ -140,6 +157,12 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 						if (x.name === 'email') return null
 						if (x.name === 'id') return null
 
+						return `${x.name}: fields.${x.name} ?? undefined`
+					})
+					.filter(isNotNone)
+					.join(', ')},
+				${user.foreignKeys
+					.map((x) => {
 						return `${x.name}: fields.${x.name} ?? undefined`
 					})
 					.filter(isNotNone)

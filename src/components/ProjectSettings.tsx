@@ -38,7 +38,7 @@ export const ProjectSettings = () => {
 					},
 				},
 				auth: {
-					expiresIn: values.auth?.expiresIn ?? '60',
+					expiresIn: values.auth?.expiresIn ?? String(30 * 24 * 60),
 					cookies: values.auth?.cookies ?? true,
 					bearer: values.auth?.bearer ?? true,
 				},
@@ -320,6 +320,11 @@ export const ProjectSettings = () => {
 											name="env.EMAIL_FROM"
 											label="EMAIL_FROM"
 											description="The address to use as the 'from' field of an email."
+										/>
+										<FormInputRow
+											name="env.DEV_EMAIL_TO"
+											label="DEV_EMAIL_TO"
+											description="Set this in dev to send all emails to this address instead."
 										/>
 										<FormInputRow
 											name="env.RESEND_API_KEY"

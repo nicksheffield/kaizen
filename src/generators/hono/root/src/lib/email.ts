@@ -27,14 +27,14 @@ export const send = (address: string, subject: string, body: string) => {
 		if (resendEnabled) {
 			return resend!.emails.send({
 				from: env.EMAIL_FROM!, // we know this is fine because of the emailEnabled check
-				to: address,
+				to: env.DEV_EMAIL_TO || address,
 				subject,
 				html: body,
 			})
 		} else if (emailEnabled) {
 			return transport.sendMail({
 				from: env.EMAIL_FROM,
-				to: address,
+				to: env.DEV_EMAIL_TO || address,
 				subject,
 				html: body,
 			})

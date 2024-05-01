@@ -141,6 +141,7 @@ export const ProjectSchema = z.object({
 			EMAIL_USER: z.string().optional(),
 			EMAIL_PASS: z.string().optional(),
 			EMAIL_FROM: z.string().optional(),
+			DEV_EMAIL_TO: z.string().optional(),
 			RESEND_API_KEY: z.string().optional(),
 		})
 		.optional(),

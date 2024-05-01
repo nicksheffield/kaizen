@@ -11,6 +11,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 		EMAIL_USER: secrets?.EMAIL_USER,
 		EMAIL_PASS: secrets?.EMAIL_PASS,
 		EMAIL_FROM: secrets?.EMAIL_FROM,
+		DEV_EMAIL_TO: secrets?.DEV_EMAIL_TO,
 		RESEND_API_KEY: secrets?.RESEND_API_KEY,
 	}
 

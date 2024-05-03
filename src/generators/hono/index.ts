@@ -6,6 +6,7 @@ import env from './root/env'
 import envExample from './root/env.example'
 import gitignore from './root/gitignore'
 import restHttp from './root/rest.http'
+import moon from './root/moon.yml'
 import prettierRc from './root/prettierrc'
 import schemaJson from './root/schema.json'
 import packageJson from './root/package.json'
@@ -53,6 +54,7 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['/.env.example'] = envExample()
 	dir['/.gitignore'] = gitignore()
 	dir['/rest.http'] = restHttp()
+	dir['/moon.yml'] = moon()
 	dir['/.pretterrc'] = prettierRc()
 	dir['/schema.json'] = schemaJson({ models, project })
 	dir['/package.json'] = packageJson({ project })

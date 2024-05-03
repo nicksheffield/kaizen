@@ -18,7 +18,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	import { HTTPException } from 'hono/http-exception'
 	import { hashPassword, validatePassword } from '@/lib/password.js'
 	
-	const generateEmailVerificationCode = async (
+	export const generateEmailVerificationCode = async (
 		userId: string,
 		email: string
 	): Promise<string> => {

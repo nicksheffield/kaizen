@@ -5,7 +5,7 @@ const tmpl = () => {
 			{
 				label: 'tsc watch',
 				type: 'shell',
-				command: 'app/node_modules/.bin/tsc',
+				command: 'apps/client/node_modules/.bin/tsc',
 				isBackground: true,
 				args: ['--watch', '--noEmit', '--project', '.'],
 				group: {

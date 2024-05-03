@@ -6,6 +6,9 @@ import { db } from '@/lib/db.js'
 import { emailVerificationCodes, users } from '@/schema.js'
 import { lucia } from '@/lib/lucia.js'
 import { setSessionCookies } from '@/middleware/authenticate.js'
+import { generateEmailVerificationCode } from '@/lib/manageUser.js'
+import { sendVerificationEmail } from '@/lib/email.js'
+import { HTTPException } from 'hono/http-exception'
 
 export const router = new Hono()
 
@@ -51,6 +54,46 @@ router.post(
 		return c.json({ message: 'Email verified' })
 	}
 )
+
+
+const resendConfirmationSchema = z.object({
+	userId: z.string(),
+})
+
+router.post(
+	'/resend-account-confirmation',
+	zValidator('json', resendConfirmationSchema),
+	async (c) => {
+		const body: z.infer<typeof resendConfirmationSchema> =
+			await c.req.json()
+
+		await db
+			.delete(emailVerificationCodes)
+			.where(eq(emailVerificationCodes.userId, body.userId))
+
+		const user = await db.query.users.findFirst({
+			where: eq(users.id, body.userId),
+		})
+
+		if (!user) {
+			throw new HTTPException(404, { message: 'User not found' })
+		}
+
+		if (user.emailVerified) {
+			return c.json({ message: 'Account already confirmed' })
+		}
+
+		const verificationCode = await generateEmailVerificationCode(
+			body.userId,
+			user.email
+		)
+
+		sendVerificationEmail(user.email, body.userId, verificationCode)
+
+		return c.json({ message: 'Account confirmation email sent' })
+	}
+)
+
 `
 
 export default tmpl

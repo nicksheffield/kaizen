@@ -1,6 +1,6 @@
 const tmpl = () => {
 	const object = {
-		'typescript.tsdk': 'app/node_modules/typescript/lib',
+		'typescript.tsdk': 'apps/client/node_modules/typescript/lib',
 		'typescript.enablePromptUseWorkspaceTsdk': true,
 	}
 

@@ -3,7 +3,10 @@ import { ProjectCtx } from '../types'
 const tmpl = ({ project }: { project?: ProjectCtx }) => {
 	const json = {
 		scripts: {
-			build: `bun install --cwd ${project?.project.devDir || 'api'} && bun install --cwd app && vite build app --outDir ../api/public`,
+			'install:api': `cd ${project?.project.devDir || 'api'} && npm install`,
+			'install:app': 'cd app && npm install',
+			'build:app': `cd app && vite build --emptyOutDir --outDir ../${project?.project.devDir || 'api'}/public`,
+			build: 'npm run install:api && npm run install:app && npm run build:app',
 			start: `cd ${project?.project.devDir || 'api'} && tsx src/index.ts`,
 		},
 		dependencies: {

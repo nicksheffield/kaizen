@@ -46,7 +46,7 @@ router.post(
 		const session = await lucia.createSession(body.userId, {})
 		const newCookie = lucia.createSessionCookie(session.id)
 
-		setSessionCookies(c, { id: body.userId })
+		setSessionCookies(c, session)
 
 		return c.json({ message: 'Email verified' })
 	}

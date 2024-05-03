@@ -22,15 +22,21 @@ const transport = nodemailer.createTransport({
 	},
 })
 
-export const send = (address: string, subject: string, body: string) => {
+export const send = async (address: string, subject: string, body: string) => {
 	try {
 		if (resendEnabled) {
-			return resend!.emails.send({
+			const res = await resend!.emails.send({
 				from: env.EMAIL_FROM!, // we know this is fine because of the emailEnabled check
 				to: env.DEV_EMAIL_TO || address,
 				subject,
 				html: body,
 			})
+
+			if (res.error) {
+				console.log('resend email error', res.error)
+			}
+
+			return res
 		} else if (emailEnabled) {
 			return transport.sendMail({
 				from: env.EMAIL_FROM,

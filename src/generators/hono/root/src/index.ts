@@ -54,9 +54,9 @@ mountRoutes('', path.join(dirname, 'routes')).then((router) => {
 			return c.text('Not Found', 404)
 		}
 
-		const content = await readFile(filePath, 'utf8')
+		const content = await readFile(filePath)
 
-		return c.text(content, 200, {
+		return c.newResponse(content, 200, {
 			'Content-Type': mime.lookup(fileName) || 'text/plain',
 		})
 	})

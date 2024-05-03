@@ -178,6 +178,8 @@ dist
 .DS_Store
 
 v8-compile-cache-*
+
+api/public
 `
 }
 

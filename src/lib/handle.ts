@@ -199,7 +199,7 @@ export const convertGeneratedFilesToDescs = async (
 	return items
 }
 
-const syncIgnores = ['bun.lockb', 'package-lock.json', 'node_modules']
+const syncIgnores = ['bun.lockb', 'pnpm-lock.yaml', 'package-lock.json', 'node_modules']
 
 /**
  * Sync two arrays of FileDesc's, deleting, adding and updating as necessary

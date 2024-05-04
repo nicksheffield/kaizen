@@ -21,6 +21,7 @@ import { GeneratorFn } from '@/generators'
 import { workspaceFiles, generate as workspaceGenerator } from '@/generators/workspace'
 import { Project, parseProject } from '@/lib/projectSchemas'
 import { toast } from 'sonner'
+import { SERVER_PATH } from '@/lib/constants'
 
 export const AppProvider = ({ children }: PropsWithChildren) => {
 	/**
@@ -253,9 +254,9 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 	 */
 	const generateProject = useCallback(
 		async (project?: Project) => {
-			if (!project || !rootHandle || !project.project.generator) return
+			if (!project || !rootHandle || !project.settings.generator) return
 
-			const generate: GeneratorFn | undefined = generators[project.project.generator as keyof typeof generators]
+			const generate: GeneratorFn | undefined = generators[project.settings.generator as keyof typeof generators]
 
 			if (!generate) return
 
@@ -270,14 +271,14 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 					}, {}),
 			})
 
-			const generatedDescs = await convertGeneratedFilesToDescs(generated, rootHandle, project.project.devDir)
+			const generatedDescs = await convertGeneratedFilesToDescs(generated, rootHandle, SERVER_PATH)
 
 			const unformatted = generatedDescs.filter(isFile).filter((x) => x.content.startsWith('/* unformatted */'))
 
 			setBuildErrorPaths(unformatted.map((x) => x.path))
 
 			await syncFiles(
-				files.filter(isFile).filter((x) => x.path.startsWith(project.project.devDir)),
+				files.filter(isFile).filter((x) => x.path.startsWith(SERVER_PATH)),
 				generatedDescs,
 				rootHandle
 			)

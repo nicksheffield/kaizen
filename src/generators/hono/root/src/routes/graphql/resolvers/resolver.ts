@@ -7,7 +7,7 @@ import { plural, singular } from 'pluralize'
 const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	const nonSelectAttrs = model.attributes.filter((x) => !x.selectable)
 
-	const authModel = project.models.find((x) => x.id === project.project.userModelId)
+	const authModel = project.models.find((x) => x.id === project.settings.userModelId)
 	const isAuthModel = authModel?.id === model.id
 
 	const relatedModels = model.relatedModels

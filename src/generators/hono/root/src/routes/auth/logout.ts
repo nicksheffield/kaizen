@@ -4,7 +4,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 	return `import { lucia } from '@/lib/lucia.js'
 	import { Hono } from 'hono'
 	import { getSession } from '@/middleware/authenticate.js'
-	${project.auth?.cookies ? `import { setCookie } from 'hono/cookie'` : ''}
+	${project.settings.auth?.enableCookies ? `import { setCookie } from 'hono/cookie'` : ''}
 	
 	export const router = new Hono()
 	
@@ -15,7 +15,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 		}
 	
 		${
-			project.auth?.cookies
+			project.settings.auth?.enableCookies
 				? `setCookie(c, 'auth_exists', 'false', {
 			maxAge: 0,
 			expires: new Date(0),

@@ -4,13 +4,14 @@ import { PropsWithChildren, ReactNode } from 'react'
 
 type HintProps = {
 	content?: ReactNode
+	className?: string
 }
 
-export const Hint = ({ content }: PropsWithChildren<HintProps>) => {
+export const Hint = ({ content, className }: PropsWithChildren<HintProps>) => {
 	return (
 		<TooltipProvider>
 			<Tooltip>
-				<TooltipTrigger>
+				<TooltipTrigger className={className} type="button">
 					<HelpCircleIcon className="h-4 w-4 shrink-0 opacity-30 hover:opacity-50" />
 				</TooltipTrigger>
 				<TooltipContent>

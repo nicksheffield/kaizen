@@ -1,7 +1,7 @@
 import { ProjectCtx } from '@/generators/hono/types'
 
 const tmpl = ({ project }: { project: ProjectCtx }) => {
-	const userModel = project.models.find((x) => project.project.userModelId === x.id)
+	const userModel = project.models.find((x) => project.settings.userModelId === x.id)
 	const nonSelectAttrs = userModel?.attributes.filter((x) => !x.selectable) || []
 
 	return `import { db } from '@/lib/db.js'

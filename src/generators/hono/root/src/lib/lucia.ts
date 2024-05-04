@@ -5,12 +5,12 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 	import { adapter } from './db.js'
 	import { isDev } from '@/lib/env.js'
 	
-	export const sessionExpiresIn = new TimeSpan(${project.auth?.expiresIn ?? 60}, 'm')
+	export const sessionExpiresIn = new TimeSpan(${project.settings.auth?.sessionExpiry ?? 60}, 'm')
 	
 	export const lucia = new Lucia(adapter, {
 		sessionExpiresIn,
 		${
-			project.auth?.cookies
+			project.settings.auth?.enableCookies
 				? `
 		sessionCookie: {
 			attributes: {

@@ -3,6 +3,7 @@ import { useApp } from '../../lib/AppContext'
 import { Button } from '../ui/button'
 import { SaveIcon } from 'lucide-react'
 import { MonacoEditor } from '../MonacoEditor'
+import { SERVER_PATH } from '@/lib/constants'
 
 export const CodeEditor = () => {
 	const selectedFile = useApp((v) => v.selectedFile)
@@ -50,7 +51,11 @@ export const CodeEditor = () => {
 					value={value}
 					onValueChange={(val) => setValue(val)}
 					extension={selectedFile?.extension}
-					readonly={project && selectedFile.path.startsWith(project.project.devDir)}
+					readonly={
+						project &&
+						selectedFile.path.startsWith(SERVER_PATH) &&
+						selectedFile.path !== `${SERVER_PATH}/.env`
+					}
 				/>
 			</div>
 		</div>

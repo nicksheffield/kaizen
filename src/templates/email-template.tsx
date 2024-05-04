@@ -22,12 +22,12 @@ const tmpl = ({ name: emailName, project }: { name: string; project: Project }) 
 	const ${name} = ({}: ${name}Props) => (
 		<Html>
 			<Head />
-			<Preview>An email from ${project.project.name}</Preview>
+			<Preview>An email from ${project.settings.name}</Preview>
 			<Tailwind>
 				<Body className="bg-white my-auto mx-auto font-sans px-2">
 					<Container>
 						<Text className="text-2xl tracking-tight leading-5 text-gray-700 pt-12">
-							${project.project.name}
+							${project.settings.name}
 						</Text>
 					</Container>
 				</Body>

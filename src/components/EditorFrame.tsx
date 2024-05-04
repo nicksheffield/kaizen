@@ -4,6 +4,7 @@ import { CodeEditor } from './FileViews/CodeEditor'
 import { ReadonlyCodeView } from './FileViews/ReadonlyView'
 import { ProjectView } from './FileViews/ProjectView'
 import { Welcome } from './Welcome'
+import { SERVER_PATH } from '@/lib/constants'
 
 export const EditorFrame = () => {
 	const project = useApp((v) => v.project)
@@ -12,11 +13,11 @@ export const EditorFrame = () => {
 	const Editor = !selectedPath ? (
 		<Welcome />
 	) : selectedPath === 'project.json' ? (
-		<ProjectView key={project?.project.id} />
-	) : project && selectedPath.startsWith(project.project.devDir) ? (
-		<ReadonlyCodeView key={`${project?.project.id}-${selectedPath}`} />
+		<ProjectView key={project?.settings.id} />
+	) : project && selectedPath.startsWith(SERVER_PATH) ? (
+		<ReadonlyCodeView key={`${project?.settings.id}-${selectedPath}`} />
 	) : (
-		<CodeEditor key={project?.project.id} />
+		<CodeEditor key={project?.settings.id} />
 	)
 
 	return (

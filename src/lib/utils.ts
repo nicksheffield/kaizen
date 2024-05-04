@@ -7,6 +7,14 @@ import typescriptPlugin from 'prettier/plugins/typescript'
 import estreePlugin from 'prettier/plugins/estree'
 import { Attribute } from '@/lib/projectSchemas'
 
+export type Nullsish = null | undefined | void
+export type Falsish = false | Nullsish
+export type VoidPromise = void | Promise<void>
+
+export const isNotFalsish = <T>(value: T | Falsish): value is T => {
+	return value !== false && value != null
+}
+
 export const generateId = (length: number = 5) => generateRandomString(length, alphabet('0-9', 'a-z'))
 
 export function cn(...inputs: ClassValue[]) {
@@ -128,6 +136,18 @@ export const userModelFields: Attribute[] = [
 		selectable: true,
 		insertable: true,
 		order: 7,
+		enabled: true,
+		modelId: '',
+	},
+	{
+		id: 'm3t7y',
+		name: 'locked',
+		type: 'boolean',
+		default: 'false',
+		nullable: false,
+		selectable: true,
+		insertable: true,
+		order: 8,
 		enabled: true,
 		modelId: '',
 	},

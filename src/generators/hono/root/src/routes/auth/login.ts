@@ -1,4 +1,4 @@
-const tmpl = () => `import { eq } from 'drizzle-orm'
+const tmpl = () => `import { eq, and, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { HTTPException } from 'hono/http-exception'
@@ -29,7 +29,7 @@ router.post(
 		const body: z.infer<typeof loginDTO> = await c.req.json()
 
 		const user = await db.query.users.findFirst({
-			where: eq(users.email, body.email),
+			where: and(eq(users.email, body.email), eq(users.emailVerified, true), isNull(users.deletedAt)),
 		})
 
 		// check if the password is correct

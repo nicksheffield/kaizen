@@ -4,7 +4,7 @@ import { ProjectCtx } from '@/generators/hono/types'
 import { isNotNone } from '@/lib/utils'
 
 const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) => {
-	const user = models.find((x) => project.project.userModelId === x.id)
+	const user = models.find((x) => project.settings.userModelId === x.id)
 
 	if (!user) return ''
 

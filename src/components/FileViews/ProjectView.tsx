@@ -3,9 +3,11 @@ import { ERDEditor } from '../ERDEditor'
 import { ProjectSettings } from '@/components/ProjectSettings'
 import { useLocalStorage } from 'usehooks-ts'
 import { CodeEditor } from '@/components/FileViews/CodeEditor'
+import { useApp } from '@/lib/AppContext'
 
 export const ProjectView = () => {
 	const [tab, setTab] = useLocalStorage<'settings' | 'models' | 'json'>('project-tab', 'settings')
+	const project = useApp((v) => v.project)
 
 	return (
 		<div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
@@ -21,7 +23,7 @@ export const ProjectView = () => {
 				/>
 			</div>
 			{tab === 'settings' ? (
-				<ProjectSettings />
+				<ProjectSettings key={project?.settings.id} />
 			) : tab === 'models' ? (
 				<ERDEditor />
 			) : tab === 'json' ? (

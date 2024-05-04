@@ -31,7 +31,7 @@ export const ProjectHeader = () => {
 						})
 					}}
 				>
-					<span className="text-sm">{project.project.name}</span>
+					<span className="text-sm">{project.settings.name}</span>
 				</Button>
 			</div>
 

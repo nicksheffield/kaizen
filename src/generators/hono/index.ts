@@ -1,8 +1,8 @@
 import { HonoGeneratorFn } from './types'
 import { format } from './utils'
 import { createModelCtx } from './contexts'
+import { SERVER_PATH } from '@/lib/constants'
 
-import env from './root/env'
 import envExample from './root/env.example'
 import gitignore from './root/gitignore'
 import restHttp from './root/rest.http'
@@ -50,7 +50,6 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 
 	const dir: Record<string, string> = {}
 
-	dir['/.env'] = env({ project })
 	dir['/.env.example'] = envExample()
 	dir['/.gitignore'] = gitignore()
 	dir['/rest.http'] = restHttp()
@@ -64,7 +63,7 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 
 	dir['/src/index.ts'] = await format(src_index({ importSeeder: !!extras.seeder }))
 	if (extras.seeder) {
-		dir['/src/seed.ts'] = await format(extras.seeder.replaceAll(`../${project.project.devDir}/src/`, '@/'))
+		dir['/src/seed.ts'] = await format(extras.seeder.replaceAll(`../${SERVER_PATH}/src/`, '@/'))
 	}
 	dir['/src/migrate.ts'] = await format(src_migrate())
 	dir['/src/schema.ts'] = await format(src_schema({ models, project }))
@@ -89,7 +88,7 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['/src/routes/auth/reset-password.ts'] = await format(src_routes_auth_resetPassword())
 	dir['/src/routes/auth/two-factor.ts'] = await format(src_routes_auth_twoFactor({ project }))
 
-	dir['/src/routes/graphql/router.ts'] = await format(src_routes_graphql_router({ models, project }))
+	dir['/src/routes/graphql/router.ts'] = await format(src_routes_graphql_router({ models }))
 	dir['/src/routes/graphql/resolvers/_filters.ts'] = await format(src_routes_graphql_resolvers_filters())
 	dir['/src/routes/graphql/resolvers/_utils.ts'] = await format(src_routes_graphql_resolvers_utils())
 

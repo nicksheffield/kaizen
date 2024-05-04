@@ -13,7 +13,7 @@ import { z } from 'zod'
 import crypto from 'node:crypto'
 import { Argon2id } from 'oslo/password'
 
-const appName = '${project.project.name}'
+const appName = '${project.settings.name}'
 
 const verify2faSchema = z.object({
 	otp: z.string(),

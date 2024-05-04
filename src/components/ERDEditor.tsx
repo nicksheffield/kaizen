@@ -178,7 +178,7 @@ export const Editor = () => {
 		setRelations(defaultRelations)
 	}
 
-	const [detailed, setDetailed] = useLocalStorage(`project-${project?.project.id}-erd-detailed`, false)
+	const [detailed, setDetailed] = useLocalStorage(`project-${project?.settings.id}-erd-detailed`, false)
 
 	const isDirty = useMemo(() => {
 		const models = nodes.map((x) => ({ ...x.data, posX: x.position.x, posY: x.position.y }))
@@ -322,8 +322,8 @@ export const Editor = () => {
 
 		saveProject({
 			...project,
-			project: {
-				...project.project,
+			settings: {
+				...project.settings,
 				userModelId,
 			},
 			models: nodes.map((x) => ({ ...x.data, posX: x.position.x, posY: x.position.y })),
@@ -334,7 +334,7 @@ export const Editor = () => {
 		setDefaultRelations(relations)
 	}
 
-	const [userModelId, setUserModelId] = useState(project?.project.userModelId || '')
+	const [userModelId, setUserModelId] = useState(project?.settings.userModelId || '')
 
 	const updateUserModelId = (id: string) => {
 		setUserModelId(id)

@@ -154,7 +154,7 @@ ${models
 		// ${relationTypes.join(', ')}
 		return `export const ${model.drizzleName}Relations = relations(${model.tableName}, ({ one, many }) => ({
 	${
-		model.id === ctx.project.project.userModelId
+		model.id === ctx.project.settings.userModelId
 			? `sessions: many(sessions),
 	emailVerificationCodes: many(emailVerificationCodes),
 	passwordResetTokens: many(passwordResetToken),

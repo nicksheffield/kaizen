@@ -1,8 +1,8 @@
 import { ProjectCtx } from '@/generators/hono/types'
 
 const tmpl = ({ project }: { project: ProjectCtx }) => {
-	const cookies = project.auth?.cookies
-	const bearer = project.auth?.bearer
+	const cookies = project.settings.auth?.enableCookies
+	const bearer = project.settings.auth?.enableBearer
 
 	return `import { lucia } from '@/lib/lucia.js'
 	import { Context, MiddlewareHandler } from 'hono'

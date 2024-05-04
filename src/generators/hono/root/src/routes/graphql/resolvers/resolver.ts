@@ -24,6 +24,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 		Column,
 		and,
 		isNull,
+		sql
 	} from 'drizzle-orm'
 	import { g, Infer } from 'garph'
 	${isAuthModel ? `import { createUser, updateUser } from '@/lib/manageUser.js'` : `import { generateId } from 'lucia'`}
@@ -185,7 +186,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 		${plural(model.drizzleName)}: g.ref(types.collection).args({
 			page: g.int().default(1),
 			limit: g.int().default(0),
-			orderBy: g.ref(OrderBys).default('createdAt'),
+			orderBy: g.ref(OrderBys).default(${model.auditDates ? `'createdAt'` : `'id'`}),
 			orderDir: g.ref(OrderDir).default('ASC'),
 			where: g.ref(types.filter).optional(),
 		}),
@@ -204,7 +205,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				}
 				where: and(
 					eq(tables.${model.drizzleName}.id, args.id),
-					isNull(tables.${model.drizzleName}.deletedAt)
+					${model.auditDates ? `isNull(tables.${model.drizzleName}.deletedAt)` : ''}
 				),
 			})
 	
@@ -217,7 +218,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	
 			const where = and(
 				...filters.toWhere(tables.${model.drizzleName}, args.where),
-				isNull(tables.${model.drizzleName}.deletedAt)
+				${model.auditDates ? `isNull(tables.${model.drizzleName}.deletedAt)` : ''}
 			)
 	
 			const items = await db.query.${model.drizzleName}.findMany({
@@ -271,7 +272,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 			.list()
 			.args({
 				id: g.id().list(),
-				softDelete: g.boolean().default(true),
+				${model.auditDates ? `softDelete: g.boolean().default(true),` : ''}
 			}),
 	}
 
@@ -290,9 +291,9 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 							${model.attributes
 								.filter((x) => x.default !== null)
 								.filter((x) => x.insertable)
-								.map((x) => `${x.name}: data.${x.name} ?? undefined`)
+								.map((x) => `${x.name}: data.${x.name} ?? ${`sql\`${x.default}\`` || undefined}`)
 								.join(',\n')}
-						})`
+						}, c.get('user').id)`
 						: `const newId = data.id ?? generateId(15)
 	
 					await db.insert(tables.${model.drizzleName}).values({
@@ -360,7 +361,8 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 					id,
 					email ?? undefined,
 					password ?? undefined,
-					fields
+					fields,
+					c.get('user').id
 				)`
 						: `await db
 				.update(tables.${model.drizzleName})
@@ -421,13 +423,19 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 			})
 	
 			for (const id of args.id) {
+				${
+					model.auditDates
+						? `
 				if (args.softDelete) {
 					await db.update(tables.${model.drizzleName}).set({ deletedAt: new Date() }).where(eq(tables.${model.drizzleName}.id, id))
 					history.softDelete('${model.tableName}', id, c.get('user').id)
 				} else {
+				`
+						: ''
+				}
 					await db.delete(tables.${model.drizzleName}).where(eq(tables.${model.drizzleName}.id, id))
 					history.hardDelete('${model.tableName}', id)
-				}
+					${model.auditDates ? `}` : ''}
 			}
 	
 			return items

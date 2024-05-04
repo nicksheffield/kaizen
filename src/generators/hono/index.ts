@@ -33,10 +33,12 @@ import src_lib_utils from './root/src/lib/utils'
 import src_middleware_authenticate from './root/src/middleware/authenticate'
 import src_middleware_rateLimit from './root/src/middleware/rateLimit'
 
-import src_routes_auth_confirmAccount from './root/src/routes/auth/confirm-account'
+import src_routes_webhooks_resend from './root/src/routes/webhooks/resend'
+
 import src_routes_auth_login from './root/src/routes/auth/login'
 import src_routes_auth_logout from './root/src/routes/auth/logout'
 import src_routes_auth_profile from './root/src/routes/auth/profile'
+import src_routes_auth_confirmAccount from './root/src/routes/auth/confirm-account'
 import src_routes_auth_resetPassword from './root/src/routes/auth/reset-password'
 import src_routes_auth_twoFactor from './root/src/routes/auth/two-factor'
 
@@ -80,6 +82,8 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 
 	dir['/src/middleware/authenticate.ts'] = await format(src_middleware_authenticate({ project }))
 	dir['/src/middleware/rateLimit.ts'] = await format(src_middleware_rateLimit())
+
+	dir['/src/routes/webhooks/resend.ts'] = await format(src_routes_webhooks_resend())
 
 	dir['/src/routes/auth/login.ts'] = await format(src_routes_auth_login())
 	dir['/src/routes/auth/logout.ts'] = await format(src_routes_auth_logout({ project }))

@@ -13,7 +13,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	import { generateId } from 'lucia'
 	import { TimeSpan, createDate } from 'oslo'
 	import { generateRandomString, alphabet } from 'oslo/crypto'
-	import { eq, or } from 'drizzle-orm'
+	import { eq, or, SQL } from 'drizzle-orm'
 	import { sendVerificationEmail } from '@/lib/email.js'
 	import { HTTPException } from 'hono/http-exception'
 	import { hashPassword, validatePassword } from '@/lib/password.js'
@@ -48,8 +48,9 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 
 				const isOptional = x.optional || x.default !== null || x.name === 'id'
 				const isNullable = x.optional && x.name !== 'id'
+				const canBeSQL = x.name !== 'id'
 
-				return `${x.name}${isOptional ? '?' : ''}: ${mapAttributeTypeToJs(x.type)} ${isNullable ? '| null' : ''}${isOptional ? '| undefined' : ''}`
+				return `${x.name}${isOptional ? '?' : ''}: ${mapAttributeTypeToJs(x.type)} ${isNullable ? '| null' : ''}${canBeSQL ? '| SQL' : ''}${isOptional ? ' | undefined' : ''}`
 			})
 			.filter(isNotNone)
 			.join('; ')}

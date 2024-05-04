@@ -41,6 +41,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 			'ns-migrate': '^0.1.3',
 			oslo: '^1.1.3',
 			resend: '^3.2.0',
+			svix: '^1.23.0',
 			tsx: '^4.7.1',
 			zod: '^3.22.4',
 			zxcvbn: '^4.4.2',

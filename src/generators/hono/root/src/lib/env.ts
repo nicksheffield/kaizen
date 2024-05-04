@@ -15,6 +15,7 @@ const envSchema = z.object({
 	EMAIL_FROM: z.string().optional(),
 	DEV_EMAIL_TO: z.string().optional(),
 	RESEND_API_KEY: z.string().optional(),
+	RESEND_WEBHOOK_SECRET: z.string().optional(),
 })
 
 export const env = envSchema.parse(process.env)

@@ -63,9 +63,23 @@ export const history = mysqlTable('_history', {
 	rowId: varchar('rowId', { length: 15 }).notNull(),
 	operation: mediumtext('operation').notNull(),
 	date: datetime('date')
-		.default(sql\`'CURRENT_TIMESTAMP'\`)
+		.default(sql\`CURRENT_TIMESTAMP\`)
 		.notNull(),
 	userId: varchar('userId', { length: 15 }).notNull(),
+})
+
+export const emailLogs = mysqlTable('_email_logs', {
+	id: varchar('id', { length: 15 }).primaryKey(),
+	resendId: varchar('resendId', { length: 255 }),
+	from: varchar('from', { length: 255 }),
+	to: varchar('to', { length: 255 }),
+	subject: mediumtext('subject'),
+	body: mediumtext('body'),
+	initiated: datetime('initiated').default(sql\`CURRENT_TIMESTAMP\`).notNull(),
+	sent: datetime('sent'),
+	delayed: datetime('delayed'),
+	delivered: datetime('delivered'),
+	bounced: datetime('bounced'),
 })
 
 /**

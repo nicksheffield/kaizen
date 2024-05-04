@@ -17,6 +17,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	import { sendVerificationEmail } from '@/lib/email.js'
 	import { HTTPException } from 'hono/http-exception'
 	import { hashPassword, validatePassword } from '@/lib/password.js'
+	import * as history from '@/lib/history.js'
 	
 	export const generateEmailVerificationCode = async (
 		userId: string,
@@ -62,7 +63,12 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 			.join('; ')}
 	}
 	
-	export const createUser = async (email: string, password: string, fields: CreateUserFields) => {
+	export const createUser = async (
+		email: string,
+		password: string,
+		fields: CreateUserFields,
+		_userId: string
+	) => {
 		const userId = fields.id || generateId(15)
 	
 		const newUser = {
@@ -75,11 +81,11 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	
 		const existingUser = await db
 			.select()
-			.from(users)
+			.from(${user.drizzleName})
 			.where(
 				or(
-					eq(users.email, newUser.email),
-					eq(users.id, newUser.id)
+					eq(${user.drizzleName}.email, newUser.email),
+					eq(${user.drizzleName}.id, newUser.id)
 				)
 			)
 	
@@ -91,14 +97,16 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	
 		const hashedPassword = await hashPassword(password)
 	
-		await db.insert(users).values({ ...newUser, password: hashedPassword })
+		await db.insert(${user.drizzleName}).values({ ...newUser, password: hashedPassword })
+
+		await history.create('${user.tableName}', userId, { ...newUser }, _userId)
 	
 		const verificationCode = await generateEmailVerificationCode(userId, email)
 	
 		sendVerificationEmail(email, userId, verificationCode)
 	
-		return db.query.users.findFirst({
-			where: eq(users.id, userId),
+		return db.query.${user.drizzleName}.findFirst({
+			where: eq(${user.drizzleName}.id, userId),
 		})
 	}
 
@@ -126,10 +134,11 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 		userId: string,
 		email: string | undefined,
 		password: string | undefined,
-		fields: UpdateUserFields
+		fields: UpdateUserFields,
+		_userId: string
 	) => {
-		const user = await db.query.users.findFirst({
-			where: eq(users.id, userId),
+		const user = await db.query.${user.drizzleName}.findFirst({
+			where: eq(${user.drizzleName}.id, userId),
 		})
 	
 		if (!user) {
@@ -144,34 +153,38 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 			await validatePassword(password)
 			hashedPassword = await hashPassword(password)
 		}
+
+		const newData = {
+			email,
+			password: hashedPassword,
+			${user?.attributes
+				.map((x) => {
+					if (!x.insertable) return null
+					if (x.name === 'password') return null
+					if (x.name === 'email') return null
+					if (x.name === 'id') return null
+
+					return `${x.name}: fields.${x.name} ?? undefined`
+				})
+				.filter(isNotNone)
+				.join(', ')},
+			${user.foreignKeys
+				.map((x) => {
+					return `${x.name}: fields.${x.name} ?? undefined`
+				})
+				.filter(isNotNone)
+				.join(', ')}
+		}
 	
 		await db
-			.update(users)
-			.set({
-				email,
-				password: hashedPassword,
-				${user?.attributes
-					.map((x) => {
-						if (!x.insertable) return null
-						if (x.name === 'password') return null
-						if (x.name === 'email') return null
-						if (x.name === 'id') return null
+			.update(${user.drizzleName})
+			.set(newData)
+			.where(eq(${user.drizzleName}.id, userId))
 
-						return `${x.name}: fields.${x.name} ?? undefined`
-					})
-					.filter(isNotNone)
-					.join(', ')},
-				${user.foreignKeys
-					.map((x) => {
-						return `${x.name}: fields.${x.name} ?? undefined`
-					})
-					.filter(isNotNone)
-					.join(', ')}
-			})
-			.where(eq(users.id, userId))
+		await history.update('${user.tableName}', userId, newData, user, _userId)
 	
-		return db.query.users.findFirst({
-			where: eq(users.id, userId),
+		return db.query.${user.drizzleName}.findFirst({
+			where: eq(${user.drizzleName}.id, userId),
 		})
 	}
 	`

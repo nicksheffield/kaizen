@@ -32,6 +32,10 @@ router.post(
 			where: and(eq(users.email, body.email), eq(users.emailVerified, true), isNull(users.deletedAt)),
 		})
 
+		if (user?.locked) {
+			throw new HTTPException(401, { message: 'Account is locked' })
+		}
+
 		// check if the password is correct
 		const passwordIsCorrect = await verifyPassword(
 			body.password,

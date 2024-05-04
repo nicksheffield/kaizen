@@ -130,6 +130,9 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 					setDraft(undefined)
 					setFiles([])
 				}
+			} else {
+				setOpenPaths([])
+				setSelectedPath(undefined)
 			}
 		}
 

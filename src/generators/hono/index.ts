@@ -49,6 +49,7 @@ import src_routes_graphql_resolvers_resolver from './root/src/routes/graphql/res
 
 export const generate: HonoGeneratorFn = async (project, extras) => {
 	const models = project.models.map((model) => createModelCtx(model, project))
+	console.log('extras', extras)
 
 	const dir: Record<string, string> = {}
 
@@ -71,7 +72,7 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['/src/schema.ts'] = await format(src_schema({ models, project }))
 
 	dir['/src/lib/db.ts'] = await format(src_lib_db())
-	dir['/src/lib/email.ts'] = await format(src_lib_email())
+	dir['/src/lib/email.ts'] = await format(src_lib_email({ extras }))
 	dir['/src/lib/env.ts'] = await format(src_lib_env())
 	dir['/src/lib/history.ts'] = await format(src_lib_history())
 	dir['/src/lib/lucia.ts'] = await format(src_lib_lucia({ project }))
@@ -102,10 +103,6 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 		)
 
 		dir[`/http-test/${model.drizzleName}.http`] = httpTest_test({ model })
-	}
-
-	for (const email in extras.emails) {
-		dir[`/src/emails/${email}`] = extras.emails[email]
 	}
 
 	return dir

@@ -16,6 +16,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 			typescript: '^5.0.0',
 		},
 		dependencies: {
+			transactional: 'workspace:*',
 			'@envelop/graphql-middleware': '^6.0.0',
 			'@escape.tech/graphql-armor': '^2.4.0',
 			'@faker-js/faker': '^8.4.1',

@@ -9,7 +9,7 @@ const tmpl = () => {
 				command: 'pnpm install',
 			},
 			build: {
-				command: 'vite build --emptyOutDir --outDir ../server/public',
+				command: 'vite build',
 				inputs: ['src/**/*'],
 				outputs: ['/apps/server/public'],
 				deps: ['install', 'server:install'],

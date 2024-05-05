@@ -21,7 +21,7 @@ import { GeneratorFn } from '@/generators'
 import { workspaceFiles, generate as workspaceGenerator } from '@/generators/workspace'
 import { Project, parseProject } from '@/lib/projectSchemas'
 import { toast } from 'sonner'
-import { SERVER_PATH } from '@/lib/constants'
+import { SERVER_PATH, TRANSACTIONAL_PATH } from '@/lib/constants'
 
 export const AppProvider = ({ children }: PropsWithChildren) => {
 	/**
@@ -267,7 +267,7 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 				seeder: files.filter(isFile).find((x) => x.path.startsWith('kaizen/seed.ts'))?.content,
 				emails: files
 					.filter(isFile)
-					.filter((x) => x.path.startsWith('kaizen/emails'))
+					.filter((x) => x.path.startsWith(`${TRANSACTIONAL_PATH}/emails`))
 					.reduce<Record<string, string>>((acc, file) => {
 						acc[file.name] = file.content
 						return acc

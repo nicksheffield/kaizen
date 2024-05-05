@@ -3,6 +3,8 @@ import { WorkspaceGeneratorFn } from './types'
 import gitignore from './root/gitignore'
 import packageJson from './root/packageJson'
 import projectJson from './root/projectJson'
+import tsconfigJson from './root/tsconfigJson'
+import pnpmWorkspace from './root/pnpm-workspace.yml'
 import kaizen_seed from './root/kaizen/seed'
 import vscode_settings from './root/vscode/settings'
 import vscode_tasks from './root/vscode/tasks'
@@ -14,12 +16,18 @@ export const workspaceFiles = [
 	'.gitignore',
 	'package.json',
 	'project.json',
+	'tsconfig.json',
+	'pnpm-workspace.yml',
 	'kaizen/seed.ts',
 	'.vscode/settings.json',
 	'.vscode/tasks.json',
 	'.moon/toolchain.yml',
 	'.moon/workspace.yml',
 	'apps/client/moon.yml',
+	'apps/transactional/tsconfig.json',
+	'apps/transactional/package.json',
+	'apps/transactional/emails/ConfirmAccount.tsx',
+	'apps/transactional/emails/ResetPassword.tsx',
 ]
 
 export const generate: WorkspaceGeneratorFn = async ({ project }) => {
@@ -28,6 +36,8 @@ export const generate: WorkspaceGeneratorFn = async ({ project }) => {
 	dir['/.gitignore'] = gitignore()
 	dir['/package.json'] = packageJson({ project })
 	dir['/project.json'] = projectJson()
+	dir['/tsconfig.json'] = tsconfigJson()
+	dir['/pnpm-workspace.yml'] = pnpmWorkspace()
 
 	dir['/kaizen/seed.ts'] = kaizen_seed()
 

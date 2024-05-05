@@ -1,8 +1,10 @@
 export const APPS_DIRNAME = 'apps'
 export const SERVER_DIRNAME = 'server'
-export const CLIENT_DIRNAME = `client`
 export const SERVER_PATH = `${APPS_DIRNAME}/${SERVER_DIRNAME}`
+export const CLIENT_DIRNAME = `client`
 export const CLIENT_PATH = `${APPS_DIRNAME}/${CLIENT_DIRNAME}`
+export const TRANSACTIONAL_DIRNAME = `transactional`
+export const TRANSACTIONAL_PATH = `${APPS_DIRNAME}/${TRANSACTIONAL_DIRNAME}`
 
 export const envKeys = [
 	'DB_URI',

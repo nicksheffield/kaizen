@@ -123,6 +123,7 @@ export const upgrade = (project: V2_0.Project) => {
 			generator: 'hono',
 			userModelId: project.project.userModelId,
 			useOrbStack: project.settings.dev.useOrbStack,
+			hasClient: false,
 			auth: {
 				requireAccountConfirmation: true,
 				require2fa: false,

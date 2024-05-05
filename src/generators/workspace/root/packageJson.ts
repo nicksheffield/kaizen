@@ -6,6 +6,7 @@ const tmpl = ({}: { project?: ProjectCtx }) => {
 			build: 'moon server:install client:install client:build',
 			start: 'cd apps/server && tsx src/index.ts',
 		},
+		workspaces: ['apps/*'],
 		dependencies: {
 			tsx: '^4.7.3',
 		},

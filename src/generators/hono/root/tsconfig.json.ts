@@ -1,25 +1,20 @@
 const tmpl = () => {
 	const tsConfigJson = {
+		$schema: 'https://json.schemastore.org/tsconfig',
+		extends: '../../tsconfig.json',
 		compilerOptions: {
-			target: 'ES6',
-			lib: ['es2018', 'esnext.asynciterable'],
-			module: 'NodeNext',
+			module: 'ESNext',
+			moduleResolution: 'Bundler',
 			allowJs: true,
-			outDir: 'build',
-			rootDir: 'src',
-			strict: true,
-			skipLibCheck: true,
-			noImplicitAny: true,
-			esModuleInterop: true,
-			emitDecoratorMetadata: true,
-			experimentalDecorators: true,
-			moduleResolution: 'NodeNext',
+			jsx: 'preserve',
+			noEmit: true,
 			baseUrl: 'src',
 			paths: {
 				'@/*': ['./*'],
 			},
 		},
-		include: ['src/**/*.ts'],
+		include: ['**/*.ts', '**/*.tsx'],
+		exclude: ['node_modules'],
 	}
 
 	return JSON.stringify(tsConfigJson, null, 4)

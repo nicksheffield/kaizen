@@ -16,4 +16,20 @@ export const envKeys = [
 	'EMAIL_PASS',
 	'EMAIL_FROM',
 	'DEV_EMAIL_TO',
-]
+	'RESEND_WEBHOOK_SECRET',
+	'EMAIL_BASEURL',
+] as const
+
+export const envHints: Record<string, string> = {
+	DB_URI: 'The URI to connect to the database.',
+	EMAIL_HOST: 'The host of the email server.',
+	EMAIL_PORT: 'The port of the email server.',
+	EMAIL_USER: 'The username of the email server.',
+	EMAIL_PASS: 'The password of the email server.',
+	EMAIL_FROM: 'The email address to send emails from.',
+	DEV_EMAIL_TO: 'The email address to send emails to in development.',
+	RESEND_API_KEY: 'The API key to use for sending emails via resend.',
+	RESEND_WEBHOOK_SECRET: 'The secret used to verify webhook requests from resend.',
+	SENDGRID_API_KEY: 'The API key to use for sending emails via sendgrid.',
+	EMAIL_BASEURL: 'The base URL to use for links in emails.',
+}

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useApp } from '@/lib/AppContext'
-import { SERVER_PATH, envKeys } from '@/lib/constants'
+import { SERVER_PATH, envHints, envKeys } from '@/lib/constants'
 import { isFile } from '@/lib/handle'
 import { Project } from '@/lib/projectSchemas'
 import { cn, generateId, isNotNone } from '@/lib/utils'
@@ -17,18 +17,6 @@ import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { useDebounceCallback, useLocalStorage } from 'usehooks-ts'
-
-const envHints: Record<string, string> = {
-	DB_URI: 'The URI to connect to the database.',
-	EMAIL_HOST: 'The host of the email server.',
-	EMAIL_PORT: 'The port of the email server.',
-	EMAIL_USER: 'The username of the email server.',
-	EMAIL_PASS: 'The password of the email server.',
-	EMAIL_FROM: 'The email address to send emails from.',
-	DEV_EMAIL_TO: 'The email address to send emails to in development.',
-	RESEND_API_KEY: 'The API key to use for sending emails via resend.',
-	SENDGRID_API_KEY: 'The API key to use for sending emails via sendgrid.',
-}
 
 type EnvData = { key: string; value: string }[]
 
@@ -170,7 +158,7 @@ export const ProjectSettings = () => {
 							</div>
 
 							<div className="flex w-full flex-col gap-6 px-4 py-4">
-								<FormRow label="Name" description="The name of the project.">
+								<FormRow label="Name">
 									<FormInput name="name" />
 								</FormRow>
 
@@ -206,8 +194,8 @@ export const ProjectSettings = () => {
 							</div>
 							<div className="flex w-full flex-col gap-6 px-4 py-4">
 								<FormRow
-									label="Session Expiry Time (Minutes)"
-									description="How long a login session is valid for. If a request is made within the last 50% of the time, the session is extended by this much again."
+									label="Session Expiry Time"
+									description="How long a login session is valid for in minutes."
 								>
 									<FormInput name="auth.sessionExpiry" type="number" />
 								</FormRow>
@@ -216,7 +204,7 @@ export const ProjectSettings = () => {
 									<Switcher
 										name="auth.enableCookies"
 										label="Enable Cookies"
-										description="Use HttpOnly cookies for auth. This only works if you use a client."
+										description="Use HttpOnly cookies for auth."
 									/>
 
 									<Switcher
@@ -282,7 +270,7 @@ export const ProjectSettings = () => {
 											<div key={i} className="flex flex-row divide-x">
 												<div
 													className={cn(
-														'relative flex w-[200px] items-center justify-between rounded-none border-0 px-3 py-1.5 focus:z-10',
+														'relative flex w-[230px] items-center justify-between rounded-none border-0 px-3 py-1.5 focus:z-10',
 														i === 0 && 'rounded-tl-md'
 													)}
 												>
@@ -319,7 +307,7 @@ export const ProjectSettings = () => {
 										>
 											<SelectTrigger
 												className={cn(
-													'relative w-[200px] rounded-none border-0 px-3 py-1.5 focus:z-10',
+													'relative w-[230px] rounded-none border-0 px-3 py-1.5 focus:z-10',
 													envData?.length === 0 && 'rounded-tl-md',
 													'rounded-bl-md'
 												)}

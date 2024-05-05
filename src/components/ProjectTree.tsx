@@ -2,6 +2,7 @@ import { TreeFileIcon } from '@/components/TreeFileIcon'
 import { openPrompt } from '@/components/modals/openPrompt'
 import { Button } from '@/components/ui/button'
 import { useApp } from '@/lib/AppContext'
+import { KAIZEN_PATH } from '@/lib/constants'
 import { isFile } from '@/lib/handle'
 import { camelize, cn, uc } from '@/lib/utils'
 import emailTemplate from '@/templates/email-template'
@@ -16,8 +17,12 @@ export const ProjectTree = () => {
 	const openFile = useApp((v) => v.openFile)
 	const selectedPath = useApp((v) => v.selectedPath)
 
-	const [apiOpen, setApiOpen] = useLocalStorage('sidebar-api-open', true)
+	const seedFilePath = `${KAIZEN_PATH}/src/seed.ts`
+
+	// const [apiOpen, setApiOpen] = useLocalStorage('sidebar-api-open', true)
 	const [emailsOpen, setEmailsOpen] = useLocalStorage('sidebar-emails-open', true)
+
+	const emailFiles = files.filter(isFile).filter((x) => x.path.startsWith('apps/kaizen/emails'))
 
 	if (!project) return null
 
@@ -42,20 +47,20 @@ export const ProjectTree = () => {
 				<div
 					className={cn(
 						'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
-						selectedPath === 'kaizen/seed.ts'
+						selectedPath === seedFilePath
 							? 'bg-primary text-primary-foreground hover:bg-primary/80'
 							: 'hover:bg-foreground/10'
 					)}
 					onClick={() => {
-						openFile('kaizen/seed.ts')
+						openFile(seedFilePath)
 					}}
 				>
-					<TreeFileIcon path={'kaizen/seed.ts'} className="opacity-50" />
+					<TreeFileIcon path={seedFilePath} className="opacity-50" />
 					Seed
 				</div>
 			</div>
 
-			<div className="flex flex-col">
+			{/* <div className="flex flex-col">
 				<div className="flex flex-row items-center">
 					<Button
 						variant="ghost"
@@ -121,7 +126,7 @@ export const ProjectTree = () => {
 						</motion.div>
 					)}
 				</AnimatePresence>
-			</div>
+			</div> */}
 
 			<div className="flex flex-col">
 				<div className="flex flex-row justify-between">
@@ -167,26 +172,23 @@ export const ProjectTree = () => {
 							animate={{ height: 'auto' }}
 							className="overflow-hidden"
 						>
-							{files
-								.filter(isFile)
-								.filter((x) => x.path.startsWith('kaizen/emails'))
-								.map((file) => (
-									<div
-										key={file.path}
-										className={cn(
-											'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
-											selectedPath === file.path
-												? 'bg-primary text-primary-foreground hover:bg-primary/80'
-												: 'hover:bg-foreground/10'
-										)}
-										onClick={() => {
-											openFile(file.path)
-										}}
-									>
-										<TreeFileIcon path={file.path} className="opacity-50" />
-										{file.name}
-									</div>
-								))}
+							{emailFiles.map((file) => (
+								<div
+									key={file.path}
+									className={cn(
+										'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
+										selectedPath === file.path
+											? 'bg-primary text-primary-foreground hover:bg-primary/80'
+											: 'hover:bg-foreground/10'
+									)}
+									onClick={() => {
+										openFile(file.path)
+									}}
+								>
+									<TreeFileIcon path={file.path} className="opacity-50" />
+									{file.name}
+								</div>
+							))}
 						</motion.div>
 					)}
 				</AnimatePresence>

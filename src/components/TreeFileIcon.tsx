@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useApp } from '@/lib/AppContext'
+import { KAIZEN_PATH } from '@/lib/constants'
 
 type TreeFileIconProps = {
 	path?: string
@@ -51,15 +52,15 @@ export const TreeFileIcon = ({ path, open = true, className }: TreeFileIconProps
 			return <ActivityIcon className={classNames} />
 		}
 
-		if (file?.path === 'kaizen/seed.ts') {
+		if (file?.path === `${KAIZEN_PATH}/src/seed.ts`) {
 			return <SproutIcon className={classNames} />
 		}
 
-		if (file.path.startsWith('kaizen/emails')) {
+		if (file.path.startsWith(`${KAIZEN_PATH}/emails`)) {
 			return <MailIcon className={classNames} />
 		}
 
-		if (file.path.startsWith('kaizen/api')) {
+		if (file.path.startsWith(`${KAIZEN_PATH}/api`)) {
 			return <BoxIcon className={classNames} />
 		}
 

@@ -11,6 +11,10 @@ import vscode_tasks from './root/vscode/tasks'
 import moon_toolchain from './root/moon/toolchain.yml'
 import moon_workspace from './root/moon/workspace.yml'
 import apps_client_moon from './root/apps/client/moon.yml'
+import apps_transactional_tsconfigJson from './root/apps/transactional/tsconfigJson'
+import apps_transactional_packageJson from './root/apps/transactional/packageJson'
+import apps_transactional_emails_ConfirmAccount from './root/apps/transactional/emails/ConfirmAccount'
+import apps_transactional_emails_ResetPassword from './root/apps/transactional/emails/ResetPassword'
 
 export const workspaceFiles = [
 	'.gitignore',
@@ -48,6 +52,11 @@ export const generate: WorkspaceGeneratorFn = async ({ project }) => {
 	dir['/.vscode/tasks.json'] = vscode_tasks()
 
 	dir['apps/client/moon.yml'] = apps_client_moon()
+
+	dir['apps/transactional/tsconfig.json'] = apps_transactional_tsconfigJson()
+	dir['apps/transactional/package.json'] = apps_transactional_packageJson()
+	dir['apps/transactional/emails/ConfirmAccount.tsx'] = apps_transactional_emails_ConfirmAccount()
+	dir['apps/transactional/emails/ResetPassword.tsx'] = apps_transactional_emails_ResetPassword()
 
 	return dir
 }

@@ -181,17 +181,19 @@ export const ProjectSettings = () => {
 									options={generatorNames.map((x) => ({ label: x, value: x }))}
 								/> */}
 
-								<Switcher
-									name="useOrbStack"
-									label="Use Orb Stack"
-									description="Use orb stack instead of docker desktop to enable unique local domains in dev."
-								/>
+								<Card className="divide-y">
+									<Switcher
+										name="useOrbStack"
+										label="Use Orb Stack"
+										description="Use orb stack instead of docker desktop to enable unique local domains in dev."
+									/>
 
-								<Switcher
-									name="hasClient"
-									label="Have Client"
-									description="Set this to true if you have a vite based app in the 'apps/client' directory"
-								/>
+									<Switcher
+										name="hasClient"
+										label="Have Client"
+										description="Set this to true if you have a vite based app in the 'apps/client' directory"
+									/>
+								</Card>
 							</div>
 						</div>
 					)}
@@ -210,50 +212,52 @@ export const ProjectSettings = () => {
 									<FormInput name="auth.sessionExpiry" type="number" />
 								</FormRow>
 
-								<Switcher
-									name="auth.enableCookies"
-									label="Enable Cookies"
-									description="Use HttpOnly cookies for auth. This only works if you use a client."
-								/>
+								<Card className="divide-y">
+									<Switcher
+										name="auth.enableCookies"
+										label="Enable Cookies"
+										description="Use HttpOnly cookies for auth. This only works if you use a client."
+									/>
 
-								<Switcher
-									name="auth.enableBearer"
-									label="Enable Bearer Tokens"
-									description="Use Bearer tokens for auth."
-								/>
+									<Switcher
+										name="auth.enableBearer"
+										label="Enable Bearer Tokens"
+										description="Use Bearer tokens for auth."
+									/>
 
-								<Switcher
-									name="auth.enableAuthenticator2fa"
-									label="Enable Authenticator 2fa"
-									description="Enable 2fa using an authenticator app."
-								/>
+									<Switcher
+										name="auth.enableAuthenticator2fa"
+										label="Enable Authenticator 2fa"
+										description="Enable 2fa using an authenticator app."
+									/>
 
-								<Switcher
-									name="auth.enableEmail2fa"
-									label="Enable Email 2fa"
-									description="Enable 2fa using a code sent via email."
-								/>
+									<Switcher
+										name="auth.enableEmail2fa"
+										label="Enable Email 2fa"
+										description="Enable 2fa using a code sent via email."
+									/>
 
-								<Switcher
-									name="auth.enableRegistration"
-									label="Enable Registration"
-									description="Allow users to register new accounts themselves."
-									disabled
-								/>
+									<Switcher
+										name="auth.enableRegistration"
+										label="Enable Registration"
+										description="Allow users to register new accounts themselves."
+										disabled
+									/>
 
-								<Switcher
-									name="auth.requireAccountConfirmation"
-									label="Require Account Confirmation"
-									description="Force users to confirm their email address before they can login."
-									disabled
-								/>
+									<Switcher
+										name="auth.requireAccountConfirmation"
+										label="Require Account Confirmation"
+										description="Force users to confirm their email address before they can login."
+										disabled
+									/>
 
-								<Switcher
-									name="auth.require2fa"
-									label="Require 2fa"
-									description="Force users to set up 2fa."
-									disabled
-								/>
+									<Switcher
+										name="auth.require2fa"
+										label="Require 2fa"
+										description="Force users to set up 2fa."
+										disabled
+									/>
+								</Card>
 							</div>
 						</div>
 					)}
@@ -360,23 +364,23 @@ const Switcher = ({
 	label,
 	description,
 	disabled,
+	className,
 }: {
 	name: string
 	label: string
 	description: string
 	disabled?: boolean
+	className?: string
 }) => {
 	return (
-		<Card className="p-6">
-			<div className="flex flex-row items-center gap-20">
-				<div className="flex flex-1 flex-col gap-1">
-					<Label>{label}</Label>
-					<div className="text-sm text-muted-foreground">{description}</div>
-				</div>
-				<div className="flex items-center gap-2">
-					<FormSwitch name={name} disabled={disabled} />
-				</div>
+		<div className={cn('flex flex-row items-center gap-20 p-4 hover:bg-muted/50', className)}>
+			<div className="flex flex-1 flex-col gap-1">
+				<Label>{label}</Label>
+				<div className="text-sm text-muted-foreground">{description}</div>
 			</div>
-		</Card>
+			<div className="flex items-center gap-2">
+				<FormSwitch name={name} disabled={disabled} />
+			</div>
+		</div>
 	)
 }

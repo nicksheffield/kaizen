@@ -1,13 +1,13 @@
 import { ProjectCtx } from '@/generators/hono/types'
 
 const tmpl = ({ project }: { project: ProjectCtx }) => {
-	return `import { db } from '@/lib/db.js'
-import { recoveryCodes, users } from '@/schema.js'
+	return `import { db } from '../../lib/db.js'
+import { recoveryCodes, users } from '../../schema.js'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { encodeHex, decodeHex } from 'oslo/encoding'
 import { TOTPController, createTOTPKeyURI } from 'oslo/otp'
-import { authenticate } from '@/middleware/authenticate.js'
+import { authenticate } from '../../middleware/authenticate.js'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import crypto from 'node:crypto'
@@ -81,7 +81,11 @@ router.post(
 		let codeHashes: string[] = []
 
 		for (let i = 0; i < codes.length; i++) {
-			const codeHash = await new Argon2id().hash(codes[i])
+			const code = codes[i]
+
+			if (!code) continue
+
+			const codeHash = await new Argon2id().hash(code)
 			codeHashes.push(codeHash)
 		}
 

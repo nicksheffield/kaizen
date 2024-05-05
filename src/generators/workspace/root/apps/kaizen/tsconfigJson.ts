@@ -3,21 +3,18 @@ const tmpl = () => {
 		$schema: 'https://json.schemastore.org/tsconfig',
 		extends: '../../tsconfig.json',
 		compilerOptions: {
-			module: 'NodeNext',
-			moduleResolution: 'NodeNext',
+			module: 'ESNext',
+			moduleResolution: 'Bundler',
 			allowJs: true,
-			jsx: 'preserve',
+			jsx: 'react-jsx',
 			noEmit: true,
 			baseUrl: 'src',
-			paths: {
-				'kaizen/*': ['../../kaizen/*'],
-			},
 		},
 		include: ['**/*.ts', '**/*.tsx'],
 		exclude: ['node_modules'],
 	}
 
-	return JSON.stringify(tsConfigJson, null, 4).replaceAll(/[" "]{4}/g, '\t')
+	return JSON.stringify(tsConfigJson, null, 4)
 }
 
 export default tmpl

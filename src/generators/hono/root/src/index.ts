@@ -1,25 +1,34 @@
-const tmpl = ({ importSeeder }: { importSeeder: boolean }) => {
+import { HonoGeneratorExtras } from '@/generators/hono/types'
+
+const tmpl = ({ extras }: { extras: HonoGeneratorExtras }) => {
+	const hasSeeder = !!extras.seeder
+
 	return `import { serve } from '@hono/node-server'
-import { serveStatic } from '@hono/node-server/serve-static'
 import { Hono } from 'hono'
-import { mountRoutes } from '@/lib/mountRoutes.js'
 import { showRoutes } from 'hono/dev'
 import { cors } from 'hono/cors'
 import { secureHeaders } from 'hono/secure-headers'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { env, isDev } from '@/lib/env.js'
-import { migrate } from '@/migrate.js'
+import { env, isDev } from './lib/env.js'
+import { migrate } from './migrate.js'
 import { readFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import mime from 'mime-types'
-import { fileExtensions } from '@/lib/utils.js'
-${importSeeder ? `import seed from '@/seed.js'` : ''}
+import { fileExtensions } from './lib/utils.js'
+import { router } from './routes/index.js'
+${hasSeeder ? `import seed from 'kaizen/src/seed.js'` : ''}
 
 const app = new Hono()
 
 migrate().then(() => {
-	${importSeeder ? 'return seed()' : ''}
+	${
+		hasSeeder
+			? `
+		// @ts-ignore
+		return seed.default()`
+			: ''
+	}
 })
 
 app.use(
@@ -38,31 +47,34 @@ app.use(
 )
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
-mountRoutes('', path.join(dirname, 'routes')).then((router) => {
-	app.route('/api', router)
+
+app.route('/api', router)
 	
-	app.get('*', async (c) => {
-		const ext = c.req.path.split('.').slice(-1)[0]
+app.get('*', async (c) => {
+	const ext = c.req.path.split('.').slice(-1)[0]
 
-		const fileName = fileExtensions.includes(ext)
-			? c.req.path
-			: '/index.html'
+	if (!ext) {
+		return c.text('Not Found', 404)
+	}
 
-		const filePath = path.join(dirname, '../public', fileName)
+	const fileName = fileExtensions.includes(ext)
+		? c.req.path
+		: '/index.html'
 
-		if (!existsSync(filePath)) {
-			return c.text('Not Found', 404)
-		}
+	const filePath = path.join(dirname, '../../client/dist', fileName)
 
-		const content = await readFile(filePath)
+	if (!existsSync(filePath)) {
+		return c.text('Not Found', 404)
+	}
 
-		return c.newResponse(content, 200, {
-			'Content-Type': mime.lookup(fileName) || 'text/plain',
-		})
+	const content = await readFile(filePath)
+
+	return c.newResponse(content, 200, {
+		'Content-Type': mime.lookup(fileName) || 'text/plain',
 	})
-
-	if (isDev) showRoutes(app)
 })
+
+if (isDev) showRoutes(app)
 
 serve({
 	port: +(env.PORT || 3000),

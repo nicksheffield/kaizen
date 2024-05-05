@@ -1,12 +1,10 @@
 import { HonoGeneratorFn } from './types'
 import { format } from './utils'
 import { createModelCtx } from './contexts'
-import { SERVER_PATH } from '@/lib/constants'
 
 import envExample from './root/env.example'
 import gitignore from './root/gitignore'
 import restHttp from './root/rest.http'
-import moon from './root/moon.yml'
 import prettierRc from './root/prettierrc'
 import schemaJson from './root/schema.json'
 import packageJson from './root/package.json'
@@ -26,12 +24,13 @@ import src_lib_env from './root/src/lib/env'
 import src_lib_history from './root/src/lib/history'
 import src_lib_lucia from './root/src/lib/lucia'
 import src_lib_manageUser from './root/src/lib/manageUser'
-import src_lib_mountRoutes from './root/src/lib/mountRoutes'
 import src_lib_password from './root/src/lib/password'
 import src_lib_utils from './root/src/lib/utils'
 
 import src_middleware_authenticate from './root/src/middleware/authenticate'
 import src_middleware_rateLimit from './root/src/middleware/rateLimit'
+
+import src_routes from './root/src/routes/index'
 
 import src_routes_webhooks_resend from './root/src/routes/webhooks/resend'
 
@@ -49,25 +48,20 @@ import src_routes_graphql_resolvers_resolver from './root/src/routes/graphql/res
 
 export const generate: HonoGeneratorFn = async (project, extras) => {
 	const models = project.models.map((model) => createModelCtx(model, project))
-	console.log('extras', extras)
 
 	const dir: Record<string, string> = {}
 
 	dir['/.env.example'] = envExample()
 	dir['/.gitignore'] = gitignore()
 	dir['/rest.http'] = restHttp()
-	dir['/moon.yml'] = moon()
 	dir['/.pretterrc'] = prettierRc()
 	dir['/schema.json'] = schemaJson({ models, project })
-	dir['/package.json'] = packageJson({ project })
+	dir['/package.json'] = packageJson()
 	dir['/tsconfig.json'] = tsconfigJson()
 	dir['/drizzle.config.ts'] = drizzleConfig()
 	dir['/docker-compose.yml'] = dockerCompose({ project })
 
-	dir['/src/index.ts'] = await format(src_index({ importSeeder: !!extras.seeder }))
-	if (extras.seeder) {
-		dir['/src/seed.ts'] = await format(extras.seeder.replaceAll(`../${SERVER_PATH}/src/`, '@/'))
-	}
+	dir['/src/index.ts'] = await format(src_index({ extras }))
 	dir['/src/migrate.ts'] = await format(src_migrate())
 	dir['/src/schema.ts'] = await format(src_schema({ models, project }))
 
@@ -77,12 +71,13 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['/src/lib/history.ts'] = await format(src_lib_history())
 	dir['/src/lib/lucia.ts'] = await format(src_lib_lucia({ project }))
 	dir['/src/lib/manageUser.ts'] = await format(src_lib_manageUser({ models, project }))
-	dir['/src/lib/mountRoutes.ts'] = await format(src_lib_mountRoutes())
 	dir['/src/lib/password.ts'] = await format(src_lib_password())
 	dir['/src/lib/utils.ts'] = await format(src_lib_utils())
 
 	dir['/src/middleware/authenticate.ts'] = await format(src_middleware_authenticate({ project }))
 	dir['/src/middleware/rateLimit.ts'] = await format(src_middleware_rateLimit())
+
+	dir['/src/routes/index.ts'] = await format(src_routes())
 
 	dir['/src/routes/webhooks/resend.ts'] = await format(src_routes_webhooks_resend())
 

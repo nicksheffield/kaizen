@@ -4,15 +4,15 @@ const tmpl = ({ extras }: { extras: HonoGeneratorExtras }) => {
 	const hasConfirmAccount = extras.emails['ConfirmAccount.tsx']
 	const hasResetPassword = extras.emails['ResetPassword.tsx']
 
-	return `import { db } from '@/lib/db.js'
-	import { env } from '@/lib/env.js'
-	import { emailLogs } from '@/schema.js'
+	return `import { db } from './db.js'
+	import { env } from './env.js'
+	import { emailLogs } from '../schema.js'
 	import { render } from '@react-email/render'
 	import { generateId } from 'lucia'
 	import nodemailer from 'nodemailer'
 	import { Resend } from 'resend'
-	${hasConfirmAccount ? `import ConfirmAccount from 'transactional/emails/ConfirmAccount'` : ''}
-	${hasResetPassword ? `import ResetPassword from 'transactional/emails/ResetPassword'` : ''}
+	${hasConfirmAccount ? `import ConfirmAccount from 'kaizen/emails/ConfirmAccount.js'` : ''}
+	${hasResetPassword ? `import ResetPassword from 'kaizen/emails/ResetPassword.js'` : ''}
 	
 	const resendEnabled = env.RESEND_API_KEY && env.EMAIL_FROM
 	

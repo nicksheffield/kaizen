@@ -1,17 +1,12 @@
-import { ProjectCtx } from '../types'
-
-const tmpl = ({}: { project?: ProjectCtx }) => {
+const tmpl = () => {
 	const json = {
 		scripts: {
-			build: 'moon server:install client:install client:build',
+			build: 'cd apps/client && vite build',
 			start: 'cd apps/server && tsx src/index.ts',
 		},
-		workspaces: ['apps/*'],
 		dependencies: {
-			tsx: '^4.7.3',
-		},
-		devDependencies: {
-			'@moonrepo/cli': '^1.24.3',
+			tsx: '^4.7.1',
+			vite: '^5.1.4',
 		},
 	}
 

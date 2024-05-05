@@ -9,10 +9,10 @@ import { rule, shield } from 'graphql-shield'
 import { useDisableIntrospection } from '@graphql-yoga/plugin-disable-introspection'
 import { useGraphQLMiddleware } from '@envelop/graphql-middleware'
 import { EnvelopArmorPlugin } from '@escape.tech/graphql-armor'
-import { getSession, authDecorate } from '@/middleware/authenticate.js'
+import { getSession, authDecorate } from '../../middleware/authenticate.js'
 import { User as AuthUser, Session } from 'lucia'
-import { env, isDev } from '@/lib/env.js'
-import { isNotFalse, writeIntrospection } from '@/lib/utils.js'
+import { env, isDev } from '../../lib/env.js'
+import { isNotFalse, writeIntrospection } from '../../lib/utils.js'
 import { existsSync } from 'node:fs'
 ${models.map((model) => `import * as ${model.name} from './resolvers/${model.drizzleName}.js'`).join('\n')}
 

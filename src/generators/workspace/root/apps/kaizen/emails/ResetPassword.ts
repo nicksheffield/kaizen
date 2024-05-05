@@ -1,4 +1,6 @@
-const tmpl = () => {
+import { Project } from '@/lib/projectSchemas'
+
+const tmpl = ({ project }: { project?: Project }) => {
 	return `import * as React from 'react'
 	import {
 		Body,
@@ -25,19 +27,19 @@ const tmpl = () => {
 			<Tailwind>
 				<Body className="bg-[#f4f4f5] my-auto mx-auto font-sans px-2">
 					<Container>
-						<Section className="bg-white rounded-md border border-solid border-[#e4e4e7] px-4 pb-4 mt-8">
-							<Text className="text-sm -mb-4">XPO Showtime</Text>
-							<Text className="text-2xl tracking-tight mb-8 font-bold text-gray-800">
+						<Section className="bg-white rounded-md border border-solid border-[#e4e4e7] px-4 pb-4 mt-8 mb-8">
+							<Text className="text-sm -mb-4">${project?.settings.name || 'Your Project'}</Text>
+							<Text className="text-2xl tracking-tight font-bold text-gray-800">
 								Reset Password
 							</Text>
 							<Link
 								href={\`\${resetPasswordUrl}?code=\${resetCode}\`}
 								target="_blank"
-								className="text-blue-500 text-sm underline"
+								className="text-blue-500 text-sm underline mt-8"
 							>
 								Click here to reset your password
 							</Link>
-							<Text className="text-gray-500 mb-0">
+							<Text className="text-gray-500 mt-0">
 								If you did not request a password reset, please
 								ignore this email.
 							</Text>

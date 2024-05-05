@@ -21,7 +21,7 @@ import { GeneratorFn } from '@/generators'
 import { workspaceFiles, generate as workspaceGenerator } from '@/generators/workspace'
 import { Project, parseProject } from '@/lib/projectSchemas'
 import { toast } from 'sonner'
-import { SERVER_PATH, TRANSACTIONAL_PATH } from '@/lib/constants'
+import { KAIZEN_PATH, SERVER_PATH } from '@/lib/constants'
 
 export const AppProvider = ({ children }: PropsWithChildren) => {
 	/**
@@ -264,10 +264,10 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 			if (!generate) return
 
 			const generated = await generate(project, {
-				seeder: files.filter(isFile).find((x) => x.path.startsWith('kaizen/seed.ts'))?.content,
+				seeder: files.filter(isFile).find((x) => x.path.startsWith(`${KAIZEN_PATH}/src/seed.ts`))?.content,
 				emails: files
 					.filter(isFile)
-					.filter((x) => x.path.startsWith(`${TRANSACTIONAL_PATH}/emails`))
+					.filter((x) => x.path.startsWith(`${KAIZEN_PATH}/emails`))
 					.reduce<Record<string, string>>((acc, file) => {
 						acc[file.name] = file.content
 						return acc
@@ -323,6 +323,7 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 		const workspaceDescs = await convertGeneratedFilesToDescs(filteredWorkspace, root.handle, '')
 
 		for (const desc of workspaceDescs) {
+			if (files.find((x) => x.path === desc.path)) continue // don't overwrite existing files
 			saveFile(desc, desc.content, { showToast: false })
 		}
 	}, [files])

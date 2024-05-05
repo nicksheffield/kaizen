@@ -1,4 +1,6 @@
-const tmpl = () => {
+import { Project } from '@/lib/projectSchemas'
+
+const tmpl = ({ project }: { project?: Project }) => {
 	return `import * as React from 'react'
 	import {
 		Body,
@@ -26,30 +28,30 @@ const tmpl = () => {
 	}: ConfirmAccountProps) => (
 		<Html>
 			<Head />
-			<Preview>Confirm your account on XPO Showtime</Preview>
+			<Preview>Confirm your account</Preview>
 			<Tailwind>
 				<Body className="bg-[#f4f4f5] my-auto mx-auto font-sans px-2">
 					<Container>
 						<Section className="bg-white rounded-md border border-solid border-[#e4e4e7] px-4 pb-4 mt-8 mb-8">
-							<Text className="text-sm -mb-4">XPO Showtime</Text>
-							<Text className="text-2xl tracking-tight mb-8 font-bold text-gray-800">
+							<Text className="text-sm -mb-4">${project?.settings.name || 'Your Project'}</Text>
+							<Text className="text-2xl tracking-tight font-bold text-gray-800">
 								Confirm Account
 							</Text>
-							<Section className="bg-gray-100 rounded-lg vertical-align-middle my-8">
+							<Link
+								href={\`\${confirmAccountUrl}?userId=\${userId}\`}
+								target="_blank"
+								className="text-blue-500 text-sm underline mt-8"
+							>
+								Click here to confirm your account
+							</Link>
+							<Text className="text-gray-500 mt-0">
+								You will be asked to enter the code below
+							</Text>
+							<Section className="bg-gray-100 rounded-lg vertical-align-middle mt-8">
 								<Text className="text-3xl font-black text-center tracking-widest font-mono">
 									{validationCode}
 								</Text>
 							</Section>
-							<Link
-								href={\`\${confirmAccountUrl}?userId=\${userId}\`}
-								target="_blank"
-								className="text-blue-500 text-sm underline"
-							>
-								Click here to confirm your account
-							</Link>
-							<Text className="text-gray-500 mb-0">
-								You will be asked top copy the numeric code above
-							</Text>
 						</Section>
 					</Container>
 				</Body>

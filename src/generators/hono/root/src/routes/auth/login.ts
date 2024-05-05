@@ -7,11 +7,11 @@ import { decodeHex } from 'oslo/encoding'
 import { TOTPController } from 'oslo/otp'
 import { z } from 'zod'
 import { TimeSpan } from 'lucia'
-import { db } from '@/lib/db.js'
-import { recoveryCodes, users } from '@/schema.js'
-import { rateLimit } from '@/middleware/rateLimit.js'
-import { doLogin } from '@/middleware/authenticate.js'
-import { verifyPassword } from '@/lib/password.js'
+import { db } from '../../lib/db.js'
+import { recoveryCodes, users } from '../../schema.js'
+import { rateLimit } from '../../middleware/rateLimit.js'
+import { doLogin } from '../../middleware/authenticate.js'
+import { verifyPassword } from '../../lib/password.js'
 
 export const loginDTO = z.object({
 	email: z.string(),
@@ -78,15 +78,19 @@ router.post(
 		})
 
 		for (let i = 0; i < codes.length; i++) {
+			const code = codes[i]
+
+			if (!code) continue
+
 			const codeIsValid = await new Argon2id().verify(
-				codes[i].codeHash,
+				code.codeHash,
 				body.password
 			)
 
 			if (codeIsValid) {
 				await db
 					.delete(recoveryCodes)
-					.where(eq(recoveryCodes.codeHash, codes[i].codeHash))
+					.where(eq(recoveryCodes.codeHash, code.codeHash))
 
 				if (user) {
 					return doLogin(c, user)

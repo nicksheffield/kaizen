@@ -1,10 +1,6 @@
-import { ProjectCtx } from '@/generators/hono/types'
-
-const tmpl = ({ project }: { project: ProjectCtx }) => {
-	const name = project.settings.name.toLowerCase().replace(/\s/, '-')
-
+const tmpl = () => {
 	const packageJson = {
-		name,
+		name: 'server',
 		main: 'index.ts',
 		type: 'module',
 		scripts: {
@@ -16,7 +12,6 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 			typescript: '^5.0.0',
 		},
 		dependencies: {
-			transactional: 'workspace:*',
 			'@envelop/graphql-middleware': '^6.0.0',
 			'@escape.tech/graphql-armor': '^2.4.0',
 			'@faker-js/faker': '^8.4.1',
@@ -54,7 +49,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 		},
 	}
 
-	return JSON.stringify(packageJson, null, 4)
+	return JSON.stringify(packageJson, null, 4).replaceAll(/[" "]{4}/g, '\t')
 }
 
 export default tmpl

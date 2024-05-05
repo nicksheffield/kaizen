@@ -1,9 +1,9 @@
 import { ProjectCtx } from '@/generators/hono/types'
 
 const tmpl = ({ project }: { project: ProjectCtx }) => {
-	return `import { lucia } from '@/lib/lucia.js'
+	return `import { lucia } from '../../lib/lucia.js'
 	import { Hono } from 'hono'
-	import { getSession } from '@/middleware/authenticate.js'
+	import { getSession } from '../../middleware/authenticate.js'
 	${project.settings.auth?.enableCookies ? `import { setCookie } from 'hono/cookie'` : ''}
 	
 	export const router = new Hono()

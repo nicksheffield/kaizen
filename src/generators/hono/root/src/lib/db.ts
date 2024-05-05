@@ -1,8 +1,8 @@
 const tmpl = () => `import { DrizzleMySQLAdapter } from '@lucia-auth/adapter-drizzle'
 import { drizzle } from 'drizzle-orm/mysql2'
 import mysql from 'mysql2/promise'
-import * as schema from '@/schema.js'
-import { env } from '@/lib/env.js'
+import * as schema from '../schema.js'
+import { env } from './env.js'
 
 const connection = mysql.createPool({ uri: env.DB_URI })
 

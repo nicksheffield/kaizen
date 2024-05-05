@@ -1,4 +1,4 @@
-const tmpl = () => `import { getSession } from '@/middleware/authenticate.js'
+const tmpl = () => `import { getSession } from './authenticate.js'
 import { Context, MiddlewareHandler } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { TimeSpan } from 'lucia'

@@ -1,5 +1,5 @@
 const tmpl = () => {
-	return `import { env, isDev } from '@/lib/env.js'
+	return `import { env, isDev } from './lib/env.js'
 	import { migrate as nsMigrate } from 'ns-migrate'
 	import { readFileSync } from 'node:fs'
 	import { fileURLToPath } from 'node:url'

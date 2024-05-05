@@ -4,7 +4,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 	const cookies = project.settings.auth?.enableCookies
 	const bearer = project.settings.auth?.enableBearer
 
-	return `import { lucia } from '@/lib/lucia.js'
+	return `import { lucia } from '../lib/lucia.js'
 	import { Context, MiddlewareHandler } from 'hono'
 	${cookies ? `import { getCookie, setCookie } from 'hono/cookie'` : ''}
 	import { HTTPException } from 'hono/http-exception'

@@ -12,9 +12,9 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 
 	const relatedModels = model.relatedModels
 
-	return `import { db } from '@/lib/db.js'
-	import { Resolvers } from '@/routes/graphql/router.js'
-	import * as tables from '@/schema.js'
+	return `import { db } from '../../../lib/db.js'
+	import { Resolvers } from '../router.js'
+	import * as tables from '../../../schema.js'
 	import {
 		asc,
 		desc,
@@ -27,16 +27,16 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 		sql
 	} from 'drizzle-orm'
 	import { g, Infer } from 'garph'
-	${isAuthModel ? `import { createUser, updateUser } from '@/lib/manageUser.js'` : `import { generateId } from 'lucia'`}
+	${isAuthModel ? `import { createUser, updateUser } from '../../../lib/manageUser.js'` : `import { generateId } from 'lucia'`}
 	${model.relatedModels
 		.map((x) => {
 			return `import * as ${x.otherModel.name} from './${x.drizzleName}.js'`
 		})
 		.join('\n')}
-	import { removeDuplicates } from '@/lib/utils.js'
+	import { removeDuplicates } from '../../../lib/utils.js'
 	import { OrderDir, DateType } from './_utils.js'
 	import * as filters from './_filters.js'
-	import * as history from '@/lib/history.js'
+	import * as history from '../../../lib/history.js'
 	
 	const OrderBys = g.enumType('${model.name}OrderBy', [
 		${model.attributes
@@ -239,7 +239,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				where,
 			})
 	
-			const [{ totalCount }] = await db
+			const [{ totalCount } = { totalCount: 0 }] = await db
 				.select({ totalCount: count() })
 				.from(tables.${model.drizzleName})
 				.where(where)

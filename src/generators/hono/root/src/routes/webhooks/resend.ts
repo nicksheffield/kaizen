@@ -1,10 +1,10 @@
-const tmpl = () => `import { db } from '@/lib/db.js'
-import { emailLogs } from '@/schema.js'
+const tmpl = () => `import { db } from '../../lib/db.js'
+import { emailLogs } from '../../schema.js'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { Webhook } from 'svix'
-import { env } from '@/lib/env.js'
+import { env } from '../../lib/env.js'
 
 const secret = env.RESEND_WEBHOOK_SECRET
 

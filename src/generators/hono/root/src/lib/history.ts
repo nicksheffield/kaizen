@@ -1,6 +1,6 @@
 const tmpl = () => {
-	return `import { db } from '@/lib/db.js'
-	import { history } from '@/schema.js'
+	return `import { db } from './db.js'
+	import { history } from '../schema.js'
 	import { and, eq } from 'drizzle-orm'
 	import { generateId } from 'lucia'
 	

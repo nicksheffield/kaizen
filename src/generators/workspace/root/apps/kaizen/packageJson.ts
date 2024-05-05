@@ -1,16 +1,14 @@
 const tmpl = () => {
 	const obj = {
-		name: 'transactional',
-		version: '1.0.0',
-		description: '',
-		main: 'index.js',
+		name: 'kaizen',
 		scripts: {
 			emails: 'email dev',
 		},
-		keywords: [],
-		author: '',
-		license: 'ISC',
 		dependencies: {
+			server: 'workspace:*',
+			'@faker-js/faker': '^8.4.1',
+			oslo: '^1.1.3',
+			'drizzle-orm': '^0.30.1',
 			'@react-email/components': '0.0.17',
 			react: '^18.3.1',
 			'react-email': '2.1.2',

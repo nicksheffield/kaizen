@@ -3,8 +3,8 @@ const tmpl = () => {
 		$schema: 'https://json.schemastore.org/tsconfig',
 		display: 'Default',
 		compilerOptions: {
-			declaration: true,
-			declarationMap: true,
+			declaration: false,
+			declarationMap: false,
 			esModuleInterop: true,
 			incremental: false,
 			isolatedModules: true,

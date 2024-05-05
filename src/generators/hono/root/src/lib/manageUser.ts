@@ -8,16 +8,16 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 
 	if (!user) return ''
 
-	return `import { db } from '@/lib/db.js'
-	import { emailVerificationCodes, ${user.drizzleName} } from '@/schema.js'
+	return `import { db } from './db.js'
+	import { emailVerificationCodes, ${user.drizzleName} } from '../schema.js'
 	import { generateId } from 'lucia'
 	import { TimeSpan, createDate } from 'oslo'
 	import { generateRandomString, alphabet } from 'oslo/crypto'
 	import { eq, or, SQL } from 'drizzle-orm'
-	import { sendVerificationEmail } from '@/lib/email.js'
+	import { sendVerificationEmail } from './email.js'
 	import { HTTPException } from 'hono/http-exception'
-	import { hashPassword, validatePassword } from '@/lib/password.js'
-	import * as history from '@/lib/history.js'
+	import { hashPassword, validatePassword } from './password.js'
+	import * as history from './history.js'
 	
 	export const generateEmailVerificationCode = async (
 		userId: string,

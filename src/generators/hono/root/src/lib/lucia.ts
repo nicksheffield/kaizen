@@ -3,7 +3,7 @@ import { ProjectCtx } from '@/generators/hono/types'
 const tmpl = ({ project }: { project: ProjectCtx }) => {
 	return `import { Lucia, TimeSpan } from 'lucia'
 	import { adapter } from './db.js'
-	import { isDev } from '@/lib/env.js'
+	import { isDev } from './env.js'
 	
 	export const sessionExpiresIn = new TimeSpan(${project.settings.auth?.sessionExpiry ?? 60}, 'm')
 	

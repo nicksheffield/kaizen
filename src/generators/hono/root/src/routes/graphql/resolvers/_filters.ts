@@ -122,7 +122,7 @@ export const toWhere = (
 		const filterEntry = Object.entries(filters)
 		for (const [filterName, value] of filterEntry) {
 			if (filterOperators[filterName] !== undefined) {
-				const query = filterOperators[filterName](col, value)
+				const query = filterOperators[filterName]?.(col, value)
 				queries = [...queries, query]
 			}
 		}

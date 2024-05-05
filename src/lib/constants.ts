@@ -3,8 +3,8 @@ export const SERVER_DIRNAME = 'server'
 export const SERVER_PATH = `${APPS_DIRNAME}/${SERVER_DIRNAME}`
 export const CLIENT_DIRNAME = `client`
 export const CLIENT_PATH = `${APPS_DIRNAME}/${CLIENT_DIRNAME}`
-export const TRANSACTIONAL_DIRNAME = `transactional`
-export const TRANSACTIONAL_PATH = `${APPS_DIRNAME}/${TRANSACTIONAL_DIRNAME}`
+export const KAIZEN_DIRNAME = `kaizen`
+export const KAIZEN_PATH = `${APPS_DIRNAME}/${KAIZEN_DIRNAME}`
 
 export const envKeys = [
 	'DB_URI',

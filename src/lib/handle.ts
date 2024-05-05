@@ -48,25 +48,7 @@ export const sortFilesByPath = (a: FSDesc, b: FSDesc) => {
 /**
  * file or folder names to skip when traversing a directory
  */
-const skip = ['node_modules', '.next', '.DS_Store', '.git']
-
-/**
- * Verify that a directory handle has the correct permissions
- * https://stackoverflow.com/a/66500919
- */
-export const verifyPermission = async (dirHandle: FileSystemDirectoryHandle) => {
-	const options: FileSystemHandlePermissionDescriptor = { mode: 'readwrite' }
-
-	if ((await dirHandle.queryPermission(options)) === 'granted') {
-		return true
-	}
-
-	if ((await dirHandle.requestPermission(options)) === 'granted') {
-		return true
-	}
-
-	return false
-}
+const skip = ['node_modules', '.next', '.DS_Store', '.git', '.moon/cache']
 
 /**
  * Get a tree of Desc objects by recursively traversing a directory handle
@@ -80,6 +62,7 @@ export const getHandleTreeFromHandle = async (
 
 	for await (const entry of entries) {
 		if (skip.includes(entry.name)) continue
+		if (skip.includes(`${path}/${entry.name}`)) continue
 		if (entry.name.endsWith('.crswap')) continue
 
 		const nextPath = [path, entry.name].filter((x) => x !== '').join('/')
@@ -204,9 +187,15 @@ const syncIgnores = ['bun.lockb', 'pnpm-lock.yaml', 'package-lock.json', 'node_m
 /**
  * Sync two arrays of FileDesc's, deleting, adding and updating as necessary
  */
-export const syncFiles = async (files: FileDesc[], newFiles: FileDesc[], rootHandle: FileSystemDirectoryHandle) => {
+export const syncFiles = async (
+	files: FileDesc[],
+	newFiles: FileDesc[],
+	rootHandle: FileSystemDirectoryHandle,
+	options: { overwrite?: boolean } = {}
+) => {
 	const sortedFiles = files.sort(sortFilesByPath).filter((x) => !syncIgnores.includes(x.name))
 	const sortedNewFiles = newFiles.sort(sortFilesByPath).filter((x) => !syncIgnores.includes(x.name))
+	const { overwrite = true } = options
 
 	console.group('syncing files')
 
@@ -226,7 +215,7 @@ export const syncFiles = async (files: FileDesc[], newFiles: FileDesc[], rootHan
 			// if the file is in the old files, update it
 			if (!isFile(newFile) || !isFile(found)) continue
 
-			if (newFile.content !== found.content) {
+			if (newFile.content !== found.content && overwrite) {
 				if (newFile.handle) {
 					console.log('updating file', newFile.path)
 					write(newFile.handle, newFile.content)

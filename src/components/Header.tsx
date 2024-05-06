@@ -1,5 +1,6 @@
 import { ProjectHeader } from '@/components/ProjectHeader'
 import { UserMenu } from '@/components/UserMenu'
+import { Button } from '@/components/ui/button'
 
 export const Header = () => {
 	return (
@@ -16,6 +17,12 @@ export const Header = () => {
 				</div>
 			</div>
 			<div className="flex items-center gap-4">
+				<Button variant="link" asChild>
+					<a href="https://docs.kz-app.com" target="_blank" rel="noreferrer">
+						Docs
+					</a>
+				</Button>
+
 				<UserMenu />
 			</div>
 			<div className="pointer-events-none absolute left-0 top-0 flex w-full items-center justify-center p-4">

@@ -22,7 +22,7 @@ POST http://localhost:${port}/api/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
-query Get${plural(model.name)}($page: Int, $limit: Int, $where: ${model.name}Filter, $orderBy: ${model.name}OrderBy, $orderDir: OrderDirection) {
+query Get${plural(model.name)}($page: Int, $limit: Int, $where: ${model.name}Filter, $orderBy: ${model.name}OrderBy, $orderDir: OrderDir) {
 	${plural(model.drizzleName)}(page: $page, limit: $limit, where: $where, orderBy: $orderBy, orderDir: $orderDir) {
 		items {
 ${model.attributes

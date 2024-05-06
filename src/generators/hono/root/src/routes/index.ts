@@ -11,7 +11,7 @@ const tmpl = () => {
 	
 	export const router = new Hono()
 	
-	router.route('/resend', resend)
+	router.route('/webhooks', resend)
 	router.route('/auth', login)
 	router.route('/auth', logout)
 	router.route('/auth', profile)

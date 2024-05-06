@@ -338,7 +338,7 @@ export const ProjectSettings = () => {
 					)}
 				</ScrollArea>
 				{(tab === 'details' || tab === 'auth') && (
-					<div className="-mt-px flex justify-end border-t bg-muted/50 p-4">
+					<div className="flex justify-end border-t bg-muted/50 p-4">
 						<Button type="submit">Save</Button>
 					</div>
 				)}
@@ -362,8 +362,8 @@ const Switcher = ({
 }) => {
 	return (
 		<div className={cn('flex flex-row items-center gap-20 p-4 hover:bg-muted/50', className)}>
-			<div className="flex flex-1 flex-col gap-1">
-				<Label>{label}</Label>
+			<div className="flex flex-1 flex-col gap-0">
+				<Label className="leading-normal">{label}</Label>
 				<div className="text-sm text-muted-foreground">{description}</div>
 			</div>
 			<div className="flex items-center gap-2">

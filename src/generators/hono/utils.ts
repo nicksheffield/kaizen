@@ -70,7 +70,7 @@ export const mapAttrToGarph = (type: string) => {
 		case 'id':
 			return 'id()'
 		case 'a_i':
-			return 'id()'
+			return 'int()'
 		case 'varchar':
 			return 'string()'
 		case 'text':

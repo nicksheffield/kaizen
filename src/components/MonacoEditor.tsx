@@ -52,6 +52,11 @@ export const MonacoEditor = ({ value, onValueChange, extension, readonly = false
 			allowNonTsExtensions: true,
 			target: monaco.languages.typescript.ScriptTarget.ES2020,
 		})
+
+		monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+			noSemanticValidation: true,
+			noSyntaxValidation: true,
+		})
 	}
 
 	const prevTheme = useRef<string | undefined>(resolvedTheme)

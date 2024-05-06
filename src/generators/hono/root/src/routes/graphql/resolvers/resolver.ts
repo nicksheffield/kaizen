@@ -85,10 +85,13 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	
 		create: g.inputType('Create${model.name}', {
 			${model.attributes
+				.filter((x) => x.type !== 'a_i')
 				.map((x) => {
 					if (!x.insertable) return null
 
-					return `${x.name}: g.${mapAttrToGarph(x.type)}${x.optional || x.default !== null || x.name === 'id' ? '.optional()' : ''},`
+					const isOptional = x.optional || x.default !== null || x.name === 'id'
+
+					return `${x.name}: g.${mapAttrToGarph(x.type)}${isOptional ? '.optional()' : ''},`
 				})
 				.filter(isNotNone)
 				.join('\n')}
@@ -103,6 +106,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	
 		update: g.inputType('Update${model.name}', {
 			${model.attributes
+				.filter((x) => x.type !== 'a_i')
 				.map((x) => {
 					if (x.name === 'id') return `id: g.id(),`
 					if (!x.insertable) return null
@@ -368,6 +372,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				.update(tables.${model.drizzleName})
 				.set({
 					${model.attributes
+						.filter((x) => x.type !== 'a_i')
 						.map((x) => {
 							if (x.name === 'id') return null
 							return `${x.name}: data.${x.name} ?? undefined,`

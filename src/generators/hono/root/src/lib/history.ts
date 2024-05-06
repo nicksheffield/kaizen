@@ -10,22 +10,22 @@ const tmpl = () => {
 		data: Record<string, any>,
 		userId: string
 	) => {
-		for (const key in data) {
-			if (key === '__typename') continue
-			if (key === 'id') continue
-	
-			await db.insert(history).values({
+		const values = Object.entries(data)
+			.filter(([key]) => {
+				return key !== '__typename' && key !== 'id'
+			})
+			.map(([column, value]) => ({
 				id: generateId(15),
-				table: table,
-				column: key,
-				value: String(data[key]),
+				table,
+				column,
+				value: String(value),
 				rowId,
 				operation: 'create',
 				userId,
-			})
-		}
+			}))
+		await db.insert(history).values(values)
 	}
-
+	
 	export const update = async (
 		table: string,
 		rowId: string,
@@ -33,24 +33,24 @@ const tmpl = () => {
 		data: Record<string, any>,
 		userId: string
 	) => {
-		for (const key in data) {
-			if (key === '__typename') continue
-			if (key === 'id') continue
-
-			if (String(oldData[key]) === String(data[key])) {
-				continue
-			}
-	
-			await db.insert(history).values({
+		const values = Object.entries(data)
+			.filter(([key]) => {
+				return key !== '__typename' && key !== 'id'
+			})
+			.filter(([key]) => {
+				return String(oldData[key]) !== String(data[key])
+			})
+			.map(([column, value]) => ({
 				id: generateId(15),
-				table: table,
-				column: key,
-				value: String(data[key]),
+				table,
+				column,
+				value: String(value),
 				rowId,
 				operation: 'update',
 				userId,
-			})
-		}
+			}))
+	
+		await db.insert(history).values(values)
 	}
 
 	export const softDelete = async (table: string, rowId: string, userId: string) => {

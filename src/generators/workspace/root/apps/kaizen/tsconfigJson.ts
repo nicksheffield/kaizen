@@ -8,7 +8,7 @@ const tmpl = () => {
 			allowJs: true,
 			jsx: 'react-jsx',
 			noEmit: true,
-			baseUrl: 'src',
+			baseUrl: '.',
 		},
 		include: ['**/*.ts', '**/*.tsx'],
 		exclude: ['node_modules'],

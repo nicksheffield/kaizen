@@ -397,12 +397,12 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 							onCheckedChange={(val) => updateField('optional', val)}
 						/>
 
-						<SwitchPanelRow
+						{/* <SwitchPanelRow
 							label="Enabled"
 							hint="If set to false, this relationship will be omitted from the generated app and db schema"
 							checked={rel.enabled}
 							onCheckedChange={(val) => updateField('enabled', val)}
-						/>
+						/> */}
 
 						{rel.type === 'manyToMany' && (
 							<Button

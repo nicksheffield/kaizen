@@ -1,7 +1,8 @@
 import { ModelCtx } from '@/generators/hono/contexts'
+import { ProjectCtx } from '@/generators/hono/types'
 import { CLIENT_DIRNAME, SERVER_PATH } from '@/lib/constants'
 
-const tmpl = ({ models }: { models: ModelCtx[] }) => {
+const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) => {
 	return `import { Context, Hono } from 'hono'
 import { g, InferResolvers, buildSchema } from 'garph'
 import { createYoga, maskError } from 'graphql-yoga'
@@ -56,7 +57,7 @@ const resolvers = {
 const schema = buildSchema({ g, resolvers })
 
 ${
-	SERVER_PATH
+	SERVER_PATH && project.settings.hasClient
 		? `if (isDev && existsSync('../${CLIENT_DIRNAME.replace(/^\//, '')}')) {
 	writeIntrospection(schema, '../${CLIENT_DIRNAME.replace(/^\//, '')}')
 }`

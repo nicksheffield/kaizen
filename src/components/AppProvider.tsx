@@ -310,23 +310,29 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 	/**
 	 * Generate the workspace files, and write them to the root directory
 	 */
-	const generateWorkspace = useCallback(async () => {
-		if (!root || !root.handle) return
+	const generateWorkspace = useCallback(
+		async (projectObj?: Project, clientChange = false) => {
+			if (!root || !root.handle) return
 
-		const workspace = await workspaceGenerator({ project })
-		const filteredWorkspace = Object.fromEntries(
-			Object.entries(workspace).filter(([path, _]) => {
-				return !files.find((x) => x.path === path.slice(1))
-			})
-		)
+			const proj = projectObj || project
 
-		const workspaceDescs = await convertGeneratedFilesToDescs(filteredWorkspace, root.handle, '')
+			const workspace = await workspaceGenerator({ project: proj })
 
-		for (const desc of workspaceDescs) {
-			if (files.find((x) => x.path === desc.path)) continue // don't overwrite existing files
-			saveFile(desc, desc.content, { showToast: false })
-		}
-	}, [files])
+			const workspaceDescs = await convertGeneratedFilesToDescs(workspace, root.handle, '')
+
+			const clientRelatedFilePaths = ['package.json', '.vscode/settings.json', '.vscode/tasks.json']
+
+			for (const desc of workspaceDescs) {
+				const fileExists = files.some((x) => x.path === desc.path)
+				const fileShouldCreateAnyway = clientChange && clientRelatedFilePaths.includes(desc.path)
+
+				if (fileShouldCreateAnyway || !fileExists) {
+					await saveFile(desc, desc.content, { showToast: false })
+				}
+			}
+		},
+		[files]
+	)
 
 	/**
 	 * Memoize the context object to prevent unnecessary re-renders

@@ -260,18 +260,20 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 													)}
 												</SelectContent>
 											</Select>
-											<div className="absolute right-0 top-0 mr-6 flex h-full translate-x-px items-center">
-												<Button
-													size="pip-icon"
-													variant="outline"
-													className="h-5 w-5 border-0"
-													onClick={() => {
-														setDef('')
-													}}
-												>
-													<XIcon className="w-3" />
-												</Button>
-											</div>
+											{def && !isLocked && (
+												<div className="absolute right-0 top-0 mr-6 flex h-full translate-x-px items-center">
+													<Button
+														size="pip-icon"
+														variant="outline"
+														className="h-5 w-5 border-0"
+														onClick={() => {
+															setDef('')
+														}}
+													>
+														<XIcon className="w-3" />
+													</Button>
+												</div>
+											)}
 										</div>
 									) : (
 										<Input
@@ -307,7 +309,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 									/>
 								</PanelRow>
 
-								<PanelRow
+								{/* <PanelRow
 									label="Enabled"
 									hint="If set to false, this field will be omitted from the generated app and db schema"
 								>
@@ -316,7 +318,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 										onCheckedChange={(val) => updateField('enabled', val)}
 										disabled={isLocked}
 									/>
-								</PanelRow>
+								</PanelRow> */}
 							</>
 						)}
 					</div>

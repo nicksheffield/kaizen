@@ -305,6 +305,19 @@ export const Editor = () => {
 			messages.push('You have attributes with reserved keywords as names')
 		}
 
+		const autoIncrementAttrs = attributes.filter((x) => x.type === AttributeType.a_i)
+
+		for (const attr of autoIncrementAttrs) {
+			const otherAttr = attributes.find(
+				(x) => x.modelId === attr.modelId && x.id !== attr.id && x.type === AttributeType.a_i
+			)
+			if (otherAttr) {
+				const model = models.find((x) => x.id === attr.modelId)
+				const message = `${model?.name || 'A model'} has multiple auto-increment attributes`
+				if (!messages.includes(message)) messages.push(message)
+			}
+		}
+
 		return messages
 	}, [nodes, relations])
 

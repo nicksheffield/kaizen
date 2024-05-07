@@ -1,13 +1,22 @@
-const tmpl = () => {
+import { ProjectCtx } from '@/generators/workspace/types'
+
+const tmpl = ({ project }: { project?: ProjectCtx }) => {
+	const scripts: Record<string, string> = {
+		start: 'cd apps/server && tsx src/index.ts',
+	}
+
+	const dependencies: Record<string, string> = {
+		tsx: '^4.7.1',
+	}
+
+	if (project?.settings.hasClient) {
+		scripts.build = 'cd apps/client && vite build'
+		dependencies.vite = '^5.1.4'
+	}
+
 	const json = {
-		scripts: {
-			build: 'cd apps/client && vite build',
-			start: 'cd apps/server && tsx src/index.ts',
-		},
-		dependencies: {
-			tsx: '^4.7.1',
-			vite: '^5.1.4',
-		},
+		scripts,
+		dependencies,
 	}
 
 	return JSON.stringify(json, null, 4)

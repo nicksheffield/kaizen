@@ -17,19 +17,23 @@ import { Label } from '@/components/ui/label'
 type FormProps<T extends FieldValues> = {
 	context: UseFormReturn<T>
 	onSubmit: (values: T) => void | Promise<void>
+	disableWhileSubmitting?: boolean
 	className?: string
 }
 
 const Form = <T extends FieldValues>({
 	context,
 	onSubmit,
+	disableWhileSubmitting,
 	className,
 	children,
 }: React.PropsWithChildren<FormProps<T>>) => {
 	return (
 		<FormProvider {...context}>
 			<form onSubmit={context.handleSubmit(onSubmit)} className={cn('contents', className)}>
-				{children}
+				<fieldset disabled={disableWhileSubmitting && context.formState.isSubmitting} className="contents">
+					{children}
+				</fieldset>
 			</form>
 		</FormProvider>
 	)

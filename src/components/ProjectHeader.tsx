@@ -1,7 +1,7 @@
 import { openConfirm } from '@/components/Alert'
 import { Button } from '@/components/ui/button'
 import { useApp } from '@/lib/AppContext'
-import { PackageOpenIcon, RefreshCcwDotIcon } from 'lucide-react'
+import { PackageOpenIcon, RefreshCcwDotIcon, XIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 export const ProjectHeader = () => {
@@ -19,7 +19,7 @@ export const ProjectHeader = () => {
 			<div className="text-sm font-medium">
 				<Button
 					variant="pip"
-					className="gap-1 rounded-full text-sm font-normal hover:bg-foreground/5"
+					className="group gap-1 rounded-full text-sm font-normal hover:bg-foreground/5"
 					size="pip"
 					onClick={() => {
 						openConfirm({
@@ -32,6 +32,9 @@ export const ProjectHeader = () => {
 					}}
 				>
 					<span className="text-sm">{project.settings.name}</span>
+					<div className="flex w-0 justify-end opacity-0 transition-all group-hover:w-4 group-hover:opacity-100">
+						<XIcon className="h-4 w-4 shrink-0 text-primary" />
+					</div>
 				</Button>
 			</div>
 
@@ -42,7 +45,7 @@ export const ProjectHeader = () => {
 						size="pip-icon"
 						className="rounded-full"
 						onClick={async () => {
-							await generateWorkspace()
+							await generateWorkspace(project)
 							toast.success('Workspace generated')
 						}}
 					>

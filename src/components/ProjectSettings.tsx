@@ -12,7 +12,7 @@ import { SERVER_PATH, envHints, envKeys } from '@/lib/constants'
 import { isFile } from '@/lib/handle'
 import { Project } from '@/lib/projectSchemas'
 import { cn, generateId, isNotNone } from '@/lib/utils'
-import { XIcon } from 'lucide-react'
+import { Loader2Icon, XIcon } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -29,33 +29,33 @@ const generateDBURI = ({ settings }: Project) => {
 export const ProjectSettings = () => {
 	const project = useApp((v) => v.project)
 	const saveProject = useApp((v) => v.saveProject)
+	const generateWorkspace = useApp((v) => v.generateWorkspace)
 
 	const form = useForm<FormState>({
-		defaultValues: {
-			...(project?.settings || {
-				id: generateId(),
-				name: 'New project',
-				generator: 'hono',
-				useOrbStack: false,
-				hasClient: false,
-				auth: {
-					requireAccountConfirmation: true,
-					require2fa: false,
-					sessionExpiry: '60',
-					enableCookies: false,
-					enableBearer: true,
-					enableAuthenticator2fa: true,
-					enableEmail2fa: false,
-				},
-			}),
+		defaultValues: project?.settings || {
+			id: generateId(),
+			name: 'New project',
+			generator: 'hono',
+			useOrbStack: false,
+			hasClient: false,
+			auth: {
+				requireAccountConfirmation: true,
+				require2fa: false,
+				sessionExpiry: '60',
+				enableCookies: false,
+				enableBearer: true,
+				enableAuthenticator2fa: true,
+				enableEmail2fa: false,
+			},
 		},
 	})
 
 	const onSubmit = async (values: FormState) => {
 		if (!project) return
-		if (!values) return
 
-		await saveProject({
+		const clientChange = project.settings.hasClient !== values.hasClient
+
+		const newProject = {
 			...project,
 			settings: {
 				...values,
@@ -64,7 +64,13 @@ export const ProjectSettings = () => {
 					...values.auth,
 				},
 			},
-		})
+		}
+
+		if (clientChange) {
+			await generateWorkspace(newProject, true)
+		}
+
+		await saveProject(newProject)
 
 		toast('Project settings saved', { closeButton: true })
 	}
@@ -113,7 +119,7 @@ export const ProjectSettings = () => {
 	const [tab, setTab] = useLocalStorage('project-settings-tab', 'project')
 
 	return (
-		<Form context={form} onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-row">
+		<Form context={form} onSubmit={onSubmit} disableWhileSubmitting className="flex min-h-0 flex-1 flex-row">
 			<div className="flex w-[200px] shrink-0 flex-col gap-1 border-r p-2">
 				<Button
 					variant={tab === 'details' ? 'default' : 'ghost'}
@@ -182,6 +188,15 @@ export const ProjectSettings = () => {
 										description="Set this to true if you have a vite based app in the 'apps/client' directory"
 									/>
 								</Card>
+
+								<div>
+									<Button type="submit">
+										Save
+										{form.formState.isSubmitting && (
+											<Loader2Icon className="ml-2 h-4 w-4 animate-spin" />
+										)}
+									</Button>
+								</div>
 							</div>
 						</div>
 					)}
@@ -246,6 +261,15 @@ export const ProjectSettings = () => {
 										disabled
 									/>
 								</Card>
+
+								<div>
+									<Button type="submit">
+										Save
+										{form.formState.isSubmitting && (
+											<Loader2Icon className="ml-2 h-4 w-4 animate-spin" />
+										)}
+									</Button>
+								</div>
 							</div>
 						</div>
 					)}
@@ -337,11 +361,6 @@ export const ProjectSettings = () => {
 						</div>
 					)}
 				</ScrollArea>
-				{(tab === 'details' || tab === 'auth') && (
-					<div className="flex justify-end border-t bg-muted/50 p-4">
-						<Button type="submit">Save</Button>
-					</div>
-				)}
 			</div>
 		</Form>
 	)

@@ -1,8 +1,12 @@
+import { ModelCtx } from '@/generators/hono/contexts'
 import { ProjectCtx } from '@/generators/hono/types'
 
-const tmpl = ({ project }: { project: ProjectCtx }) => {
+const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) => {
+	const authModel = models.find((x) => project.settings.userModelId === x.id)
+	const authModelName = authModel?.drizzleName || 'users'
+
 	return `import { db } from '../../lib/db.js'
-import { recoveryCodes, users } from '../../schema.js'
+import { recoveryCodes, ${authModelName} } from '../../schema.js'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { encodeHex, decodeHex } from 'oslo/encoding'
@@ -24,8 +28,8 @@ export const router = new Hono()
 router.post('/setup-twofactor', authenticate, async (c) => {
 	const user = c.get('user')
 
-	const dbUser = await db.query.users.findFirst({
-		where: eq(users.id, user.id),
+	const dbUser = await db.query.${authModelName}.findFirst({
+		where: eq(${authModelName}.id, user.id),
 	})
 
 	if (dbUser?.twoFactorEnabled) {
@@ -34,12 +38,12 @@ router.post('/setup-twofactor', authenticate, async (c) => {
 
 	const twoFactorSecret = crypto.getRandomValues(new Uint8Array(20))
 	await db
-		.update(users)
+		.update(${authModelName})
 		.set({
 			twoFactorSecret: encodeHex(twoFactorSecret),
 			twoFactorEnabled: false,
 		})
-		.where(eq(users.id, user.id))
+		.where(eq(${authModelName}.id, user.id))
 
 	// pass the website's name and the user identifier (e.g. email, username)
 	const uri = createTOTPKeyURI(appName, user.email, twoFactorSecret)
@@ -54,8 +58,8 @@ router.post(
 	async (c) => {
 		const user = c.get('user')
 
-		const dbUser = await db.query.users.findFirst({
-			where: eq(users.id, user.id),
+		const dbUser = await db.query.${authModelName}.findFirst({
+			where: eq(${authModelName}.id, user.id),
 		})
 
 		if (!dbUser || dbUser.twoFactorEnabled || !dbUser.twoFactorSecret) {
@@ -94,11 +98,11 @@ router.post(
 			.values(codeHashes.map((x) => ({ codeHash: x, userId: user.id })))
 
 		await db
-			.update(users)
+			.update(${authModelName})
 			.set({
 				twoFactorEnabled: true,
 			})
-			.where(eq(users.id, user.id))
+			.where(eq(${authModelName}.id, user.id))
 
 		return c.json({ recoveryCodes: codes })
 	}
@@ -108,9 +112,9 @@ router.post('/disable-twofactor', authenticate, async (c) => {
 	const user = c.get('user')
 
 	await db
-		.update(users)
+		.update(${authModelName})
 		.set({ twoFactorSecret: null, twoFactorEnabled: false })
-		.where(eq(users.id, user.id))
+		.where(eq(${authModelName}.id, user.id))
 
 	await db.delete(recoveryCodes).where(eq(recoveryCodes.userId, user.id))
 

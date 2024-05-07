@@ -10,6 +10,9 @@ const tmpl = (ctx: { models: ModelCtx[]; project: ProjectCtx }) => {
 
 	const models = ctx.models
 
+	const authModel = models.find((x) => ctx.project.settings.userModelId === x.id)
+	const authModelName = authModel?.drizzleName || 'users'
+
 	return `import { relations, sql } from 'drizzle-orm'
 import { ${drizzleTypeImports.join(', ')} } from 'drizzle-orm/mysql-core'
 
@@ -26,7 +29,7 @@ export const sessions = mysqlTable('_sessions', {
 	id: varchar('id', { length: 15 }).primaryKey(),
 	userId: varchar('userId', { length: 255 })
 		.notNull()
-		.references(() => users.id),
+		.references(() => ${authModelName}.id),
 	expiresAt: datetime('expiresAt').notNull(),
 })
 
@@ -35,7 +38,7 @@ export const emailVerificationCodes = mysqlTable('_email_verification_codes', {
 	code: varchar('code', { length: 255 }).notNull(),
 	userId: varchar('userId', { length: 15 })
 		.notNull()
-		.references(() => users.id),
+		.references(() => ${authModelName}.id),
 	email: varchar('email', { length: 255 }).notNull(),
 	expiresAt: datetime('expiresAt').notNull(),
 })
@@ -44,7 +47,7 @@ export const passwordResetToken = mysqlTable('_password_reset_token', {
 	tokenHash: varchar('tokenHash', { length: 255 }).unique(),
 	userId: varchar('userId', { length: 15 })
 		.notNull()
-		.references(() => users.id),
+		.references(() => ${authModelName}.id),
 	expiresAt: datetime('expiresAt').notNull(),
 })
 
@@ -52,7 +55,7 @@ export const recoveryCodes = mysqlTable('_recovery_codes', {
 	codeHash: varchar('codeHash', { length: 255 }).unique().notNull(),
 	userId: varchar('userId', { length: 15 })
 		.notNull()
-		.references(() => users.id),
+		.references(() => ${authModelName}.id),
 })
 
 export const history = mysqlTable('_history', {
@@ -86,18 +89,18 @@ export const emailLogs = mysqlTable('_email_logs', {
  * Auth Relations
  */
 export const sessionsRelations = relations(sessions, ({ one }) => ({
-	user: one(users, {
+	user: one(${authModelName}, {
 		fields: [sessions.userId],
-		references: [users.id],
+		references: [${authModelName}.id],
 	}),
 }))
 
 export const emailVerificationCodeRelations = relations(
 	emailVerificationCodes,
 	({ one }) => ({
-		user: one(users, {
+		user: one(${authModelName}, {
 			fields: [emailVerificationCodes.userId],
-			references: [users.id],
+			references: [${authModelName}.id],
 		}),
 	})
 )
@@ -105,17 +108,17 @@ export const emailVerificationCodeRelations = relations(
 export const passwordResetTokenRelations = relations(
 	passwordResetToken,
 	({ one }) => ({
-		user: one(users, {
+		user: one(${authModelName}, {
 			fields: [passwordResetToken.userId],
-			references: [users.id],
+			references: [${authModelName}.id],
 		}),
 	})
 )
 
 export const recoveryCodesRelations = relations(recoveryCodes, ({ one }) => ({
-	user: one(users, {
+	user: one(${authModelName}, {
 		fields: [recoveryCodes.userId],
-		references: [users.id],
+		references: [${authModelName}.id],
 	}),
 }))
 

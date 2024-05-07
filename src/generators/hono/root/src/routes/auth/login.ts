@@ -1,4 +1,11 @@
-const tmpl = () => `import { eq, and, isNull } from 'drizzle-orm'
+import { ModelCtx } from '@/generators/hono/contexts'
+import { ProjectCtx } from '@/generators/hono/types'
+
+const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) => {
+	const authModel = models.find((x) => project.settings.userModelId === x.id)
+	const authModelName = authModel?.drizzleName || 'users'
+
+	return `import { eq, and, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { HTTPException } from 'hono/http-exception'
@@ -8,7 +15,7 @@ import { TOTPController } from 'oslo/otp'
 import { z } from 'zod'
 import { TimeSpan } from 'lucia'
 import { db } from '../../lib/db.js'
-import { recoveryCodes, users } from '../../schema.js'
+import { recoveryCodes, ${authModelName} } from '../../schema.js'
 import { rateLimit } from '../../middleware/rateLimit.js'
 import { doLogin } from '../../middleware/authenticate.js'
 import { verifyPassword } from '../../lib/password.js'
@@ -28,8 +35,8 @@ router.post(
 	async (c) => {
 		const body: z.infer<typeof loginDTO> = await c.req.json()
 
-		const user = await db.query.users.findFirst({
-			where: and(eq(users.email, body.email), eq(users.emailVerified, true), isNull(users.deletedAt)),
+		const user = await db.query.${authModelName}.findFirst({
+			where: and(eq(${authModelName}.email, body.email), eq(${authModelName}.emailVerified, true), isNull(${authModelName}.deletedAt)),
 		})
 
 		if (user?.locked) {
@@ -102,5 +109,6 @@ router.post(
 	}
 )
 `
+}
 
 export default tmpl

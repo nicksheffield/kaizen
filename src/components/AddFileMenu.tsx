@@ -5,6 +5,7 @@ import { useApp } from '@/lib/AppContext'
 import { camelize, uc } from '@/lib/utils'
 import { Link2Icon, MailPlusIcon, PlusSquareIcon } from 'lucide-react'
 import emailTemplate from '@/templates/email-template'
+import { MODS_PATH } from '@/lib/constants'
 
 export const AddFileMenu = () => {
 	const saveFile = useApp((v) => v.saveFile)
@@ -32,8 +33,8 @@ export const AddFileMenu = () => {
 								if (val.startsWith('/')) path = path.slice(1)
 								if (val.startsWith('api/')) path = path.slice(4)
 
-								await saveFile(`kaizen/api/${path}.json`, '{}')
-								openFile(`kaizen/api/${path}.json`)
+								await saveFile(`${MODS_PATH}/api/${path}.json`, '{}')
+								openFile(`${MODS_PATH}/api/${path}.json`)
 							},
 						})
 					}}
@@ -48,10 +49,10 @@ export const AddFileMenu = () => {
 							onSubmit: async (name) => {
 								const fixedName = uc(camelize(name))
 								await saveFile(
-									`kaizen/emails/${fixedName}.tsx`,
+									`${MODS_PATH}/emails/${fixedName}.tsx`,
 									emailTemplate({ name: fixedName, project })
 								)
-								openFile(`kaizen/emails/${fixedName}.tsx`)
+								openFile(`${MODS_PATH}/emails/${fixedName}.tsx`)
 							},
 						})
 					}}

@@ -1,3 +1,5 @@
+import { MODS_DIRNAME } from '@/lib/constants'
+
 const tmpl = () => {
 	const tsConfigJson = {
 		$schema: 'https://json.schemastore.org/tsconfig',
@@ -10,7 +12,7 @@ const tmpl = () => {
 			noEmit: true,
 			baseUrl: 'src',
 			paths: {
-				'kaizen/*': ['../../kaizen/*'],
+				[`${MODS_DIRNAME}/*`]: [`../../${MODS_DIRNAME}/*`],
 			},
 		},
 		include: ['**/*.ts', '**/*.tsx'],

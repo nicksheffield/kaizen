@@ -1,5 +1,5 @@
 import { XIcon } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, uc } from '@/lib/utils'
 import { TreeFileIcon } from './TreeFileIcon'
 import { useApp } from '../lib/AppContext'
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu'
@@ -156,7 +156,9 @@ const FileTab = ({ filePath, index, onSelect }: FileTabProps) => {
 	const hasProtocol = filePath.includes(':')
 	const protocol = hasProtocol ? filePath.split(':')[0] : ''
 
-	const name = `${protocol}${hasProtocol ? ':' : ''}${fileName}`
+	const name = fileName.includes('?')
+		? uc(fileName.split('?').pop() || fileName)
+		: `${protocol}${hasProtocol ? ':' : ''}${fileName}`
 
 	// handle auto scrolling to tab when it becomes selected
 	const [prevSelected, setPrevSelected] = useState(selectedPath === filePath)

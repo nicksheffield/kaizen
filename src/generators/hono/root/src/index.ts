@@ -1,4 +1,5 @@
 import { HonoGeneratorExtras } from '@/generators/hono/types'
+import { MODS_DIRNAME } from '@/lib/constants'
 
 const tmpl = ({ extras }: { extras: HonoGeneratorExtras }) => {
 	const hasSeeder = !!extras.seeder
@@ -17,7 +18,7 @@ import { existsSync } from 'node:fs'
 import mime from 'mime-types'
 import { fileExtensions } from './lib/utils.js'
 import { router } from './routes/index.js'
-${hasSeeder ? `import seed from 'kaizen/src/seed.js'` : ''}
+${hasSeeder ? `import seed from '${MODS_DIRNAME}/src/seed.js'` : ''}
 
 const app = new Hono()
 

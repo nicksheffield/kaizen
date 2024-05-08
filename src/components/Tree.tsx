@@ -94,9 +94,7 @@ const DescRow = ({ file, isSelected, onSelect, onDelete, level = 1, isOpen }: De
 				<div
 					className={cn(
 						'flex cursor-pointer items-center gap-2 rounded-md py-1',
-						isSelected
-							? 'bg-primary text-primary-foreground hover:bg-primary/80'
-							: 'hover:bg-foreground/10',
+						isSelected ? 'bg-primary/10 text-primary hover:bg-primary/20' : 'hover:bg-foreground/10',
 						hasError && 'text-destructive',
 						isSelected && hasError && 'bg-destructive text-primary-foreground hover:bg-destructive/80'
 					)}

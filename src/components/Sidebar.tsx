@@ -1,12 +1,8 @@
 import { AlertOctagonIcon, FolderSearchIcon, RocketIcon } from 'lucide-react'
-import { Tree } from './Tree'
 import { Button } from './ui/button'
 import { useApp } from '../lib/AppContext'
-import { AddFileMenu } from '@/components/AddFileMenu'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import pluralize from 'pluralize'
-import { PipTabs } from '@/components/PipTabs'
-import { useLocalStorage } from 'usehooks-ts'
 import { ProjectTree } from '@/components/ProjectTree'
 
 export const Sidebar = () => {
@@ -21,12 +17,8 @@ export const Sidebar = () => {
 
 	const projectJson = files.find((x) => x.path === 'project.json')
 
-	const firstLevelDescs = files.filter((x) => x.path !== root?.path).filter((x) => !x.path.includes('/'))
-
-	const [tab, setTab] = useLocalStorage('sidebar-tab', 'project')
-
 	return (
-		<div className="relative flex min-h-0 flex-1 flex-col divide-y bg-muted/50">
+		<div className="relative flex min-h-0 flex-1 flex-col divide-y bg-muted">
 			{!root ? (
 				<div className="flex flex-col p-4">
 					<Button onClick={getRootHandle} variant="default">
@@ -37,25 +29,6 @@ export const Sidebar = () => {
 			) : (
 				<>
 					<div className="flex min-h-0 flex-1 flex-col divide-y">
-						<div className="flex h-10 shrink-0 flex-row items-center justify-between px-2">
-							<div className="flex flex-row items-center gap-1">
-								<PipTabs
-									value={tab}
-									onValueChange={setTab}
-									items={{
-										project: 'Config',
-										files: 'Files',
-									}}
-								/>
-							</div>
-
-							{tab === 'files' && (
-								<div className="flex items-center gap-2">
-									<AddFileMenu />
-								</div>
-							)}
-						</div>
-
 						{buildErrorPaths.length > 0 && (
 							<div className="p-2">
 								<Button
@@ -91,21 +64,9 @@ export const Sidebar = () => {
 							</div>
 						)}
 
-						{tab === 'files' && (
-							<ScrollArea className="flex flex-1 flex-col overflow-auto" orientation="vertical">
-								<div className="flex flex-1 flex-col p-2">
-									{firstLevelDescs.map((desc) => (
-										<Tree key={desc.path} path={desc.path} />
-									))}
-								</div>
-							</ScrollArea>
-						)}
-
-						{tab === 'project' && (
-							<ScrollArea className="flex flex-1 flex-col overflow-auto" orientation="vertical">
-								<ProjectTree />
-							</ScrollArea>
-						)}
+						<ScrollArea className="flex flex-1 flex-col overflow-auto" orientation="vertical">
+							<ProjectTree />
+						</ScrollArea>
 					</div>
 				</>
 			)}

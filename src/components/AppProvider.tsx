@@ -21,7 +21,7 @@ import { GeneratorFn } from '@/generators'
 import { workspaceFiles, generate as workspaceGenerator } from '@/generators/workspace'
 import { Project, parseProject } from '@/lib/projectSchemas'
 import { toast } from 'sonner'
-import { KAIZEN_PATH, SERVER_PATH } from '@/lib/constants'
+import { MODS_PATH, SERVER_PATH } from '@/lib/constants'
 
 export const AppProvider = ({ children }: PropsWithChildren) => {
 	/**
@@ -188,8 +188,8 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 	 */
 	const openFile = useCallback(
 		(path: string) => {
-			const file = files.find((x) => x.path === path)
-			if (!file) return
+			// const file = files.find((x) => x.path === path)
+			// if (!file) return
 
 			setSelectedPath(path)
 			setOpenPaths((x) => {
@@ -264,10 +264,10 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 			if (!generate) return
 
 			const generated = await generate(project, {
-				seeder: files.filter(isFile).find((x) => x.path.startsWith(`${KAIZEN_PATH}/src/seed.ts`))?.content,
+				seeder: files.filter(isFile).find((x) => x.path.startsWith(`${MODS_PATH}/src/seed.ts`))?.content,
 				emails: files
 					.filter(isFile)
-					.filter((x) => x.path.startsWith(`${KAIZEN_PATH}/emails`))
+					.filter((x) => x.path.startsWith(`${MODS_PATH}/emails`))
 					.reduce<Record<string, string>>((acc, file) => {
 						acc[file.name] = file.content
 						return acc

@@ -1,4 +1,5 @@
 import { HonoGeneratorExtras } from '@/generators/hono/types'
+import { MODS_DIRNAME } from '@/lib/constants'
 
 const tmpl = ({ extras }: { extras: HonoGeneratorExtras }) => {
 	const hasConfirmAccount = extras.emails['ConfirmAccount.tsx']
@@ -11,8 +12,8 @@ const tmpl = ({ extras }: { extras: HonoGeneratorExtras }) => {
 	import { generateId } from 'lucia'
 	import nodemailer from 'nodemailer'
 	import { Resend } from 'resend'
-	${hasConfirmAccount ? `import ConfirmAccount from 'kaizen/emails/ConfirmAccount.js'` : ''}
-	${hasResetPassword ? `import ResetPassword from 'kaizen/emails/ResetPassword.js'` : ''}
+	${hasConfirmAccount ? `import ConfirmAccount from '${MODS_DIRNAME}/emails/ConfirmAccount.js'` : ''}
+	${hasResetPassword ? `import ResetPassword from '${MODS_DIRNAME}/emails/ResetPassword.js'` : ''}
 	
 	const resendEnabled = env.RESEND_API_KEY && env.EMAIL_FROM
 	

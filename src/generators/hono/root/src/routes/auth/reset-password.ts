@@ -93,7 +93,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 				return c.body(null, 400)
 			}
 	
-			await validatePassword(password)
+			await validatePassword(body.password)
 	
 			const tokenHash = encodeHex(
 				await sha256(new TextEncoder().encode(verificationToken))

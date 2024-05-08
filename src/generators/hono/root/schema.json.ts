@@ -308,7 +308,7 @@ const historyModel: z.infer<typeof ModelSchema> = {
 		{
 			id: '9dbst',
 			name: 'operation',
-			type: 'text',
+			type: 'varchar',
 			default: null,
 			nullable: false,
 			selectable: true,

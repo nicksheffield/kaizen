@@ -66,7 +66,7 @@ export const history = mysqlTable('_history', {
 	column: varchar('column', { length: 255 }).notNull(),
 	value: mediumtext('value').notNull(),
 	rowId: varchar('rowId', { length: 15 }).notNull(),
-	operation: mediumtext('operation').notNull(),
+	operation: varchar('operation', { length: 255 }).notNull(),
 	date: datetime('date')
 		.default(sql\`CURRENT_TIMESTAMP\`)
 		.notNull(),

@@ -18,7 +18,7 @@ export const Sidebar = () => {
 	const projectJson = files.find((x) => x.path === 'project.json')
 
 	return (
-		<div className="relative flex min-h-0 flex-1 flex-col divide-y bg-muted">
+		<div className="relative flex min-h-0 flex-1 flex-col divide-y bg-muted/50">
 			{!root ? (
 				<div className="flex flex-col p-4">
 					<Button onClick={getRootHandle} variant="default">

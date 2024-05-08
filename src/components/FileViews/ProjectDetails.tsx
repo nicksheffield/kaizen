@@ -73,7 +73,7 @@ export const ProjectDetails = () => {
 						</CardHeader>
 						<CardContent>
 							<div className="flex w-full flex-col gap-6">
-								<FormRow label="Name">
+								<FormRow label="Name" description="The name of the project. Not used for much">
 									<FormInput name="name" />
 								</FormRow>
 

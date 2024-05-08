@@ -35,14 +35,14 @@ export const workspaceFiles = [
 export const generate: WorkspaceGeneratorFn = async ({ project }) => {
 	const dir: Record<string, string> = {}
 
-	dir['/.gitignore'] = gitignore()
-	dir['/package.json'] = packageJson({ project })
-	dir['/project.json'] = projectJson()
-	dir['/tsconfig.json'] = tsconfigJson()
-	dir['/pnpm-workspace.yaml'] = pnpmWorkspace()
+	dir['.gitignore'] = gitignore()
+	dir['package.json'] = packageJson({ project })
+	dir['project.json'] = projectJson()
+	dir['tsconfig.json'] = tsconfigJson()
+	dir['pnpm-workspace.yaml'] = pnpmWorkspace()
 
-	dir['/.vscode/settings.json'] = vscode_settings({ project })
-	dir['/.vscode/tasks.json'] = vscode_tasks({ project })
+	dir['.vscode/settings.json'] = vscode_settings({ project })
+	dir['.vscode/tasks.json'] = vscode_tasks({ project })
 
 	dir[`${MODS_PATH}/tsconfig.json`] = apps_mods_tsconfigJson()
 	dir[`${MODS_PATH}/package.json`] = apps_mods_packageJson()

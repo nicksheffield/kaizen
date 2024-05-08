@@ -522,7 +522,7 @@ export const Editor = () => {
 						size={1}
 						variant={BackgroundVariant.Dots}
 						color="currentColor"
-						className="bg-muted/25 text-foreground/20"
+						className="bg-muted/50 text-foreground/20"
 					/>
 				</ReactFlow>
 			</div>

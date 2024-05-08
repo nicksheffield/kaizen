@@ -304,7 +304,8 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 	)
 
 	const workspaceIsMissingFiles = useMemo(() => {
-		return workspaceFiles.some((x) => !files.find((y) => y.path === x))
+		const missingFiles = workspaceFiles.filter((x) => !files.find((y) => y.path === x))
+		return missingFiles.length > 0
 	}, [files])
 
 	/**
@@ -314,21 +315,25 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 		async (projectObj?: Project, clientChange = false) => {
 			if (!root || !root.handle) return
 
+			const clientRelatedFilePaths = ['package.json', '.vscode/settings.json', '.vscode/tasks.json']
+
 			const proj = projectObj || project
 
 			const workspace = await workspaceGenerator({ project: proj })
 
-			const workspaceDescs = await convertGeneratedFilesToDescs(workspace, root.handle, '')
+			const filteredWorkspaceFiles = Object.fromEntries(
+				Object.entries(workspace).filter(([path]) => {
+					const fileExists = files.some((x) => x.path === path)
+					const fileShouldCreateAnyway = clientChange && clientRelatedFilePaths.includes(path)
 
-			const clientRelatedFilePaths = ['package.json', '.vscode/settings.json', '.vscode/tasks.json']
+					return fileShouldCreateAnyway || !fileExists
+				})
+			)
+
+			const workspaceDescs = await convertGeneratedFilesToDescs(filteredWorkspaceFiles, root.handle, '')
 
 			for (const desc of workspaceDescs) {
-				const fileExists = files.some((x) => x.path === desc.path)
-				const fileShouldCreateAnyway = clientChange && clientRelatedFilePaths.includes(desc.path)
-
-				if (fileShouldCreateAnyway || !fileExists) {
-					await saveFile(desc, desc.content, { showToast: false })
-				}
+				await saveFile(desc, desc.content, { showToast: false })
 			}
 		},
 		[files]

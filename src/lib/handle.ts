@@ -172,10 +172,10 @@ export const convertGeneratedFilesToDescs = async (
 		items.push({
 			type: 'file',
 			name: path.split('/').pop() || '',
-			path: `${buildDir}${path}`,
+			path: `${buildDir}/${path}`.replace(/^\//, ''),
 			extension: path.split('.').pop() || '.txt',
 			content,
-			handle: await getFileHandle(`${buildDir}${path}`, rootHandle),
+			handle: await getFileHandle(`${buildDir}/${path}`, rootHandle),
 		})
 	}
 

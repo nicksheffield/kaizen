@@ -51,53 +51,53 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 
 	const dir: Record<string, string> = {}
 
-	dir['/.env.example'] = envExample()
-	dir['/.gitignore'] = gitignore()
-	dir['/rest.http'] = restHttp()
-	dir['/.pretterrc'] = prettierRc()
-	dir['/schema.json'] = schemaJson({ models, project })
-	dir['/package.json'] = packageJson()
-	dir['/tsconfig.json'] = tsconfigJson()
-	dir['/drizzle.config.ts'] = drizzleConfig()
-	dir['/docker-compose.yml'] = dockerCompose({ project })
+	dir['.env.example'] = envExample()
+	dir['.gitignore'] = gitignore()
+	dir['rest.http'] = restHttp()
+	dir['.pretterrc'] = prettierRc()
+	dir['schema.json'] = schemaJson({ models, project })
+	dir['package.json'] = packageJson()
+	dir['tsconfig.json'] = tsconfigJson()
+	dir['drizzle.config.ts'] = drizzleConfig()
+	dir['docker-compose.yml'] = dockerCompose({ project })
 
-	dir['/src/index.ts'] = await format(src_index({ extras }))
-	dir['/src/migrate.ts'] = await format(src_migrate())
-	dir['/src/schema.ts'] = await format(src_schema({ models, project }))
+	dir['src/index.ts'] = await format(src_index({ extras }))
+	dir['src/migrate.ts'] = await format(src_migrate())
+	dir['src/schema.ts'] = await format(src_schema({ models, project }))
 
-	dir['/src/lib/db.ts'] = await format(src_lib_db({ models, project }))
-	dir['/src/lib/email.ts'] = await format(src_lib_email({ extras }))
-	dir['/src/lib/env.ts'] = await format(src_lib_env())
-	dir['/src/lib/history.ts'] = await format(src_lib_history())
-	dir['/src/lib/lucia.ts'] = await format(src_lib_lucia({ project }))
-	dir['/src/lib/manageUser.ts'] = await format(src_lib_manageUser({ models, project }))
-	dir['/src/lib/password.ts'] = await format(src_lib_password())
-	dir['/src/lib/utils.ts'] = await format(src_lib_utils())
+	dir['src/lib/db.ts'] = await format(src_lib_db({ models, project }))
+	dir['src/lib/email.ts'] = await format(src_lib_email({ extras }))
+	dir['src/lib/env.ts'] = await format(src_lib_env())
+	dir['src/lib/history.ts'] = await format(src_lib_history())
+	dir['src/lib/lucia.ts'] = await format(src_lib_lucia({ project }))
+	dir['src/lib/manageUser.ts'] = await format(src_lib_manageUser({ models, project }))
+	dir['src/lib/password.ts'] = await format(src_lib_password())
+	dir['src/lib/utils.ts'] = await format(src_lib_utils())
 
-	dir['/src/middleware/authenticate.ts'] = await format(src_middleware_authenticate({ project }))
-	dir['/src/middleware/rateLimit.ts'] = await format(src_middleware_rateLimit())
+	dir['src/middleware/authenticate.ts'] = await format(src_middleware_authenticate({ project }))
+	dir['src/middleware/rateLimit.ts'] = await format(src_middleware_rateLimit())
 
-	dir['/src/routes/index.ts'] = await format(src_routes())
+	dir['src/routes/index.ts'] = await format(src_routes())
 
-	dir['/src/routes/webhooks/resend.ts'] = await format(src_routes_webhooks_resend())
+	dir['src/routes/webhooks/resend.ts'] = await format(src_routes_webhooks_resend())
 
-	dir['/src/routes/auth/login.ts'] = await format(src_routes_auth_login({ models, project }))
-	dir['/src/routes/auth/logout.ts'] = await format(src_routes_auth_logout({ project }))
-	dir['/src/routes/auth/profile.ts'] = await format(src_routes_auth_profile({ models, project }))
-	dir['/src/routes/auth/confirm-account.ts'] = await format(src_routes_auth_confirmAccount({ models, project }))
-	dir['/src/routes/auth/reset-password.ts'] = await format(src_routes_auth_resetPassword({ models, project }))
-	dir['/src/routes/auth/two-factor.ts'] = await format(src_routes_auth_twoFactor({ models, project }))
+	dir['src/routes/auth/login.ts'] = await format(src_routes_auth_login({ models, project }))
+	dir['src/routes/auth/logout.ts'] = await format(src_routes_auth_logout({ project }))
+	dir['src/routes/auth/profile.ts'] = await format(src_routes_auth_profile({ models, project }))
+	dir['src/routes/auth/confirm-account.ts'] = await format(src_routes_auth_confirmAccount({ models, project }))
+	dir['src/routes/auth/reset-password.ts'] = await format(src_routes_auth_resetPassword({ models, project }))
+	dir['src/routes/auth/two-factor.ts'] = await format(src_routes_auth_twoFactor({ models, project }))
 
-	dir['/src/routes/graphql/router.ts'] = await format(src_routes_graphql_router({ models, project }))
-	dir['/src/routes/graphql/resolvers/_filters.ts'] = await format(src_routes_graphql_resolvers_filters())
-	dir['/src/routes/graphql/resolvers/_utils.ts'] = await format(src_routes_graphql_resolvers_utils())
+	dir['src/routes/graphql/router.ts'] = await format(src_routes_graphql_router({ models, project }))
+	dir['src/routes/graphql/resolvers/_filters.ts'] = await format(src_routes_graphql_resolvers_filters())
+	dir['src/routes/graphql/resolvers/_utils.ts'] = await format(src_routes_graphql_resolvers_utils())
 
 	for (const model of models) {
-		dir[`/src/routes/graphql/resolvers/${model.drizzleName}.ts`] = await format(
+		dir[`src/routes/graphql/resolvers/${model.drizzleName}.ts`] = await format(
 			src_routes_graphql_resolvers_resolver({ model, project })
 		)
 
-		dir[`/http-test/${model.drizzleName}.http`] = httpTest_test({ model })
+		dir[`http-test/${model.drizzleName}.http`] = httpTest_test({ model })
 	}
 
 	return dir

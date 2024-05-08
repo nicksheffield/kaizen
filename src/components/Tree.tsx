@@ -104,7 +104,11 @@ const DescRow = ({ file, isSelected, onSelect, onDelete, level = 1, isOpen }: De
 					}}
 					style={{ paddingLeft: `${level * 1 + 0.5}rem` }}
 				>
-					{hasError ? <AlertOctagonIcon className="w-4" /> : <TreeFileIcon path={file.path} open={isOpen} />}
+					{hasError ? (
+						<AlertOctagonIcon className="w-4" />
+					) : (
+						<TreeFileIcon path={file.path} open={isOpen} className="opacity-50" />
+					)}
 
 					<div className="select-none truncate text-sm">{file.name}</div>
 				</div>

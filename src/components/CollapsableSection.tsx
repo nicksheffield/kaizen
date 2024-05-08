@@ -21,11 +21,11 @@ export const CollapsableSection = ({
 
 	return (
 		<div className="flex flex-col">
-			<div className="flex flex-row justify-between">
+			<div className="flex flex-row justify-between gap-2">
 				<Button
 					variant="ghost"
 					size="pip"
-					className="flex flex-1 items-center justify-start gap-2 px-2 text-sm font-medium opacity-50"
+					className="flex flex-1 items-center justify-start gap-2 px-2 text-sm font-medium opacity-50 hover:bg-foreground/10"
 					onClick={() => {
 						setOpen((x) => !x)
 					}}

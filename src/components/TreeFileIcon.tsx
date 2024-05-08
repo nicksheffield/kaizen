@@ -30,7 +30,7 @@ export const TreeFileIcon = ({ path, open = true, className }: TreeFileIconProps
 
 	const file = files.find((x) => x.path === path)
 
-	const classNames = cn('w-4 h-4 shrink-0', file?.type === 'directory' && 'text-primary', className)
+	const classNames = cn('w-4 h-4 shrink-0', className)
 
 	switch (file?.name) {
 		case '.git':

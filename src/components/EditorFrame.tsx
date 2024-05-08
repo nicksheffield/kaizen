@@ -16,7 +16,7 @@ export const EditorFrame = () => {
 	const Editor = !selectedPath ? (
 		<Welcome />
 	) : selectedPath === 'project.json?models' ? (
-		<ERDEditor />
+		<ERDEditor key={project?.settings.id} />
 	) : selectedPath === 'project.json?details' ? (
 		<ProjectDetails key={project?.settings.id} />
 	) : selectedPath === 'project.json?auth' ? (

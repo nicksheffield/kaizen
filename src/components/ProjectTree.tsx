@@ -96,12 +96,13 @@ export const ProjectTree = () => {
 
 			<div className="p-2">
 				<CollapsableSection
-					title="Customisation"
+					title="Modifications"
 					localStorageKey="sidebar-customisation-open"
 					button={
 						<Button
 							variant="ghost"
 							size="pip-icon"
+							className="hover:bg-foreground/10"
 							onClick={() => {
 								openPrompt({
 									title: 'Email name',
@@ -118,7 +119,7 @@ export const ProjectTree = () => {
 								})
 							}}
 						>
-							<PlusIcon className="w-4" />
+							<PlusIcon className="w-4 text-muted-foreground" />
 						</Button>
 					}
 				>

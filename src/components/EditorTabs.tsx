@@ -144,6 +144,9 @@ const FileTab = ({ filePath, index, onSelect }: FileTabProps) => {
 			const index = openPaths.indexOf(path)
 			setSelectedPath(openPaths.length === 1 ? undefined : index - 1 >= 0 ? openPaths[index - 1] : openPaths[0])
 		}
+		if (openPaths.length === 1) {
+			setSelectedPath(undefined)
+		}
 	}
 
 	const style = {

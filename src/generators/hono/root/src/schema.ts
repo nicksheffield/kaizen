@@ -6,7 +6,9 @@ const tmpl = (ctx: { models: ModelCtx[]; project: ProjectCtx }) => {
 	const attrTypeImports = ctx.models.flatMap((x) => x.attributes).map((x) => mapAttrToDrizzleTypeName(x.type))
 	const requiredTypeImports = ['mysqlTable', 'timestamp', 'varchar', 'datetime']
 
-	const drizzleTypeImports = [...attrTypeImports, ...requiredTypeImports].filter((x, i, a) => a.indexOf(x) === i)
+	const drizzleTypeImports = ['int', ...attrTypeImports, ...requiredTypeImports].filter(
+		(x, i, a) => a.indexOf(x) === i
+	)
 
 	const models = ctx.models
 
@@ -59,7 +61,7 @@ export const recoveryCodes = mysqlTable('_recovery_codes', {
 })
 
 export const history = mysqlTable('_history', {
-	id: varchar('id', { length: 15 }).primaryKey(),
+	id: int('id').primaryKey().autoincrement().notNull(),
 	table: varchar('table', { length: 255 }).notNull(),
 	column: varchar('column', { length: 255 }).notNull(),
 	value: mediumtext('value').notNull(),

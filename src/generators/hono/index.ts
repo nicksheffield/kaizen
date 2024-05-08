@@ -65,7 +65,7 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['/src/migrate.ts'] = await format(src_migrate())
 	dir['/src/schema.ts'] = await format(src_schema({ models, project }))
 
-	dir['/src/lib/db.ts'] = await format(src_lib_db())
+	dir['/src/lib/db.ts'] = await format(src_lib_db({ models, project }))
 	dir['/src/lib/email.ts'] = await format(src_lib_email({ extras }))
 	dir['/src/lib/env.ts'] = await format(src_lib_env())
 	dir['/src/lib/history.ts'] = await format(src_lib_history())
@@ -81,12 +81,12 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 
 	dir['/src/routes/webhooks/resend.ts'] = await format(src_routes_webhooks_resend())
 
-	dir['/src/routes/auth/login.ts'] = await format(src_routes_auth_login())
+	dir['/src/routes/auth/login.ts'] = await format(src_routes_auth_login({ models, project }))
 	dir['/src/routes/auth/logout.ts'] = await format(src_routes_auth_logout({ project }))
-	dir['/src/routes/auth/profile.ts'] = await format(src_routes_auth_profile({ project }))
-	dir['/src/routes/auth/confirm-account.ts'] = await format(src_routes_auth_confirmAccount())
-	dir['/src/routes/auth/reset-password.ts'] = await format(src_routes_auth_resetPassword())
-	dir['/src/routes/auth/two-factor.ts'] = await format(src_routes_auth_twoFactor({ project }))
+	dir['/src/routes/auth/profile.ts'] = await format(src_routes_auth_profile({ models, project }))
+	dir['/src/routes/auth/confirm-account.ts'] = await format(src_routes_auth_confirmAccount({ models, project }))
+	dir['/src/routes/auth/reset-password.ts'] = await format(src_routes_auth_resetPassword({ models, project }))
+	dir['/src/routes/auth/two-factor.ts'] = await format(src_routes_auth_twoFactor({ models, project }))
 
 	dir['/src/routes/graphql/router.ts'] = await format(src_routes_graphql_router({ models, project }))
 	dir['/src/routes/graphql/resolvers/_filters.ts'] = await format(src_routes_graphql_resolvers_filters())

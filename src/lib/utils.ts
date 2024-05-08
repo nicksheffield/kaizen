@@ -6,6 +6,15 @@ import prettier from 'prettier'
 import typescriptPlugin from 'prettier/plugins/typescript'
 import estreePlugin from 'prettier/plugins/estree'
 import { Attribute } from '@/lib/projectSchemas'
+// import { nanoid, customAlphabet } from 'nanoid'
+
+// const alphanumeric = alphabet('0-9', 'A-Z').replace('O', '').replace('I', '')
+
+// const id = customAlphabet(alphanumeric, 5)
+
+// for (let i = 0; i < 10; i++) {
+// 	console.log(id(9))
+// }
 
 export type Nullsish = null | undefined | void
 export type Falsish = false | Nullsish

@@ -2,7 +2,6 @@ const tmpl = () => {
 	return `import { db } from './db.js'
 	import { history } from '../schema.js'
 	import { and, eq } from 'drizzle-orm'
-	import { generateId } from 'lucia'
 	
 	export const create = async (
 		table: string,
@@ -15,7 +14,6 @@ const tmpl = () => {
 				return key !== '__typename' && key !== 'id'
 			})
 			.map(([column, value]) => ({
-				id: generateId(15),
 				table,
 				column,
 				value: String(value),
@@ -41,7 +39,6 @@ const tmpl = () => {
 				return String(oldData[key]) !== String(data[key])
 			})
 			.map(([column, value]) => ({
-				id: generateId(15),
 				table,
 				column,
 				value: String(value),
@@ -55,7 +52,6 @@ const tmpl = () => {
 
 	export const softDelete = async (table: string, rowId: string, userId: string) => {
 		await db.insert(history).values({
-			id: generateId(15),
 			table: table,
 			column: '',
 			value: '',

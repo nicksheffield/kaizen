@@ -1,12 +1,13 @@
 const tmpl = () => {
 	const obj = {
-		name: 'kaizen',
+		name: 'mods',
 		scripts: {
 			emails: 'email dev',
 		},
 		dependencies: {
 			server: 'workspace:*',
 			'@faker-js/faker': '^8.4.1',
+			hono: '^4.0.10',
 			oslo: '^1.1.3',
 			'drizzle-orm': '^0.30.1',
 			'@react-email/components': '0.0.17',

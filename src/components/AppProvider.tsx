@@ -272,6 +272,13 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 						acc[file.name] = file.content
 						return acc
 					}, {}),
+				api: files
+					.filter(isFile)
+					.filter((x) => x.path.startsWith(`${MODS_PATH}/api`))
+					.reduce<Record<string, string>>((acc, file) => {
+						acc[file.name] = file.content
+						return acc
+					}, {}),
 			})
 
 			const generatedDescs = await convertGeneratedFilesToDescs(generated, rootHandle, SERVER_PATH)

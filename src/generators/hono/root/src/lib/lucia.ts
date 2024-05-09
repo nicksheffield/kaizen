@@ -30,6 +30,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 				setupTwoFactor:
 					attributes.twoFactorSecret !== null &&
 					attributes.twoFactorEnabled, // what is it even used for??
+				roles: attributes.roles,
 			}
 		},
 	})
@@ -43,6 +44,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 				emailVerified: boolean
 				twoFactorSecret: string | null
 				twoFactorEnabled: boolean
+				roles: string
 			}
 		}
 	}

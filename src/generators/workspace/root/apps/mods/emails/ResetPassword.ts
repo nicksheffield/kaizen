@@ -1,7 +1,7 @@
 import { Project } from '@/lib/projectSchemas'
 
 const tmpl = ({ project }: { project?: Project }) => {
-	return `import * as React from 'react'
+	return `import * as React from 'react' // do not remove
 	import {
 		Body,
 		Container,

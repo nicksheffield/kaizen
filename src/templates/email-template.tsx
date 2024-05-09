@@ -4,7 +4,7 @@ import { snakeToCamel } from '@/lib/utils'
 const tmpl = ({ name: emailName, project }: { name: string; project: Project }) => {
 	const name = snakeToCamel(emailName)
 
-	return `import * as React from 'react'
+	return `import * as React from 'react' // do not remove
 	import {
 		Body,
 		Container,

@@ -6,8 +6,8 @@ import { Welcome } from './Welcome'
 import { SERVER_PATH } from '@/lib/constants'
 import { ERDEditor } from '@/components/ERDEditor'
 import { ProjectDetails } from '@/components/FileViews/ProjectDetails'
-import { ProjectAuth } from '@/components/ProjectAuth'
-import { ProjectEnv } from '@/components/ProjectEnv'
+import { ProjectAuth } from '@/components/FileViews/ProjectAuth'
+import { ProjectEnv } from '@/components/FileViews/ProjectEnv'
 
 export const EditorFrame = () => {
 	const project = useApp((v) => v.project)

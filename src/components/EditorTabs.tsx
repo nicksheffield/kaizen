@@ -184,7 +184,7 @@ const FileTab = ({ filePath, index, onSelect }: FileTabProps) => {
 						setNodeRef(node)
 						nodeRef.current = node
 					}}
-					className={cn('relative h-full border-r', isDragging && 'z-20 cursor-grabbing')}
+					className={cn('relative h-full', isDragging && 'z-20 cursor-grabbing')}
 					onClick={() => {
 						openFile(filePath)
 						if (nodeRef.current) onSelect(nodeRef.current)
@@ -198,7 +198,7 @@ const FileTab = ({ filePath, index, onSelect }: FileTabProps) => {
 						)}
 					>
 						<div {...attributes} {...listeners} className="flex items-center gap-2">
-							<TreeFileIcon path={filePath} />
+							<TreeFileIcon path={filePath} className="opacity-50" />
 							<div className="truncate">{name}</div>
 						</div>
 

@@ -1,5 +1,4 @@
 import {
-	BookKeyIcon,
 	BoxIcon,
 	FileIcon,
 	FileJson2Icon,
@@ -12,8 +11,9 @@ import {
 	HelpCircleIcon,
 	MailIcon,
 	BoltIcon,
-	ShapesIcon,
 	SproutIcon,
+	DatabaseIcon,
+	TentTreeIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useApp } from '@/lib/AppContext'
@@ -51,7 +51,7 @@ export const TreeFileIcon = ({ path, open = true, className }: TreeFileIconProps
 	}
 
 	if (path === 'project.json?models') {
-		return <ShapesIcon className={classNames} />
+		return <DatabaseIcon className={classNames} />
 	}
 
 	if (path === 'project.json?details') {
@@ -63,7 +63,7 @@ export const TreeFileIcon = ({ path, open = true, className }: TreeFileIconProps
 	}
 
 	if (path === 'project.json?environment') {
-		return <BookKeyIcon className={classNames} />
+		return <TentTreeIcon className={classNames} />
 	}
 
 	if (file?.type === 'file') {

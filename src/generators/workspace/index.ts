@@ -14,23 +14,31 @@ import apps_mods_src_seed from './root/apps/mods/src/seed'
 import apps_mods_emails_ConfirmAccount from './root/apps/mods/emails/ConfirmAccount'
 import apps_mods_emails_ResetPassword from './root/apps/mods/emails/ResetPassword'
 import { MODS_PATH } from '@/lib/constants'
+import { Project } from '@/lib/projectSchemas'
 
-export const workspaceFiles = [
-	'.gitignore',
-	'package.json',
-	'project.json',
-	'tsconfig.json',
-	'pnpm-workspace.yaml',
+export const workspaceFiles = (project?: Project) => {
+	const files = [
+		'.gitignore',
+		'package.json',
+		'project.json',
+		'tsconfig.json',
+		'pnpm-workspace.yaml',
 
-	'.vscode/settings.json',
-	'.vscode/tasks.json',
+		'.vscode/settings.json',
+		'.vscode/tasks.json',
 
-	`${MODS_PATH}/tsconfig.json`,
-	`${MODS_PATH}/package.json`,
-	`${MODS_PATH}/src/seed.ts`,
-	`${MODS_PATH}/emails/ConfirmAccount.tsx`,
-	`${MODS_PATH}/emails/ResetPassword.tsx`,
-]
+		`${MODS_PATH}/tsconfig.json`,
+		`${MODS_PATH}/package.json`,
+		`${MODS_PATH}/src/seed.ts`,
+		`${MODS_PATH}/emails/ResetPassword.tsx`,
+	]
+
+	if (project?.settings.auth.requireAccountConfirmation) {
+		files.push(`${MODS_PATH}/emails/ConfirmAccount.tsx`)
+	}
+
+	return files
+}
 
 export const generate: WorkspaceGeneratorFn = async ({ project }) => {
 	const dir: Record<string, string> = {}
@@ -47,8 +55,11 @@ export const generate: WorkspaceGeneratorFn = async ({ project }) => {
 	dir[`${MODS_PATH}/tsconfig.json`] = apps_mods_tsconfigJson()
 	dir[`${MODS_PATH}/package.json`] = apps_mods_packageJson()
 	dir[`${MODS_PATH}/src/seed.ts`] = await format(apps_mods_src_seed())
-	dir[`${MODS_PATH}/emails/ConfirmAccount.tsx`] = await format(apps_mods_emails_ConfirmAccount({ project }))
 	dir[`${MODS_PATH}/emails/ResetPassword.tsx`] = await format(apps_mods_emails_ResetPassword({ project }))
+
+	if (project?.settings.auth.requireAccountConfirmation) {
+		dir[`${MODS_PATH}/emails/ConfirmAccount.tsx`] = await format(apps_mods_emails_ConfirmAccount({ project }))
+	}
 
 	return dir
 }

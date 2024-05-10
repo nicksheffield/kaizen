@@ -1,5 +1,6 @@
 import { FormInput, FormRow } from '@/components/FormFields'
 import { Switcher } from '@/components/Switcher'
+import { TreeFileIcon } from '@/components/TreeFileIcon'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
@@ -68,7 +69,10 @@ export const ProjectDetails = () => {
 				<div className="flex flex-col items-center p-6">
 					<Card className="w-full max-w-3xl  border-0 shadow-none">
 						<CardHeader>
-							<CardTitle>Details</CardTitle>
+							<CardTitle className="flex items-center gap-2">
+								<TreeFileIcon path="project.json?details" className="h-6 w-6" />
+								Details
+							</CardTitle>
 							<CardDescription>The general settings for the project</CardDescription>
 						</CardHeader>
 						<CardContent>

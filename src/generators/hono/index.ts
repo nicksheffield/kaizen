@@ -66,7 +66,7 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['src/schema.ts'] = await format(src_schema({ models, project }))
 
 	dir['src/lib/db.ts'] = await format(src_lib_db({ models, project }))
-	dir['src/lib/email.ts'] = await format(src_lib_email({ extras }))
+	dir['src/lib/email.ts'] = await format(src_lib_email({ project, extras }))
 	dir['src/lib/env.ts'] = await format(src_lib_env())
 	dir['src/lib/history.ts'] = await format(src_lib_history())
 	dir['src/lib/lucia.ts'] = await format(src_lib_lucia({ project }))
@@ -77,7 +77,7 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['src/middleware/authenticate.ts'] = await format(src_middleware_authenticate({ project }))
 	dir['src/middleware/rateLimit.ts'] = await format(src_middleware_rateLimit())
 
-	dir['src/routes/index.ts'] = await format(src_routes({ endpointFiles: Object.keys(extras.api) }))
+	dir['src/routes/index.ts'] = await format(src_routes({ project, endpointFiles: Object.keys(extras.api) }))
 
 	dir['src/routes/webhooks/resend.ts'] = await format(src_routes_webhooks_resend())
 

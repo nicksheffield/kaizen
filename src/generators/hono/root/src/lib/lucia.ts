@@ -26,7 +26,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 			return {
 				id: attributes.id,
 				email: attributes.email,
-				emailVerified: attributes.emailVerified,
+				${project.settings.auth.requireAccountConfirmation ? `emailVerified: attributes.emailVerified,` : ''}
 				setupTwoFactor:
 					attributes.twoFactorSecret !== null &&
 					attributes.twoFactorEnabled, // what is it even used for??
@@ -41,7 +41,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 			DatabaseUserAttributes: {
 				id: string
 				email: string
-				emailVerified: boolean
+				${project.settings.auth.requireAccountConfirmation ? `emailVerified: boolean` : ''}
 				twoFactorSecret: string | null
 				twoFactorEnabled: boolean
 				roles: string

@@ -1,5 +1,6 @@
 import { FormInput, FormRow } from '@/components/FormFields'
 import { Switcher } from '@/components/Switcher'
+import { TreeFileIcon } from '@/components/TreeFileIcon'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
@@ -53,7 +54,10 @@ export const ProjectAuth = () => {
 				<div className="flex flex-col items-center p-6">
 					<Card className="w-full max-w-3xl border-0 shadow-none">
 						<CardHeader>
-							<CardTitle>Auth</CardTitle>
+							<CardTitle className="flex items-center gap-2">
+								<TreeFileIcon path="project.json?auth" className="h-6 w-6" />
+								Auth
+							</CardTitle>
 							<CardDescription>Control details about the authentication flow</CardDescription>
 						</CardHeader>
 						<CardContent>
@@ -101,7 +105,6 @@ export const ProjectAuth = () => {
 										name="requireAccountConfirmation"
 										label="Require Account Confirmation"
 										description="Force users to confirm their email address before they can login."
-										disabled
 									/>
 
 									<Switcher

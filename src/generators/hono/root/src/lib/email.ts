@@ -1,7 +1,8 @@
-import { HonoGeneratorExtras } from '@/generators/hono/types'
+import { HonoGeneratorExtras, ProjectCtx } from '@/generators/hono/types'
 import { MODS_DIRNAME } from '@/lib/constants'
 
-const tmpl = ({ extras }: { extras: HonoGeneratorExtras }) => {
+const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorExtras }) => {
+	const useConfirmation = project.settings.auth.requireAccountConfirmation
 	const hasConfirmAccount = extras.emails['ConfirmAccount.tsx']
 	const hasResetPassword = extras.emails['ResetPassword.tsx']
 
@@ -12,7 +13,7 @@ const tmpl = ({ extras }: { extras: HonoGeneratorExtras }) => {
 	import { generateId } from 'lucia'
 	import nodemailer from 'nodemailer'
 	import { Resend } from 'resend'
-	${hasConfirmAccount ? `import ConfirmAccount from '${MODS_DIRNAME}/emails/ConfirmAccount.js'` : ''}
+	${useConfirmation && hasConfirmAccount ? `import ConfirmAccount from '${MODS_DIRNAME}/emails/ConfirmAccount.js'` : ''}
 	${hasResetPassword ? `import ResetPassword from '${MODS_DIRNAME}/emails/ResetPassword.js'` : ''}
 	
 	const resendEnabled = env.RESEND_API_KEY && env.EMAIL_FROM
@@ -50,7 +51,7 @@ const tmpl = ({ extras }: { extras: HonoGeneratorExtras }) => {
 					return false
 				}
 	
-				if (res.data?.id) await logResendEmail(res.data.id)
+				if (res.data?.id) await logEmail(res.data.id, 'resend')
 	
 				return true
 			} else if (emailEnabled && env.EMAIL_FROM) {
@@ -60,6 +61,9 @@ const tmpl = ({ extras }: { extras: HonoGeneratorExtras }) => {
 					subject,
 					html: body,
 				})
+
+				await logEmail(res.data.id)
+
 				return true
 			}
 		} catch (error) {
@@ -68,7 +72,7 @@ const tmpl = ({ extras }: { extras: HonoGeneratorExtras }) => {
 		return false
 	}
 	
-	export const logResendEmail = async (id: string) => {
+	export const logEmail = async (id?: string, provider?: string) => {
 		const res = await resend?.emails.get(id)
 	
 		if (!res || !res.data) {
@@ -77,7 +81,8 @@ const tmpl = ({ extras }: { extras: HonoGeneratorExtras }) => {
 	
 		await db.insert(emailLogs).values({
 			id: generateId(15),
-			resendId: id,
+			emailId: id,
+			provider: provider || 'smtp',
 			from: res.data.from,
 			to: res.data.to[0],
 			subject: res.data.subject,

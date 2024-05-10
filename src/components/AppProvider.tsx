@@ -47,7 +47,7 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 	/**
 	 * The open status of directories
 	 */
-	const [dirOpenStatus, setDirOpenStatus] = useLocalStorage<Record<string, boolean>>('dirOpenStatus', { '': true })
+	const [dirOpenStatus, setDirOpenStatus] = useLocalStorage<Record<string, boolean>>('dirOpenStatus', { apps: true })
 
 	/**
 	 * The paths of files with build errors
@@ -160,8 +160,8 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 		const projectFile = files.filter(isFile).find((x) => x.path === 'project.json')
 
 		if (projectFile) {
-			setSelectedPath('project.json')
-			setOpenPaths(['project.json'])
+			setSelectedPath('project.json?models')
+			setOpenPaths(['project.json?models'])
 		}
 	}, [loadFiles])
 
@@ -221,7 +221,7 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 					await writable.write(content)
 				}
 				await writable.close()
-				if (showToast) toast.success(`File saved: ${fileName}`)
+				if (showToast) toast.success(`File saved: ${fileName}`, { closeButton: true })
 				await loadFiles(rootHandle)
 			}
 		},
@@ -293,7 +293,7 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 				rootHandle
 			)
 		},
-		[getFileHandle, files]
+		[files]
 	)
 
 	/**
@@ -311,9 +311,9 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 	)
 
 	const workspaceIsMissingFiles = useMemo(() => {
-		const missingFiles = workspaceFiles.filter((x) => !files.find((y) => y.path === x))
+		const missingFiles = workspaceFiles(project).filter((x) => !files.find((y) => y.path === x))
 		return missingFiles.length > 0
-	}, [files])
+	}, [files, project])
 
 	/**
 	 * Generate the workspace files, and write them to the root directory

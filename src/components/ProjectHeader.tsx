@@ -41,12 +41,12 @@ export const ProjectHeader = () => {
 			<div className="flex flex-row gap-2">
 				{workspaceIsMissingFiles && (
 					<Button
-						variant="default"
+						variant="pip"
 						size="pip-icon"
 						className="rounded-full"
 						onClick={async () => {
 							await generateWorkspace(project)
-							toast.success('Workspace generated')
+							toast.success('Workspace generated', { closeButton: true })
 						}}
 					>
 						<PackageOpenIcon className="h-4 w-4" />
@@ -54,12 +54,12 @@ export const ProjectHeader = () => {
 				)}
 
 				<Button
-					variant="default"
+					variant="pip"
 					size="pip-icon"
 					className="rounded-full"
 					onClick={async () => {
 						await generateProject(project)
-						toast.success('Project generated')
+						toast.success('Project generated', { closeButton: true })
 					}}
 				>
 					<RefreshCcwDotIcon className="h-4 w-4" />

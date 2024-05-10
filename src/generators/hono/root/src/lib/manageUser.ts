@@ -102,9 +102,15 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 
 		await history.create('${user.tableName}', userId, { ...newUser }, _userId)
 	
-		const verificationCode = await generateEmailVerificationCode(userId, email)
-	
-		sendVerificationEmail(email, userId, verificationCode)
+		${
+			project.settings.auth.requireAccountConfirmation
+				? `
+			const verificationCode = await generateEmailVerificationCode(userId, email)
+		
+			sendVerificationEmail(email, userId, verificationCode)
+		`
+				: ''
+		}
 	
 		return db.query.${user.drizzleName}.findFirst({
 			where: eq(${user.drizzleName}.id, userId),

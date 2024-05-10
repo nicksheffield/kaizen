@@ -51,8 +51,8 @@ router.post('/resend', async (c) => {
 
 		await db
 			.update(emailLogs)
-			.set(set)
-			.where(eq(emailLogs.resendId, parsedEvent.data.data.email_id))
+			.set({ ...set, provider: 'resend' })
+			.where(eq(emailLogs.emailId, parsedEvent.data.data.email_id))
 	}
 
 	return c.body(null, 204)

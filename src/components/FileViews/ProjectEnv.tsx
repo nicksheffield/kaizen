@@ -1,4 +1,5 @@
 import { Hint } from '@/components/Hint'
+import { TreeFileIcon } from '@/components/TreeFileIcon'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -67,9 +68,12 @@ export const ProjectEnv = () => {
 		<div className="flex min-h-0 flex-1 flex-row">
 			<ScrollArea className="flex-1">
 				<div className="flex flex-col items-center p-6">
-					<Card className="w-full max-w-3xl  border-0 shadow-none">
+					<Card className="w-full max-w-3xl border-0 shadow-none">
 						<CardHeader>
-							<CardTitle>Environment Variables</CardTitle>
+							<CardTitle className="flex items-center gap-2">
+								<TreeFileIcon path="project.json?environment" className="h-6 w-6" />
+								Environment Variables
+							</CardTitle>
 							<CardDescription>
 								Set environment variables that will be used locally in dev.
 								<br />

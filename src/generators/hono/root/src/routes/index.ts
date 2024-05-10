@@ -1,4 +1,6 @@
-const tmpl = ({ endpointFiles }: { endpointFiles: string[] }) => {
+import { ProjectCtx } from '@/generators/hono/types'
+
+const tmpl = ({ project, endpointFiles }: { project: ProjectCtx; endpointFiles: string[] }) => {
 	const api = endpointFiles.map((x) => {
 		const path = x
 		const fullPath = x.replace('.ts', '.js')
@@ -24,7 +26,7 @@ const tmpl = ({ endpointFiles }: { endpointFiles: string[] }) => {
 	import { router as logout } from './auth/logout.js'
 	import { router as profile } from './auth/profile.js'
 	import { router as twoFactor } from './auth/two-factor.js'
-	import { router as confirmAccount } from './auth/confirm-account.js'
+	${project.settings.auth.requireAccountConfirmation ? `import { router as confirmAccount } from './auth/confirm-account.js'` : ''}
 	import { router as resetPassword } from './auth/reset-password.js'
 	import { router as graphql } from './graphql/router.js'
 	import { router as resend } from './webhooks/resend.js'
@@ -37,7 +39,7 @@ const tmpl = ({ endpointFiles }: { endpointFiles: string[] }) => {
 	router.route('/auth', logout)
 	router.route('/auth', profile)
 	router.route('/auth', twoFactor)
-	router.route('/auth', confirmAccount)
+	${project.settings.auth.requireAccountConfirmation ? `router.route('/auth', confirmAccount)` : ''}
 	router.route('/auth', resetPassword)
 	router.route('/graphql', graphql)
 	${api.map((x) => `router.route('${x.route}', ${x.router})`).join('\n')}

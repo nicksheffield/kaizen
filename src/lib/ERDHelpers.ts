@@ -293,7 +293,7 @@ export type AttrTypeRecommend = {
 export const getAttrTypeRecommends = (project?: Project) => {
 	if (!project) return []
 
-	const attrs = project.models.map((x) => x.attributes).flat()
+	const attrs = project.models.flatMap((x) => x.attributes)
 
 	const recommends = attrs.reduce<AttrTypeRecommend[]>((arr, attr) => {
 		const otherAttrs = attrs.filter((x) => x.name.trim().toLowerCase() === attr.name.trim().toLowerCase())

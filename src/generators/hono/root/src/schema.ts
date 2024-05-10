@@ -75,7 +75,8 @@ export const history = mysqlTable('_history', {
 
 export const emailLogs = mysqlTable('_email_logs', {
 	id: varchar('id', { length: 15 }).primaryKey(),
-	resendId: varchar('resendId', { length: 255 }),
+	emailId: varchar('emailId', { length: 255 }),
+	provider: varchar('provider', { length: 255 }),
 	from: varchar('from', { length: 255 }),
 	to: varchar('to', { length: 255 }),
 	subject: mediumtext('subject'),

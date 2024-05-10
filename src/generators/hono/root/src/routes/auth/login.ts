@@ -36,7 +36,7 @@ router.post(
 		const body: z.infer<typeof loginDTO> = await c.req.json()
 
 		const user = await db.query.${authModelName}.findFirst({
-			where: and(eq(${authModelName}.email, body.email), eq(${authModelName}.emailVerified, true), isNull(${authModelName}.deletedAt)),
+			where: and(eq(${authModelName}.email, body.email), ${project.settings.auth.requireAccountConfirmation ? `eq(${authModelName}.emailVerified, true),` : ''} isNull(${authModelName}.deletedAt)),
 		})
 
 		if (user?.locked) {

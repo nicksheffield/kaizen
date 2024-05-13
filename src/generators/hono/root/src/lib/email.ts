@@ -13,6 +13,7 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 	import { generateId } from 'lucia'
 	import nodemailer from 'nodemailer'
 	import { Resend } from 'resend'
+	import { eq } from 'drizzle-orm'
 	${useConfirmation && hasConfirmAccount ? `import ConfirmAccount from '${MODS_DIRNAME}/emails/ConfirmAccount.js'` : ''}
 	${hasResetPassword ? `import ResetPassword from '${MODS_DIRNAME}/emails/ResetPassword.js'` : ''}
 	
@@ -51,7 +52,7 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 					return false
 				}
 	
-				if (res.data?.id) await logEmail(res.data.id, 'resend')
+				if (res.data?.id) await logEmailResend(res.data.id)
 	
 				return true
 			} else if (emailEnabled && env.EMAIL_FROM) {
@@ -62,7 +63,13 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 					html: body,
 				})
 
-				await logEmail(res.data.id)
+				await logEmail({
+					provider: 'smtp',
+					from: env.EMAIL_FROM,
+					to: env.DEV_EMAIL_TO || address,
+					subject,
+					body
+				})
 
 				return true
 			}
@@ -72,23 +79,47 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 		return false
 	}
 	
-	export const logEmail = async (id?: string, provider?: string) => {
+	export const logEmailResend = async (id: string) => {
 		const res = await resend?.emails.get(id)
-	
+
 		if (!res || !res.data) {
 			return
 		}
-	
-		await db.insert(emailLogs).values({
-			id: generateId(15),
+
+		await logEmail({
 			emailId: id,
-			provider: provider || 'smtp',
+			provider: 'resend',
+			to: res.data.to.join(', '),
 			from: res.data.from,
-			to: res.data.to[0],
 			subject: res.data.subject,
 			body: res.data?.html || res.data?.text || '',
 		})
 	}
+
+	export const logEmail = async (data: {
+		emailId?: string
+		provider?: string
+		from: string
+		to: string
+		subject: string
+		body: string
+	}) => {
+		await db.insert(emailLogs).values({
+			id: generateId(15),
+			...data,
+			provider: data.provider || 'smtp',
+		})
+	}
+
+	export const resendEmailLog = async (id: string) => {
+		const log = await db.query.emailLogs.findFirst({
+			where: eq(emailLogs.id, id),
+		})
+	
+		if (!log || !log.to || !log.subject || !log.body) return
+	
+		await send(log.to, log.subject, log.body)
+	}	
 	
 	export const sendVerificationEmail = async (
 		email: string,

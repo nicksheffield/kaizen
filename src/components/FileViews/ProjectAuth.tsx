@@ -69,6 +69,7 @@ export const ProjectAuth = () => {
 									<FormInput name="sessionExpiry" type="number" />
 								</FormRow>
 
+								<div className="-mb-4 font-medium">Tokens</div>
 								<Card className="divide-y">
 									<Switcher
 										name="enableCookies"
@@ -81,7 +82,10 @@ export const ProjectAuth = () => {
 										label="Enable Bearer Tokens"
 										description="Use Bearer tokens for auth."
 									/>
+								</Card>
 
+								<div className="-mb-4 font-medium">Two Factor</div>
+								<Card className="divide-y">
 									<Switcher
 										name="enableAuthenticator2fa"
 										label="Enable Authenticator 2fa"
@@ -95,6 +99,16 @@ export const ProjectAuth = () => {
 									/>
 
 									<Switcher
+										name="require2fa"
+										label="Require 2fa"
+										description="Force users to set up 2fa."
+										disabled
+									/>
+								</Card>
+
+								<div className="-mb-4 font-medium">User Management</div>
+								<Card className="divide-y">
+									<Switcher
 										name="enableRegistration"
 										label="Enable Registration"
 										description="Allow users to register new accounts themselves."
@@ -105,13 +119,6 @@ export const ProjectAuth = () => {
 										name="requireAccountConfirmation"
 										label="Require Account Confirmation"
 										description="Force users to confirm their email address before they can login."
-									/>
-
-									<Switcher
-										name="require2fa"
-										label="Require 2fa"
-										description="Force users to set up 2fa."
-										disabled
 									/>
 								</Card>
 

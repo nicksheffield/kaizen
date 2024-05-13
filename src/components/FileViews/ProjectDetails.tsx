@@ -78,17 +78,21 @@ export const ProjectDetails = () => {
 									options={generatorNames.map((x) => ({ label: x, value: x }))}
 								/> */}
 
+								<div className="-mb-4 font-medium">Monorepo</div>
+								<Card className="divide-y">
+									<Switcher
+										name="hasClient"
+										label="Have Client"
+										description="Set this to true if you have a vite based app in the 'apps/client' directory"
+									/>
+								</Card>
+
+								<div className="-mb-4 font-medium">Dev</div>
 								<Card className="divide-y">
 									<Switcher
 										name="useOrbStack"
 										label="Use Orb Stack"
 										description="Use orb stack instead of docker desktop to enable unique local domains in dev."
-									/>
-
-									<Switcher
-										name="hasClient"
-										label="Have Client"
-										description="Set this to true if you have a vite based app in the 'apps/client' directory"
 									/>
 								</Card>
 

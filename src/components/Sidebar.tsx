@@ -58,7 +58,7 @@ export const Sidebar = () => {
 
 			<Button
 				variant="ghost"
-				className="rounded-none"
+				className="rounded-none border-t bg-muted/50"
 				onClick={() => {
 					setCompact((x) => !x)
 				}}

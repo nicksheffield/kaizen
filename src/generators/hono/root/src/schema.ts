@@ -53,6 +53,14 @@ export const passwordResetToken = mysqlTable('_password_reset_token', {
 	expiresAt: datetime('expiresAt').notNull(),
 })
 
+export const twoFactorTokens = mysqlTable('_2fa_tokens', {
+	tokenHash: varchar('tokenHash', { length: 255 }).unique().notNull(),
+	userId: varchar('userId', { length: 15 })
+		.notNull()
+		.references(() => users.id),
+	expiresAt: datetime('expiresAt').notNull(),
+})
+
 export const recoveryCodes = mysqlTable('_recovery_codes', {
 	codeHash: varchar('codeHash', { length: 255 }).unique().notNull(),
 	userId: varchar('userId', { length: 15 })

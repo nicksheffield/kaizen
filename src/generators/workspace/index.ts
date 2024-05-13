@@ -14,6 +14,7 @@ import apps_mods_src_api from './root/apps/mods/src/api'
 import apps_mods_src_seed from './root/apps/mods/src/seed'
 import apps_mods_emails_ConfirmAccount from './root/apps/mods/emails/ConfirmAccount'
 import apps_mods_emails_ResetPassword from './root/apps/mods/emails/ResetPassword'
+import apps_mods_emails_TwoFactorCode from './root/apps/mods/emails/TwoFactorCode'
 import { MODS_PATH } from '@/lib/constants'
 import { Project } from '@/lib/projectSchemas'
 
@@ -33,6 +34,7 @@ export const workspaceFiles = (project?: Project) => {
 		`${MODS_PATH}/src/api.ts`,
 		`${MODS_PATH}/src/seed.ts`,
 		`${MODS_PATH}/emails/ResetPassword.tsx`,
+		`${MODS_PATH}/emails/TwoFactorCode.tsx`,
 	]
 
 	if (project?.settings.auth.requireAccountConfirmation) {
@@ -59,6 +61,7 @@ export const generate: WorkspaceGeneratorFn = async ({ project }) => {
 	dir[`${MODS_PATH}/src/api.ts`] = await format(apps_mods_src_api())
 	dir[`${MODS_PATH}/src/seed.ts`] = await format(apps_mods_src_seed())
 	dir[`${MODS_PATH}/emails/ResetPassword.tsx`] = await format(apps_mods_emails_ResetPassword({ project }))
+	dir[`${MODS_PATH}/emails/TwoFactorCode.tsx`] = await format(apps_mods_emails_TwoFactorCode({ project }))
 
 	if (project?.settings.auth.requireAccountConfirmation) {
 		dir[`${MODS_PATH}/emails/ConfirmAccount.tsx`] = await format(apps_mods_emails_ConfirmAccount({ project }))

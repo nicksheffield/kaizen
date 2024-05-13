@@ -3,8 +3,8 @@ import { MODS_DIRNAME } from '@/lib/constants'
 
 const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorExtras }) => {
 	const useConfirmation = project.settings.auth.requireAccountConfirmation
-	const hasConfirmAccount = extras.emails['ConfirmAccount.tsx']
-	const hasResetPassword = extras.emails['ResetPassword.tsx']
+	const hasConfirmAccount = extras.emails.find((x) => x === 'ConfirmAccount.tsx')
+	const hasResetPassword = extras.emails.find((x) => x === 'ResetPassword.tsx')
 
 	return `import { db } from './db.js'
 	import { env } from './env.js'

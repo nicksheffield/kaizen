@@ -4,19 +4,24 @@ const tmpl = ({ project, endpointFiles }: { project: ProjectCtx; endpointFiles: 
 	const api = endpointFiles.map((x) => {
 		const path = x
 		const fullPath = x.replace('.ts', '.js')
-		const fileName = x.split('/').pop()
-		const name = fileName?.split('.').slice(0, -1).join('.')
 
-		console.log({
-			path,
-			fullPath,
-			fileName,
-			name,
-		})
+		const name = x
+			.split('/')
+			.filter((x) => !!x)
+			.slice(0, -1)
+			.join('/')
+			.replace(/\/|\./g, '_')
+			.replace(/\.[tj]sx?$/, '')
+
+		const route = `/${path
+			.split('/')
+			.filter((x) => !!x)
+			.slice(0, -1)
+			.join('/')}`
 
 		return {
-			import: `import ${name} from 'mods/api/${fullPath}'`,
-			route: `/${path}`,
+			import: `import ${name} from 'mods/api${fullPath}'`,
+			route,
 			router: `${name}.router`,
 		}
 	})

@@ -77,7 +77,7 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['src/middleware/authenticate.ts'] = await format(src_middleware_authenticate({ project }))
 	dir['src/middleware/rateLimit.ts'] = await format(src_middleware_rateLimit())
 
-	dir['src/routes/index.ts'] = await format(src_routes({ project, endpointFiles: Object.keys(extras.api) }))
+	dir['src/routes/index.ts'] = await format(src_routes({ project, endpointFiles: extras.api }))
 
 	dir['src/routes/webhooks/resend.ts'] = await format(src_routes_webhooks_resend())
 

@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button'
 
 export const Header = () => {
 	return (
-		<div className="relative flex items-center justify-between overflow-hidden p-4">
-			<div className="">
+		<div className="relative grid grid-cols-[auto,1fr,auto] gap-4 overflow-hidden p-4">
+			<div className="flex items-center">
 				{/* <Logo /> */}
 				<div className="group origin-left cursor-default text-2xl font-black tracking-tight transition-transform hover:scale-125">
 					<span className="transition-colors group-hover:text-indigo-500">K</span>
@@ -16,7 +16,10 @@ export const Header = () => {
 					<span className="transition-colors group-hover:text-green-500">n</span>
 				</div>
 			</div>
-			<div className="flex items-center gap-4">
+			<div className="flex w-full items-center justify-center">
+				<ProjectHeader />
+			</div>
+			<div className="flex items-center justify-end gap-4">
 				<Button variant="link" asChild>
 					<a href="https://docs.kz-app.com" target="_blank" rel="noreferrer">
 						Docs
@@ -24,9 +27,6 @@ export const Header = () => {
 				</Button>
 
 				<UserMenu />
-			</div>
-			<div className="pointer-events-none absolute left-0 top-0 flex w-full items-center justify-center p-4">
-				<ProjectHeader />
 			</div>
 		</div>
 	)

@@ -15,7 +15,7 @@ export const ProjectHeader = () => {
 	if (!project || !root) return null
 
 	return (
-		<div className="pointer-events-auto flex h-10 w-[600px] items-center justify-between rounded-full border bg-muted/50 p-1.5">
+		<div className="flex h-10 w-full max-w-[600px] items-center justify-between rounded-full border bg-muted/50 p-1.5">
 			<div className="text-sm font-medium">
 				<Button
 					variant="pip"

@@ -268,17 +268,11 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 				emails: files
 					.filter(isFile)
 					.filter((x) => x.path.startsWith(`${MODS_PATH}/emails`))
-					.reduce<Record<string, string>>((acc, file) => {
-						acc[file.name] = file.content
-						return acc
-					}, {}),
+					.map((x) => x.name),
 				api: files
 					.filter(isFile)
 					.filter((x) => x.path.startsWith(`${MODS_PATH}/api`))
-					.reduce<Record<string, string>>((acc, file) => {
-						acc[file.name] = file.content
-						return acc
-					}, {}),
+					.map((x) => x.path.replace(`${MODS_PATH}/api`, '')),
 			})
 
 			const generatedDescs = await convertGeneratedFilesToDescs(generated, rootHandle, SERVER_PATH)

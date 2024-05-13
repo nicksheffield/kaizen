@@ -69,7 +69,7 @@ export const ProjectEnv = () => {
 			<ScrollArea className="flex-1">
 				<div className="flex flex-col items-center p-6">
 					<Card className="w-full max-w-3xl border-0 shadow-none">
-						<CardHeader>
+						<CardHeader className="mb-6">
 							<CardTitle className="flex items-center gap-2">
 								<TreeFileIcon path="project.json?environment" className="h-6 w-6" />
 								Environment Variables

@@ -11,7 +11,7 @@ const tmpl = () => {
 			useOrbStack: false,
 			hasClient: false,
 			auth: {
-				requireAccountConfirmation: true,
+				requireAccountConfirmation: false,
 				require2fa: false,
 				sessionExpiry: '60',
 				enableCookies: false,

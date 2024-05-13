@@ -1,30 +1,24 @@
+import { AddFileMenu } from '@/components/AddFileMenu'
 import { CollapsableSection } from '@/components/CollapsableSection'
 import { Tree } from '@/components/Tree'
 import { TreeFileIcon } from '@/components/TreeFileIcon'
-import { openPrompt } from '@/components/modals/openPrompt'
-import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useApp } from '@/lib/AppContext'
 import { MODS_PATH } from '@/lib/constants'
 import { isFile } from '@/lib/handle'
-import { camelize, cn, uc } from '@/lib/utils'
-import emailTemplate from '@/templates/email-template'
-import { PlusIcon } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export const ProjectTree = () => {
 	const root = useApp((v) => v.root)
 	const files = useApp((v) => v.files)
-	const project = useApp((v) => v.project)
-	const saveFile = useApp((v) => v.saveFile)
 	const openFile = useApp((v) => v.openFile)
 	const selectedPath = useApp((v) => v.selectedPath)
 
 	const seedFilePath = `${MODS_PATH}/src/seed.ts`
 
 	const emailFiles = files.filter(isFile).filter((x) => x.path.startsWith(`${MODS_PATH}/emails`))
+	const apiFiles = files.filter(isFile).filter((x) => x.path.startsWith(`${MODS_PATH}/api`))
 	const firstLevelDescs = files.filter((x) => x.path !== root?.path).filter((x) => !x.path.includes('/'))
-
-	if (!project) return null
 
 	return (
 		<div className="flex flex-col gap-2">
@@ -98,30 +92,7 @@ export const ProjectTree = () => {
 				<CollapsableSection
 					title="Modifications"
 					localStorageKey="sidebar-customisation-open"
-					button={
-						<Button
-							variant="ghost"
-							size="pip-icon"
-							className="hover:bg-foreground/10"
-							onClick={() => {
-								openPrompt({
-									title: 'Email name',
-									description: 'No spaces, PascalCase, no special characters',
-									placeholder: 'eg, ConfirmAccount',
-									onSubmit: async (name) => {
-										const fixedName = uc(camelize(name))
-										await saveFile(
-											`${MODS_PATH}/emails/${fixedName}.tsx`,
-											emailTemplate({ name: fixedName, project })
-										)
-										openFile(`${MODS_PATH}/emails/${fixedName}.tsx`)
-									},
-								})
-							}}
-						>
-							<PlusIcon className="w-4 text-muted-foreground" />
-						</Button>
-					}
+					button={<AddFileMenu />}
 				>
 					<div
 						className={cn(
@@ -152,6 +123,23 @@ export const ProjectTree = () => {
 						>
 							<TreeFileIcon path={file.path} className="opacity-50" />
 							{file.name}
+						</div>
+					))}
+					{apiFiles.map((file) => (
+						<div
+							key={file.path}
+							className={cn(
+								'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
+								selectedPath === file.path
+									? 'bg-primary/10 text-primary hover:bg-primary/20'
+									: 'hover:bg-foreground/10'
+							)}
+							onClick={() => {
+								openFile(file.path)
+							}}
+						>
+							<TreeFileIcon path={file.path} className="opacity-50" />
+							{file.path.replace(`${MODS_PATH}/`, '').split('/').slice(0, -1).join('/')}
 						</div>
 					))}
 				</CollapsableSection>

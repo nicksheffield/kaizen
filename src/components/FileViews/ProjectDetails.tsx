@@ -26,15 +26,6 @@ export const ProjectDetails = () => {
 			generator: 'hono',
 			useOrbStack: false,
 			hasClient: false,
-			auth: {
-				requireAccountConfirmation: true,
-				require2fa: false,
-				sessionExpiry: '60',
-				enableCookies: false,
-				enableBearer: true,
-				enableAuthenticator2fa: true,
-				enableEmail2fa: false,
-			},
 		},
 	})
 
@@ -49,7 +40,6 @@ export const ProjectDetails = () => {
 				...values,
 				auth: {
 					...project.settings.auth,
-					...values.auth,
 				},
 			},
 		}
@@ -67,8 +57,8 @@ export const ProjectDetails = () => {
 		<Form context={form} onSubmit={onSubmit} disableWhileSubmitting className="flex min-h-0 flex-1 flex-row">
 			<ScrollArea className="flex-1">
 				<div className="flex flex-col items-center p-6">
-					<Card className="w-full max-w-3xl  border-0 shadow-none">
-						<CardHeader>
+					<Card className="w-full max-w-3xl border-0 shadow-none">
+						<CardHeader className="mb-6">
 							<CardTitle className="flex items-center gap-2">
 								<TreeFileIcon path="project.json?details" className="h-6 w-6" />
 								Details

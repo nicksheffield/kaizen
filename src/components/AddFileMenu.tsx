@@ -3,9 +3,9 @@ import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { useApp } from '@/lib/AppContext'
 import { camelize, uc } from '@/lib/utils'
-import { Link2Icon, MailPlusIcon, PlusSquareIcon } from 'lucide-react'
-import emailTemplate from '@/templates/email-template'
+import { MailPlusIcon, PlusIcon } from 'lucide-react'
 import { MODS_PATH } from '@/lib/constants'
+import emailTemplate from '@/templates/email-template'
 
 export const AddFileMenu = () => {
 	const saveFile = useApp((v) => v.saveFile)
@@ -17,31 +17,12 @@ export const AddFileMenu = () => {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="ghost" size="pip-icon">
-					<PlusSquareIcon className="h-4 w-4" />
+				<Button variant="ghost" size="pip-icon" className="hover:bg-foreground/10">
+					<PlusIcon className="w-4 text-muted-foreground" />
 				</Button>
 			</DropdownMenuTrigger>
 
-			<DropdownMenuContent>
-				<DropdownMenuItem
-					onClick={() => {
-						openPrompt({
-							title: 'Endpoint path',
-							onSubmit: async (val) => {
-								let path = val
-
-								if (val.startsWith('/')) path = path.slice(1)
-								if (val.startsWith('api/')) path = path.slice(4)
-
-								await saveFile(`${MODS_PATH}/api/${path}.json`, '{}')
-								openFile(`${MODS_PATH}/api/${path}.json`)
-							},
-						})
-					}}
-				>
-					<Link2Icon className="mr-2 w-4" />
-					<div>Add Endpoint</div>
-				</DropdownMenuItem>
+			<DropdownMenuContent side="right" align="start">
 				<DropdownMenuItem
 					onClick={() => {
 						openPrompt({

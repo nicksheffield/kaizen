@@ -10,6 +10,7 @@ import vscode_settings from './root/vscode/settings'
 import vscode_tasks from './root/vscode/tasks'
 import apps_mods_tsconfigJson from './root/apps/mods/tsconfigJson'
 import apps_mods_packageJson from './root/apps/mods/packageJson'
+import apps_mods_src_api from './root/apps/mods/src/api'
 import apps_mods_src_seed from './root/apps/mods/src/seed'
 import apps_mods_emails_ConfirmAccount from './root/apps/mods/emails/ConfirmAccount'
 import apps_mods_emails_ResetPassword from './root/apps/mods/emails/ResetPassword'
@@ -29,6 +30,7 @@ export const workspaceFiles = (project?: Project) => {
 
 		`${MODS_PATH}/tsconfig.json`,
 		`${MODS_PATH}/package.json`,
+		`${MODS_PATH}/src/api.ts`,
 		`${MODS_PATH}/src/seed.ts`,
 		`${MODS_PATH}/emails/ResetPassword.tsx`,
 	]
@@ -54,6 +56,7 @@ export const generate: WorkspaceGeneratorFn = async ({ project }) => {
 
 	dir[`${MODS_PATH}/tsconfig.json`] = apps_mods_tsconfigJson()
 	dir[`${MODS_PATH}/package.json`] = apps_mods_packageJson()
+	dir[`${MODS_PATH}/src/api.ts`] = await format(apps_mods_src_api())
 	dir[`${MODS_PATH}/src/seed.ts`] = await format(apps_mods_src_seed())
 	dir[`${MODS_PATH}/emails/ResetPassword.tsx`] = await format(apps_mods_emails_ResetPassword({ project }))
 

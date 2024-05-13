@@ -126,7 +126,7 @@ export const upgrade = (project: V2_0.Project) => {
 			useOrbStack: project.settings.dev.useOrbStack,
 			hasClient: false,
 			auth: {
-				requireAccountConfirmation: true,
+				requireAccountConfirmation: false,
 				require2fa: false,
 				sessionExpiry: project.auth?.expiresIn ?? '60',
 				enableCookies: project.auth?.cookies ?? false,

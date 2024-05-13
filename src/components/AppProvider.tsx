@@ -101,7 +101,7 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 
 				const projectFile = sortedFiles.filter(isFile).find((x) => x.path === 'project.json')
 
-				if (projectFile) {
+				if (projectFile && projectFile.content) {
 					const project = parseProject(projectFile.content)
 					setDraft({ dirty: false, content: project })
 				}
@@ -249,6 +249,8 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 		const file = files.find((x) => x.path === 'project.json')
 		if (!file || isDir(file)) return undefined
 
+		if (!file.content) return
+
 		return parseProject(file.content)
 	}, [files])
 
@@ -264,15 +266,12 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 			if (!generate) return
 
 			const generated = await generate(project, {
-				seeder: files.filter(isFile).find((x) => x.path.startsWith(`${MODS_PATH}/src/seed.ts`))?.content,
+				seeder: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/seed.ts`)),
+				api: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/api.ts`)),
 				emails: files
 					.filter(isFile)
 					.filter((x) => x.path.startsWith(`${MODS_PATH}/emails`))
 					.map((x) => x.name),
-				api: files
-					.filter(isFile)
-					.filter((x) => x.path.startsWith(`${MODS_PATH}/api`))
-					.map((x) => x.path.replace(`${MODS_PATH}/api`, '')),
 			})
 
 			const generatedDescs = await convertGeneratedFilesToDescs(generated, rootHandle, SERVER_PATH)

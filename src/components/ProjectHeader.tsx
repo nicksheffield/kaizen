@@ -12,7 +12,7 @@ export const ProjectHeader = () => {
 	const root = useApp((v) => v.root)
 	const clearRootHandle = useApp((v) => v.clearRootHandle)
 
-	if (!project || !root) return null
+	if (!root) return null
 
 	return (
 		<div className="flex h-10 w-full max-w-[600px] items-center justify-between rounded-full border bg-muted/50 p-1.5">
@@ -31,40 +31,42 @@ export const ProjectHeader = () => {
 						})
 					}}
 				>
-					<span className="text-sm">{project.settings.name}</span>
+					<span className="text-sm">{project?.settings.name || root.name}</span>
 					<div className="flex w-0 justify-end opacity-0 transition-all group-hover:w-4 group-hover:opacity-100">
 						<XIcon className="h-4 w-4 shrink-0 text-primary" />
 					</div>
 				</Button>
 			</div>
 
-			<div className="flex flex-row gap-2">
-				{workspaceIsMissingFiles && (
+			{project && (
+				<div className="flex flex-row gap-2">
+					{workspaceIsMissingFiles && (
+						<Button
+							variant="pip"
+							size="pip-icon"
+							className="rounded-full"
+							onClick={async () => {
+								await generateWorkspace(project)
+								toast.success('Workspace generated', { closeButton: true })
+							}}
+						>
+							<PackageOpenIcon className="h-4 w-4" />
+						</Button>
+					)}
+
 					<Button
 						variant="pip"
 						size="pip-icon"
 						className="rounded-full"
 						onClick={async () => {
-							await generateWorkspace(project)
-							toast.success('Workspace generated', { closeButton: true })
+							await generateProject(project)
+							toast.success('Project generated', { closeButton: true })
 						}}
 					>
-						<PackageOpenIcon className="h-4 w-4" />
+						<RefreshCcwDotIcon className="h-4 w-4" />
 					</Button>
-				)}
-
-				<Button
-					variant="pip"
-					size="pip-icon"
-					className="rounded-full"
-					onClick={async () => {
-						await generateProject(project)
-						toast.success('Project generated', { closeButton: true })
-					}}
-				>
-					<RefreshCcwDotIcon className="h-4 w-4" />
-				</Button>
-			</div>
+				</div>
+			)}
 		</div>
 	)
 }

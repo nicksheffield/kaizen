@@ -2,7 +2,7 @@ import { HonoGeneratorExtras } from '@/generators/hono/types'
 import { MODS_DIRNAME } from '@/lib/constants'
 
 const tmpl = ({ extras }: { extras: HonoGeneratorExtras }) => {
-	const hasSeeder = !!extras.seeder
+	const hasSeeder = extras.seeder
 
 	return `import { serve } from '@hono/node-server'
 import { Hono } from 'hono'

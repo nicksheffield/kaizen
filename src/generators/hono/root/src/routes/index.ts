@@ -1,30 +1,7 @@
-import { ProjectCtx } from '@/generators/hono/types'
+import { HonoGeneratorExtras, ProjectCtx } from '@/generators/hono/types'
 
-const tmpl = ({ project, endpointFiles }: { project: ProjectCtx; endpointFiles: string[] }) => {
-	const api = endpointFiles.map((x) => {
-		const path = x
-		const fullPath = x.replace('.ts', '.js')
-
-		const name = x
-			.split('/')
-			.filter((x) => !!x)
-			.slice(0, -1)
-			.join('/')
-			.replace(/\/|\./g, '_')
-			.replace(/\.[tj]sx?$/, '')
-
-		const route = `/${path
-			.split('/')
-			.filter((x) => !!x)
-			.slice(0, -1)
-			.join('/')}`
-
-		return {
-			import: `import ${name} from 'mods/api${fullPath}'`,
-			route,
-			router: `${name}.router`,
-		}
-	})
+const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorExtras }) => {
+	const hasApi = extras.api !== undefined
 
 	return `import { Hono } from 'hono'
 	import { router as login } from './auth/login.js'
@@ -35,7 +12,7 @@ const tmpl = ({ project, endpointFiles }: { project: ProjectCtx; endpointFiles: 
 	import { router as resetPassword } from './auth/reset-password.js'
 	import { router as graphql } from './graphql/router.js'
 	import { router as resend } from './webhooks/resend.js'
-	${api.map((x) => x.import).join('\n')}
+	${hasApi ? "import { default as api } from 'mods/src/api.js'" : ''}
 	
 	export const router = new Hono()
 	
@@ -47,7 +24,7 @@ const tmpl = ({ project, endpointFiles }: { project: ProjectCtx; endpointFiles: 
 	${project.settings.auth.requireAccountConfirmation ? `router.route('/auth', confirmAccount)` : ''}
 	router.route('/auth', resetPassword)
 	router.route('/graphql', graphql)
-	${api.map((x) => `router.route('${x.route}', ${x.router})`).join('\n')}
+	${hasApi ? "router.route('/', api.router)" : ''}
 	`
 }
 

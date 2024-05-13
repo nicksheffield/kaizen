@@ -19,7 +19,7 @@ export const ProjectAuth = () => {
 
 	const form = useForm<FormState>({
 		defaultValues: project?.settings.auth || {
-			requireAccountConfirmation: true,
+			requireAccountConfirmation: false,
 			require2fa: false,
 			sessionExpiry: '60',
 			enableCookies: false,
@@ -53,7 +53,7 @@ export const ProjectAuth = () => {
 			<ScrollArea className="flex-1">
 				<div className="flex flex-col items-center p-6">
 					<Card className="w-full max-w-3xl border-0 shadow-none">
-						<CardHeader>
+						<CardHeader className="mb-6">
 							<CardTitle className="flex items-center gap-2">
 								<TreeFileIcon path="project.json?auth" className="h-6 w-6" />
 								Auth

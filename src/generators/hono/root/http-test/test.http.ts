@@ -54,7 +54,7 @@ Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
 mutation Create${singular(model.name)}($data: [Create${model.name}!]!) {
-	create${model.name} {
+	create${model.name}(data: $data) {
 ${model.attributes
 	.filter((x) => x.selectable)
 	.map((x) => `\t\t${x.name}`)
@@ -89,7 +89,7 @@ Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
 mutation Update${singular(model.name)}($data: [Update${model.name}!]!) {
-	update${model.name} {
+	update${model.name}(data: $data) {
 ${model.attributes
 	.filter((x) => x.selectable)
 	.map((x) => `\t\t${x.name}`)

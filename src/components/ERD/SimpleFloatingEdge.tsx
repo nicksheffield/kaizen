@@ -118,6 +118,7 @@ export const SimpleFloatingEdge = ({ id, source, target, markerEnd, markerStart,
 		targetY: ty,
 		borderRadius: 20,
 		centerX: (tx + sx) / 2 + (rel?.data.sourceOrder + 1) * -10 + 15,
+		offset: 40,
 	})
 
 	return (

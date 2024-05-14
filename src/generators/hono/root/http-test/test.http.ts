@@ -68,15 +68,15 @@ ${model.attributes
 	.filter((x) => x.insertable)
 	.map((x) => {
 		if (x.name === 'id') {
-			return `\t\t// ${x.name}: ""`
+			return `\t\t// "${x.name}": ""`
 		}
 		if (x.optional) {
-			return `\t\t// ${x.name}: ""`
+			return `\t\t// "${x.name}": ""`
 		}
 		if (x.default) {
-			return `\t\t// ${x.name}: ${x.default}`
+			return `\t\t// "${x.name}": ${x.default}`
 		}
-		return `\t\t${x.name}: ""`
+		return `\t\t"${x.name}": ""`
 	})
 	.join(',\n')}
 	}]
@@ -103,15 +103,15 @@ ${model.attributes
 	.filter((x) => x.insertable)
 	.map((x) => {
 		if (x.name === 'id') {
-			return `\t\t${x.name}: ""`
+			return `\t\t"${x.name}": ""`
 		}
 		if (x.optional) {
-			return `\t\t// ${x.name}: ""`
+			return `\t\t// "${x.name}": ""`
 		}
 		if (x.default) {
-			return `\t\t// ${x.name}: ${x.default}`
+			return `\t\t// "${x.name}": ${x.default}`
 		}
-		return `\t\t// ${x.name}: ""`
+		return `\t\t// "${x.name}": ""`
 	})
 	.join(',\n')}
 	}]

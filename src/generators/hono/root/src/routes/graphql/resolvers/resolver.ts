@@ -33,7 +33,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 			return `import * as ${x.otherModel.name} from './${x.drizzleName}.js'`
 		})
 		.join('\n')}
-	import { removeDuplicates } from '../../../lib/utils.js'
+	import { removeDuplicates, modifyQuery } from '../../../lib/utils.js'
 	import { OrderDir, DateType } from './_utils.js'
 	import * as filters from './_filters.js'
 	import * as history from '../../../lib/history.js'
@@ -198,23 +198,39 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	
 	// the resolvers for the queries
 	export const queryResolvers: Resolvers['Query'] = {
-		${singular(model.drizzleName)}: async (_, args) => {
-			const item = await db.query.${model.drizzleName}.findFirst({
-				${
-					nonSelectAttrs.length > 0
-						? `columns: {
-					${nonSelectAttrs.map((x) => `${x.name}: false`).join(',\n')}
-					},`
-						: ''
-				}
-				where: and(
-					eq(tables.${model.drizzleName}.id, args.id),
-					${model.auditDates ? `isNull(tables.${model.drizzleName}.deletedAt)` : ''}
-				),
+		${singular(model.drizzleName)}: async (_, args, c) => {
+			const where = and(
+				eq(tables.${model.drizzleName}.id, args.id),
+				${model.auditDates ? `isNull(tables.${model.drizzleName}.deletedAt)` : ''}
+			)
+
+			let mainQ = db
+				.select({
+					${model.attributes
+						.filter((x) => x.selectable)
+						.map((x) => `${x.name}: tables.${model.drizzleName}.${x.name},`)
+						.join('\n')}
+					${model.foreignKeys.map((x) => `${x.name}: tables.${model.drizzleName}.${x.name},`).join('\n')}
+					${
+						model.auditDates
+							? `createdAt: tables.${model.drizzleName}.createdAt,
+					updatedAt: tables.${model.drizzleName}.updatedAt,
+					deletedAt: tables.${model.drizzleName}.deletedAt,`
+							: ''
+					}
+				})
+				.from(tables.${model.drizzleName})
+				.where(where)
+
+			\/\/ @ts-expect-error - this is fine
+			mainQ = modifyQuery('${singular(model.drizzleName)}Query', mainQ, {
+				where,
+				user: c.get('user'),
 			})
+
+			const item = await mainQ
 	
-			// if (!item) return null
-			return item
+			return item[0]
 		},
 	
 		${plural(model.drizzleName)}: async (_, args, c) => {
@@ -224,29 +240,57 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				...filters.toWhere(tables.${model.drizzleName}, args.where),
 				${model.auditDates ? `isNull(tables.${model.drizzleName}.deletedAt)` : ''}
 			)
+
+			let mainQ = db
+				.select({
+					${model.attributes
+						.filter((x) => x.selectable)
+						.map((x) => `${x.name}: tables.${model.drizzleName}.${x.name},`)
+						.join('\n')}
+					${model.foreignKeys.map((x) => `${x.name}: tables.${model.drizzleName}.${x.name},`).join('\n')}
+					${
+						model.auditDates
+							? `createdAt: tables.${model.drizzleName}.createdAt,
+					updatedAt: tables.${model.drizzleName}.updatedAt,
+					deletedAt: tables.${model.drizzleName}.deletedAt,`
+							: ''
+					}
+				})
+				.from(tables.${model.drizzleName})
+				.orderBy(
+					dir(
+						tables.${model.drizzleName}[
+							args.orderBy as keyof typeof tables.${model.drizzleName}
+						] as Column
+					)
+				)
+				.where(where)
+				.$dynamic()
 	
-			const items = await db.query.${model.drizzleName}.findMany({
-				${
-					nonSelectAttrs.length > 0
-						? `columns: {
-					${nonSelectAttrs.map((x) => `${x.name}: false`).join(',\n')}
-					},`
-						: ''
-				}
-				offset: args.limit ? (args.page - 1) * args.limit : undefined,
-				limit: args.limit || undefined,
-				orderBy: dir(
-					tables.${model.drizzleName}[
-						args.orderBy as keyof typeof tables.${model.drizzleName}
-					] as Column
-				),
+			\/\/ @ts-expect-error - this is fine
+			mainQ = modifyQuery('${model.drizzleName}Query', mainQ, {
 				where,
+				user: c.get('user'),
 			})
 	
-			const [{ totalCount } = { totalCount: 0 }] = await db
+			if (args.limit) mainQ = mainQ.offset((args.page - 1) * args.limit)
+			if (args.limit) mainQ = mainQ.limit(args.limit)
+	
+			const items = await mainQ
+	
+			let countQ = db
 				.select({ totalCount: count() })
 				.from(tables.${model.drizzleName})
 				.where(where)
+				.$dynamic()
+
+			\/\/ @ts-expect-error - this is fine
+			countQ = modifyQuery('${model.drizzleName}Query', countQ, {
+				where,
+				user: c.get('user'),
+			})
+	
+			const [{ totalCount } = { totalCount: 0 }] = await countQ
 	
 			return {
 				items,

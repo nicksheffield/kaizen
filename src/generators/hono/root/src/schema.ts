@@ -6,7 +6,7 @@ const tmpl = (ctx: { models: ModelCtx[]; project: ProjectCtx }) => {
 	const attrTypeImports = ctx.models.flatMap((x) => x.attributes).map((x) => mapAttrToDrizzleTypeName(x.type))
 	const requiredTypeImports = ['mysqlTable', 'timestamp', 'varchar', 'datetime']
 
-	const drizzleTypeImports = ['int', ...attrTypeImports, ...requiredTypeImports].filter(
+	const drizzleTypeImports = ['int', 'MySqlSelect', ...attrTypeImports, ...requiredTypeImports].filter(
 		(x, i, a) => a.indexOf(x) === i
 	)
 
@@ -15,8 +15,16 @@ const tmpl = (ctx: { models: ModelCtx[]; project: ProjectCtx }) => {
 	const authModel = models.find((x) => ctx.project.settings.userModelId === x.id)
 	const authModelName = authModel?.drizzleName || 'users'
 
-	return `import { relations, sql } from 'drizzle-orm'
+	return `import { SQL, relations, sql } from 'drizzle-orm'
 import { ${drizzleTypeImports.join(', ')} } from 'drizzle-orm/mysql-core'
+
+export type QueryModifier = (
+	query: MySqlSelect,
+	ctx: {
+		where: SQL<unknown>
+		user: { id: string; roles: string; email: string }
+	}
+) => MySqlSelect
 
 const auditDates = {
 	createdAt: timestamp('createdAt').defaultNow().notNull(),

@@ -39,13 +39,17 @@ POST http://localhost:${port}/api/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
-query Get${singular(model.name)}($id: ID) {
+query Get${singular(model.name)}($id: ID!) {
 	${singular(model.drizzleName)}(id: $id) {
 ${model.attributes
 	.filter((x) => x.selectable)
 	.map((x) => `\t\t${x.name}`)
 	.join('\n')}
 	}
+}
+
+{
+	"id": ""
 }
 
 ### @name Create${singular(model.name)}

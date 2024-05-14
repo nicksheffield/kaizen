@@ -268,6 +268,7 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 			const generated = await generate(project, {
 				seeder: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/seed.ts`)),
 				api: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/api.ts`)),
+				queries: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/queries.ts`)),
 				emails: files
 					.filter(isFile)
 					.filter((x) => x.path.startsWith(`${MODS_PATH}/emails`))

@@ -72,7 +72,7 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['src/lib/lucia.ts'] = await format(src_lib_lucia({ project }))
 	dir['src/lib/manageUser.ts'] = await format(src_lib_manageUser({ models, project }))
 	dir['src/lib/password.ts'] = await format(src_lib_password())
-	dir['src/lib/utils.ts'] = await format(src_lib_utils())
+	dir['src/lib/utils.ts'] = await format(src_lib_utils({ extras }))
 
 	dir['src/middleware/authenticate.ts'] = await format(src_middleware_authenticate({ project }))
 	dir['src/middleware/rateLimit.ts'] = await format(src_middleware_rateLimit())

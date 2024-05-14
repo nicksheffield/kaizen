@@ -5,6 +5,7 @@ export type ProjectCtx = Project
 export type HonoGeneratorExtras = {
 	seeder: boolean
 	api: boolean
+	queries: boolean
 	emails: string[]
 }
 

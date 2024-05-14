@@ -12,6 +12,7 @@ import apps_mods_tsconfigJson from './root/apps/mods/tsconfigJson'
 import apps_mods_packageJson from './root/apps/mods/packageJson'
 import apps_mods_src_api from './root/apps/mods/src/api'
 import apps_mods_src_seed from './root/apps/mods/src/seed'
+import apps_mods_src_queries from './root/apps/mods/src/queries'
 import apps_mods_emails_ConfirmAccount from './root/apps/mods/emails/ConfirmAccount'
 import apps_mods_emails_ResetPassword from './root/apps/mods/emails/ResetPassword'
 import apps_mods_emails_TwoFactorCode from './root/apps/mods/emails/TwoFactorCode'
@@ -33,6 +34,7 @@ export const workspaceFiles = (project?: Project) => {
 		`${MODS_PATH}/package.json`,
 		`${MODS_PATH}/src/api.ts`,
 		`${MODS_PATH}/src/seed.ts`,
+		`${MODS_PATH}/src/queries.ts`,
 		`${MODS_PATH}/emails/ResetPassword.tsx`,
 		`${MODS_PATH}/emails/TwoFactorCode.tsx`,
 	]
@@ -60,6 +62,7 @@ export const generate: WorkspaceGeneratorFn = async ({ project }) => {
 	dir[`${MODS_PATH}/package.json`] = apps_mods_packageJson()
 	dir[`${MODS_PATH}/src/api.ts`] = await format(apps_mods_src_api())
 	dir[`${MODS_PATH}/src/seed.ts`] = await format(apps_mods_src_seed())
+	dir[`${MODS_PATH}/src/queries.ts`] = await format(apps_mods_src_queries())
 	dir[`${MODS_PATH}/emails/ResetPassword.tsx`] = await format(apps_mods_emails_ResetPassword({ project }))
 	dir[`${MODS_PATH}/emails/TwoFactorCode.tsx`] = await format(apps_mods_emails_TwoFactorCode({ project }))
 

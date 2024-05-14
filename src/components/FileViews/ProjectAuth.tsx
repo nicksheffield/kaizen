@@ -70,7 +70,7 @@ export const ProjectAuth = () => {
 								</FormRow>
 
 								<div className="-mb-4 font-medium">Tokens</div>
-								<Card className="divide-y">
+								<Card className="divide-y overflow-hidden">
 									<Switcher
 										name="enableCookies"
 										label="Enable Cookies"
@@ -85,7 +85,7 @@ export const ProjectAuth = () => {
 								</Card>
 
 								<div className="-mb-4 font-medium">Two Factor</div>
-								<Card className="divide-y">
+								<Card className="divide-y overflow-hidden">
 									<Switcher
 										name="enableAuthenticator2fa"
 										label="Enable Authenticator 2fa"
@@ -107,7 +107,7 @@ export const ProjectAuth = () => {
 								</Card>
 
 								<div className="-mb-4 font-medium">User Management</div>
-								<Card className="divide-y">
+								<Card className="divide-y overflow-hidden">
 									<Switcher
 										name="enableRegistration"
 										label="Enable Registration"

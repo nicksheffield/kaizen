@@ -34,7 +34,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 	return stringify(
 		{
 			version: '3.1',
-			name: project.settings.name.toLowerCase().replace(/\s/g, '-'),
+			name: project.settings.name.toLowerCase().replaceAll(/\s/g, '-').replaceAll(/\./g, '_'),
 			services: {
 				db,
 				adminer,

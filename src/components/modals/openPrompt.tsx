@@ -50,7 +50,7 @@ const Congratulate = ({
 				<div className="p-4">
 					<FormInput name="prompt" placeholder={placeholder} className="flex-1" />
 				</div>
-				<DialogFooter className="border-t bg-muted/50 p-4">
+				<DialogFooter className="border-t bg-muted p-4">
 					<Button type="submit" variant="default" disabled={form.formState.isSubmitting} className="relative">
 						<div
 							className={cn(

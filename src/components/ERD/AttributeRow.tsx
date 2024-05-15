@@ -121,7 +121,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 						variant="ghost"
 						size="xs"
 						className={cn(
-							'flex h-[24px] items-center justify-between gap-6 px-1 py-0',
+							'flex h-[24px] items-center justify-between gap-6 px-1 py-0 hover:bg-primary/20',
 							open && 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
 						)}
 					>

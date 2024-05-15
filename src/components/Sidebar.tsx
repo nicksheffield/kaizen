@@ -23,7 +23,7 @@ export const Sidebar = () => {
 
 	return (
 		<div className={cn('flex w-[300px] shrink-0 flex-col', compact && 'w-auto')}>
-			<div className="relative flex min-h-0 flex-1 flex-col divide-y bg-muted/50">
+			<div className="relative flex min-h-0 flex-1 flex-col divide-y bg-muted">
 				{compact ? (
 					<SmallTree />
 				) : (
@@ -58,7 +58,7 @@ export const Sidebar = () => {
 
 			<Button
 				variant="ghost"
-				className="rounded-none border-t bg-muted/50"
+				className="rounded-none border-t bg-muted"
 				onClick={() => {
 					setCompact((x) => !x)
 				}}

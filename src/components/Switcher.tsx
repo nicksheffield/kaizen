@@ -16,7 +16,7 @@ export const Switcher = ({
 	className?: string
 }) => {
 	return (
-		<div className={cn('flex flex-row items-center gap-20 p-4 hover:bg-muted/50', className)}>
+		<div className={cn('flex flex-row items-center gap-20 p-4 hover:bg-muted', className)}>
 			<div className="flex flex-1 flex-col gap-0">
 				<Label className="leading-normal">{label}</Label>
 				<div className="text-sm text-muted-foreground">{description}</div>

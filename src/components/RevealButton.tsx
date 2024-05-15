@@ -28,10 +28,10 @@ export const RevealButton = forwardRef<HTMLButtonElement, RevealButtonProps>(
 				<AnimatePresence>
 					{(hovered || revealLabel) && (
 						<motion.div
-							initial={{ width: 0 }}
-							exit={{ width: 0 }}
-							animate={{ width: 'auto' }}
-							className="overflow-hidden rounded-full"
+							initial={{ width: 0, opacity: 0 }}
+							exit={{ width: 0, opacity: 0 }}
+							animate={{ width: 'auto', opacity: 1 }}
+							className={cn('flex overflow-hidden rounded-full', iconSide === 'left' && 'justify-end')}
 						>
 							<div className={cn(iconSide === 'left' ? 'ml-2' : 'mr-2')}>{revealLabel || label}</div>
 						</motion.div>

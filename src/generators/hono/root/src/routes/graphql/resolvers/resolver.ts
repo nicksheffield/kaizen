@@ -2,7 +2,6 @@ import { ModelCtx } from '@/generators/hono/contexts'
 import { mapAttrToGQLFilter, mapAttrToGarph } from '@/generators/hono/utils'
 import { ProjectCtx } from '@/generators/hono/types'
 import { isNotNone } from '@/lib/utils'
-import { plural, singular } from 'pluralize'
 
 const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	const nonSelectAttrs = model.attributes.filter((x) => !x.selectable)
@@ -183,11 +182,11 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	
 	// the types for the queries
 	export const queryTypes = {
-		${singular(model.drizzleName)}: g.ref(types.type).optional().args({
+		${model.drizzleNameSingular}: g.ref(types.type).optional().args({
 			id: g.id(),
 		}),
 	
-		${plural(model.drizzleName)}: g.ref(types.collection).args({
+		${model.drizzleName}: g.ref(types.collection).args({
 			page: g.int().default(1),
 			limit: g.int().default(0),
 			orderBy: g.ref(OrderBys).default(${model.auditDates ? `'createdAt'` : `'id'`}),
@@ -198,7 +197,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	
 	// the resolvers for the queries
 	export const queryResolvers: Resolvers['Query'] = {
-		${singular(model.drizzleName)}: async (_, args, c) => {
+		${model.drizzleNameSingular}: async (_, args, c) => {
 			const where = and(
 				eq(tables.${model.drizzleName}.id, args.id),
 				${model.auditDates ? `isNull(tables.${model.drizzleName}.deletedAt)` : ''}
@@ -223,7 +222,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				.where(where)
 
 			\/\/ @ts-expect-error - this is fine
-			mainQ = modifyQuery('${singular(model.drizzleName)}Query', mainQ, {
+			mainQ = modifyQuery('${model.drizzleNameSingular}Query', mainQ, {
 				where,
 				user: c.get('user'),
 			})
@@ -233,7 +232,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 			return item[0]
 		},
 	
-		${plural(model.drizzleName)}: async (_, args, c) => {
+		${model.drizzleName}: async (_, args, c) => {
 			const dir = args.orderDir === 'ASC' ? asc : desc
 	
 			const where = and(

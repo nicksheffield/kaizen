@@ -72,6 +72,7 @@ export const createModelCtx = (model: ProjectCtx['models'][number], ctx: Project
 						optionalOp: rel.optional ? '?' : '!',
 						order: rel.sourceOrder,
 						otherTable: getTableName(targetModel),
+						otherDrizzle: pluralize(getSmallName(targetModel), 2),
 					}
 				})
 				.filter(isNotNone),
@@ -88,6 +89,7 @@ export const createModelCtx = (model: ProjectCtx['models'][number], ctx: Project
 						optional: rel.optional,
 						order: rel.targetOrder,
 						otherTable: getTableName(sourceModel),
+						otherDrizzle: pluralize(getSmallName(sourceModel), 2),
 					}
 				})
 				.filter(isNotNone),
@@ -104,6 +106,7 @@ export const createModelCtx = (model: ProjectCtx['models'][number], ctx: Project
 						optional: rel.optional,
 						order: rel.targetOrder,
 						otherTable: getTableName(targetModel),
+						otherDrizzle: pluralize(getSmallName(targetModel), 2),
 					}
 				})
 				.filter(isNotNone),

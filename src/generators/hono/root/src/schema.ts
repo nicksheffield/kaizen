@@ -164,7 +164,7 @@ ${models
 	${model.foreignKeys
 		.map((fk) => {
 			if (fk.name === 'id') return
-			return `${fk.name}: varchar('${fk.name}', { length: 15 })${fk.optional ? '' : '.notNull()'}.references(() => ${fk.otherTable}.id),`
+			return `${fk.name}: varchar('${fk.name}', { length: 15 })${fk.optional ? '' : '.notNull()'}.references(() => ${fk.otherDrizzle}.id),`
 		})
 		.filter((x) => x !== undefined)
 		.join('\n\t')}
@@ -188,7 +188,7 @@ ${models
 		if (relationTypes.length === 0) return null
 
 		// ${relationTypes.join(', ')}
-		return `export const ${model.drizzleName}Relations = relations(${model.tableName}, ({ one, many }) => ({
+		return `export const ${model.drizzleName}Relations = relations(${model.drizzleName}, ({ one, many }) => ({
 	${
 		model.id === ctx.project.settings.userModelId
 			? `sessions: many(sessions),
@@ -201,8 +201,8 @@ ${models
 		.map((rel) => {
 			// ${rel.side}
 			if (rel.targetType === 'one') {
-				return `${rel.fieldName}: one(${rel.tableName}, {
-		fields: [${model.tableName}.${rel.thisKey}],
+				return `${rel.fieldName}: one(${rel.drizzleName}, {
+		fields: [${model.drizzleName}.${rel.thisKey}],
 		references: [${rel.drizzleName}.${rel.oppositeKey}],
 	})`
 			}

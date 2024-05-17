@@ -25,6 +25,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 		isNull,
 		sql
 	} from 'drizzle-orm'
+	import { MySqlSelectDynamic } from 'drizzle-orm/mysql-core'
 	import { g, Infer } from 'garph'
 	${isAuthModel ? `import { createUser, updateUser } from '../../../lib/manageUser.js'` : `import { generateId } from 'lucia'`}
 	${model.relatedModels
@@ -32,7 +33,8 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 			return `import * as ${x.otherModel.name} from './${x.drizzleName}.js'`
 		})
 		.join('\n')}
-	import { removeDuplicates, modifyQuery } from '../../../lib/utils.js'
+	import { removeDuplicates } from '../../../lib/utils.js'
+	import { modifyQuery } from '../../../lib/modifiers.js'
 	import { OrderDir, DateType } from './_utils.js'
 	import * as filters from './_filters.js'
 	import * as history from '../../../lib/history.js'
@@ -203,7 +205,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				${model.auditDates ? `isNull(tables.${model.drizzleName}.deletedAt)` : ''}
 			)
 
-			let mainQ = db
+			let mainQ: MySqlSelectDynamic<any> | null = db
 				.select({
 					${model.attributes
 						.filter((x) => x.selectable)
@@ -220,16 +222,24 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				})
 				.from(tables.${model.drizzleName})
 				.where(where)
-
-			\/\/ @ts-expect-error - this is fine
-			mainQ = modifyQuery('${model.drizzleNameSingular}Query', mainQ, {
+				.$dynamic()
+	
+			let cancelled = false
+	
+			const moddedQuery = modifyQuery('${model.drizzleNameSingular}', mainQ, {
 				where,
 				user: c.get('user'),
 			})
-
-			const item = await mainQ
+			
+			if (moddedQuery === null) {
+				cancelled = true
+			} else {
+				mainQ = moddedQuery
+			}
 	
-			return item[0]
+			const item = cancelled ? null : (await mainQ)[0]
+	
+			return item
 		},
 	
 		${model.drizzleName}: async (_, args, c) => {
@@ -266,31 +276,34 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				.where(where)
 				.$dynamic()
 	
-			\/\/ @ts-expect-error - this is fine
-			mainQ = modifyQuery('${model.drizzleName}Query', mainQ, {
+			let moddedQuery = modifyQuery('${model.drizzleName}', mainQ, {
 				where,
 				user: c.get('user'),
 			})
+			
+			if (moddedQuery === null) {
+				return {
+					items: [],
+					totalCount: 0,
+				}
+			}
 	
-			if (args.limit) mainQ = mainQ.offset((args.page - 1) * args.limit)
-			if (args.limit) mainQ = mainQ.limit(args.limit)
+			if (args.limit) moddedQuery = moddedQuery.offset((args.page - 1) * args.limit)
+			if (args.limit) moddedQuery = moddedQuery.limit(args.limit)
 	
-			const items = await mainQ
+			const items = await moddedQuery
 	
-			let countQ = db
+			const countQuery = modifyQuery('${model.drizzleName}', db
 				.select({ totalCount: count() })
 				.from(tables.${model.drizzleName})
 				.where(where)
-				.$dynamic()
+				.$dynamic(), {
+					where,
+					user: c.get('user'),
+				})
 
-			\/\/ @ts-expect-error - this is fine
-			countQ = modifyQuery('${model.drizzleName}Query', countQ, {
-				where,
-				user: c.get('user'),
-			})
-	
-			const [{ totalCount } = { totalCount: 0 }] = await countQ
-	
+			const [{ totalCount } = { totalCount: 0 }] = countQuery ? await countQuery : [{ totalCount: 0 }]
+
 			return {
 				items,
 				totalCount,

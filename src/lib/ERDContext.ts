@@ -14,6 +14,8 @@ type ERDContextType = {
 	setRelations: Dispatch<SetStateAction<Relation[]>>
 	detailed: boolean
 	setDetailed: Dispatch<SetStateAction<boolean>>
+	showConnections: boolean
+	setShowConnections: Dispatch<SetStateAction<boolean>>
 	attrTypeRecommends: AttrTypeRecommend[]
 	focusOn: (node: Node<Model>) => void
 	userModelId: string

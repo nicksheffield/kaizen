@@ -1,4 +1,5 @@
 // https://reactflow.dev/docs/examples/edges/simple-floating-edges/
+import { useERDContext } from '@/lib/ERDContext'
 import { useCallback } from 'react'
 import { useStore, getSmoothStepPath, type Node, type EdgeProps } from 'reactflow'
 
@@ -88,6 +89,8 @@ export const getEdgeParams = (source: Node, target: Node, relId: string) => {
 }
 
 export const SimpleFloatingEdge = ({ id, source, target, markerEnd, markerStart, style, data }: EdgeProps) => {
+	const { showConnections } = useERDContext()
+
 	const sourceNode = useStore(useCallback((store) => store.nodeInternals.get(source), [source]))
 	const targetNode = useStore(useCallback((store) => store.nodeInternals.get(target), [target]))
 	const rel = useStore(useCallback((store) => store.edges.find((x) => x.id === id), [id]))
@@ -120,6 +123,8 @@ export const SimpleFloatingEdge = ({ id, source, target, markerEnd, markerStart,
 		centerX: (tx + sx) / 2 + (rel?.data.sourceOrder + 1) * -10 + 15,
 		offset: 40,
 	})
+
+	if (!showConnections) return null
 
 	return (
 		<path

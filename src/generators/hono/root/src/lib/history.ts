@@ -36,12 +36,14 @@ const tmpl = () => {
 				return key !== '__typename' && key !== 'id'
 			})
 			.filter(([key]) => {
-				return String(oldData[key]) !== String(data[key])
+				const a = oldData[key] instanceof Date ? oldData[key].toISOString() : String(oldData[key])
+				const b = data[key] instanceof Date ? data[key].toISOString() : String(data[key])
+				return a !== b
 			})
 			.map(([column, value]) => ({
 				table,
 				column,
-				value: String(value),
+				value: value instanceof Date ? value.toISOString() : String(value),
 				rowId,
 				operation: 'update',
 				userId,

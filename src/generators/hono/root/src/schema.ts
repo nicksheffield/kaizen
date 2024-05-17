@@ -4,11 +4,17 @@ import { ProjectCtx } from '@/generators/hono/types'
 
 const tmpl = (ctx: { models: ModelCtx[]; project: ProjectCtx }) => {
 	const attrTypeImports = ctx.models.flatMap((x) => x.attributes).map((x) => mapAttrToDrizzleTypeName(x.type))
-	const requiredTypeImports = ['mysqlTable', 'timestamp', 'varchar', 'datetime']
+	const requiredTypeImports = ['AnyMySqlColumn', 'mysqlTable', 'timestamp', 'varchar', 'datetime']
 
-	const drizzleTypeImports = ['int', 'MySqlSelect', ...attrTypeImports, ...requiredTypeImports].filter(
-		(x, i, a) => a.indexOf(x) === i
-	)
+	const drizzleTypeImports = [
+		'int',
+		'MySqlSelect',
+		'MySqlInsert',
+		'MySqlUpdate',
+		'MySqlDelete',
+		...attrTypeImports,
+		...requiredTypeImports,
+	].filter((x, i, a) => a.indexOf(x) === i)
 
 	const models = ctx.models
 
@@ -17,14 +23,6 @@ const tmpl = (ctx: { models: ModelCtx[]; project: ProjectCtx }) => {
 
 	return `import { SQL, relations, sql } from 'drizzle-orm'
 import { ${drizzleTypeImports.join(', ')} } from 'drizzle-orm/mysql-core'
-
-export type QueryModifier = (
-	query: MySqlSelect,
-	ctx: {
-		where: SQL<unknown>
-		user: { id: string; roles: string; email: string }
-	}
-) => MySqlSelect
 
 const auditDates = {
 	createdAt: timestamp('createdAt').defaultNow().notNull(),
@@ -164,7 +162,7 @@ ${models
 	${model.foreignKeys
 		.map((fk) => {
 			if (fk.name === 'id') return
-			return `${fk.name}: varchar('${fk.name}', { length: 15 })${fk.optional ? '' : '.notNull()'}.references(() => ${fk.otherDrizzle}.id),`
+			return `${fk.name}: varchar('${fk.name}', { length: 15 })${fk.optional ? '' : '.notNull()'}.references((): AnyMySqlColumn => ${fk.otherDrizzle}.id),`
 		})
 		.filter((x) => x !== undefined)
 		.join('\n\t')}

@@ -1,15 +1,8 @@
-import { HonoGeneratorExtras } from '@/generators/hono/types'
-
-const tmpl = ({ extras }: { extras: HonoGeneratorExtras }) => {
-	const hasQueryMods = extras.queries
-
+const tmpl = () => {
 	return `import { GraphQLSchema, introspectionFromSchema, printSchema } from 'graphql'
 	import { writeFile } from 'node:fs/promises'
 	import { join } from 'node:path'
 	import mime from 'mime-types'
-	import queryMods from 'mods/src/queries.js'
-	import { MySqlSelect } from 'drizzle-orm/mysql-core'
-	${hasQueryMods ? `import { QueryModifier } from 'schema.js'` : ''}
 	
 	export const removeDuplicates = <T>(list: T[]): T[] => {
 		return list.filter((x, i, a) => a.indexOf(x) === i)
@@ -23,22 +16,6 @@ const tmpl = ({ extras }: { extras: HonoGeneratorExtras }) => {
 	}
 	
 	export const fileExtensions = Object.values(mime.extensions).flat()
-	
-	export const modifyQuery = (
-		modifier: string,
-		query: MySqlSelect,
-		ctx: Parameters<QueryModifier>[1]
-	) => {
-		${
-			hasQueryMods
-				? `const mod: QueryModifier | undefined =
-			queryMods[modifier as keyof typeof queryMods]
-	
-		if (mod) return mod(query, ctx)`
-				: ''
-		}
-		return query
-	}
 	`
 }
 

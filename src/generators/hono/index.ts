@@ -26,6 +26,7 @@ import src_lib_lucia from './root/src/lib/lucia'
 import src_lib_manageUser from './root/src/lib/manageUser'
 import src_lib_password from './root/src/lib/password'
 import src_lib_utils from './root/src/lib/utils'
+import src_lib_modifiers from './root/src/lib/modifiers'
 
 import src_middleware_authenticate from './root/src/middleware/authenticate'
 import src_middleware_rateLimit from './root/src/middleware/rateLimit'
@@ -72,7 +73,8 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['src/lib/lucia.ts'] = await format(src_lib_lucia({ project }))
 	dir['src/lib/manageUser.ts'] = await format(src_lib_manageUser({ models, project }))
 	dir['src/lib/password.ts'] = await format(src_lib_password())
-	dir['src/lib/utils.ts'] = await format(src_lib_utils({ extras }))
+	dir['src/lib/utils.ts'] = await format(src_lib_utils())
+	dir['src/lib/modifiers.ts'] = await format(src_lib_modifiers({ extras }))
 
 	dir['src/middleware/authenticate.ts'] = await format(src_middleware_authenticate({ project }))
 	dir['src/middleware/rateLimit.ts'] = await format(src_middleware_rateLimit())

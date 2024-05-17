@@ -17,7 +17,16 @@ import { useApp } from '@/lib/AppContext'
 import { ModelNode } from '@/components/ERD/ModelNode'
 import { SimpleFloatingEdge } from '@/components/ERD/SimpleFloatingEdge'
 import { useLocalStorage } from 'usehooks-ts'
-import { ListCollapseIcon, MaximizeIcon, PlusIcon, SaveIcon, SearchIcon, ShrinkIcon, Undo2Icon } from 'lucide-react'
+import {
+	CableIcon,
+	ListCollapseIcon,
+	MaximizeIcon,
+	PlusIcon,
+	SaveIcon,
+	SearchIcon,
+	ShrinkIcon,
+	Undo2Icon,
+} from 'lucide-react'
 import { RevealButton } from '@/components/RevealButton'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn, generateId, getUserModelFields } from '@/lib/utils'
@@ -179,6 +188,10 @@ export const Editor = () => {
 	}
 
 	const [detailed, setDetailed] = useLocalStorage(`project-${project?.settings.id}-erd-detailed`, false)
+	const [showConnections, setShowConnections] = useLocalStorage(
+		`project-${project?.settings.id}-erd-showConnections`,
+		false
+	)
 
 	const isDirty = useMemo(() => {
 		const models = nodes.map((x) => ({ ...x.data, posX: x.position.x, posY: x.position.y }))
@@ -381,6 +394,8 @@ export const Editor = () => {
 				addNode,
 				relations,
 				setRelations,
+				showConnections,
+				setShowConnections,
 				detailed,
 				setDetailed,
 				attrTypeRecommends,
@@ -452,6 +467,13 @@ export const Editor = () => {
 									onClick={() => setDetailed((x) => !x)}
 									icon={<ListCollapseIcon className="h-4 w-4" />}
 									label="Show Details"
+								/>
+								<RevealButton
+									variant="ghost"
+									size="pip"
+									onClick={() => setShowConnections((x) => !x)}
+									icon={<CableIcon className="h-4 w-4" />}
+									label="Show Connections"
 								/>
 								<RevealButton
 									variant="ghost"

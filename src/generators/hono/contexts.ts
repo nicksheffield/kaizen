@@ -125,7 +125,7 @@ export const createModelCtx = (model: ProjectCtx['models'][number], ctx: Project
 					const otherName = rel.targetName || camelize(otherModel.key || otherModel.name)
 
 					const isArray = rel.type === RelationType.oneToMany || rel.type === RelationType.manyToMany
-					const fieldName = pluralize(otherName, isArray ? 2 : 1)
+					const fieldName = isArray ? pluralize(getSmallName(otherModel), 2) : getSmallName(otherModel)
 
 					const thisKey = (() => {
 						if (rel.type === RelationType.oneToOne) return `${otherName}Id`
@@ -176,7 +176,7 @@ export const createModelCtx = (model: ProjectCtx['models'][number], ctx: Project
 					const otherName = rel.sourceName || camelize(otherModel.key || otherModel.name)
 
 					const isArray = rel.type === RelationType.manyToOne || rel.type === RelationType.manyToMany
-					const fieldName = pluralize(otherName, isArray ? 2 : 1)
+					const fieldName = isArray ? pluralize(getSmallName(otherModel), 2) : getSmallName(otherModel)
 
 					const thisKey = (() => {
 						if (rel.type === RelationType.oneToOne) return `id`

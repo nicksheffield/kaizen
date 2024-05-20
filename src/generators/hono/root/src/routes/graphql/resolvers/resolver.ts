@@ -84,7 +84,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 			totalCount: g.int(),
 		}),
 	
-		create: g.inputType('Create${model.name}', {
+		create: g.inputType('Create${model.name}Input', {
 			${model.attributes
 				.filter((x) => x.type !== 'a_i')
 				.map((x) => {
@@ -105,7 +105,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				.join('\n')}
 		}),
 	
-		update: g.inputType('Update${model.name}', {
+		update: g.inputType('Update${model.name}Input', {
 			${model.attributes
 				.filter((x) => x.type !== 'a_i')
 				.map((x) => {
@@ -288,8 +288,11 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				}
 			}
 	
-			if (args.limit) moddedQuery = moddedQuery.offset((args.page - 1) * args.limit)
-			if (args.limit) moddedQuery = moddedQuery.limit(args.limit)
+			if (args.limit) {
+				moddedQuery = (moddedQuery as typeof mainQ)
+					.limit(args.limit)
+					.offset((args.page - 1) * args.limit)
+			}
 	
 			const items = await moddedQuery
 	

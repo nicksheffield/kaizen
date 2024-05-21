@@ -1,5 +1,5 @@
 import { ModelCtx } from '@/generators/hono/contexts'
-import { plural, singular } from 'pluralize'
+import { uc } from '@/lib/utils'
 
 const tmpl = ({ model }: { model: ModelCtx }) => {
 	const port = 3000
@@ -17,13 +17,13 @@ Content-Type: application/json
 ### @name Logout
 POST http://localhost:${port}/api/auth/logout
 
-### @name Get${plural(model.name)}
+### @name Get${uc(model.drizzleName)}
 POST http://localhost:${port}/api/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
-query Get${plural(model.name)}($page: Int, $limit: Int, $where: ${model.name}Filter, $orderBy: ${model.name}OrderBy, $orderDir: OrderDir) {
-	${plural(model.drizzleName)}(page: $page, limit: $limit, where: $where, orderBy: $orderBy, orderDir: $orderDir) {
+query Get${uc(model.drizzleName)}($page: Int, $limit: Int, $where: ${model.name}Filter, $orderBy: ${model.name}OrderBy, $orderDir: OrderDir) {
+	${model.drizzleName}(page: $page, limit: $limit, where: $where, orderBy: $orderBy, orderDir: $orderDir) {
 		items {
 ${model.attributes
 	.filter((x) => x.selectable)
@@ -34,13 +34,13 @@ ${model.attributes
 	}
 }
 
-### @name Get${singular(model.name)}
+### @name Get${uc(model.drizzleNameSingular)}
 POST http://localhost:${port}/api/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
-query Get${singular(model.name)}($id: ID!) {
-	${singular(model.drizzleName)}(id: $id) {
+query Get${uc(model.drizzleNameSingular)}($id: ID!) {
+	${model.drizzleNameSingular}(id: $id) {
 ${model.attributes
 	.filter((x) => x.selectable)
 	.map((x) => `\t\t${x.name}`)
@@ -52,12 +52,12 @@ ${model.attributes
 	"id": ""
 }
 
-### @name Create${singular(model.name)}
+### @name Create${uc(model.drizzleNameSingular)}
 POST http://localhost:${port}/api/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
-mutation Create${singular(model.name)}($data: [Create${model.name}!]!) {
+mutation Create${uc(model.drizzleNameSingular)}($data: [Create${model.name}!]!) {
 	create${model.name}(data: $data) {
 ${model.attributes
 	.filter((x) => x.selectable)
@@ -87,12 +87,12 @@ ${model.attributes
 }
 
 
-### @name Update${singular(model.name)}
+### @name Update${uc(model.drizzleNameSingular)}
 POST http://localhost:${port}/api/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
-mutation Update${singular(model.name)}($data: [Update${model.name}!]!) {
+mutation Update${uc(model.drizzleNameSingular)}($data: [Update${model.name}!]!) {
 	update${model.name}(data: $data) {
 ${model.attributes
 	.filter((x) => x.selectable)
@@ -121,12 +121,12 @@ ${model.attributes
 	}]
 }
 
-### @name Delete${singular(model.name)}
+### @name Delete${uc(model.drizzleNameSingular)}
 POST http://localhost:${port}/api/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
-mutation Delete${singular(model.name)}($id: [ID]!) {
+mutation Delete${uc(model.drizzleNameSingular)}($id: [ID]!) {
 	delete${model.name} {
 		id
 	}

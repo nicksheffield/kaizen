@@ -1,5 +1,5 @@
 import { FormSwitch } from '@/components/FormFields'
-import { Label } from '@/components/ui/label'
+import { labelVariants } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 
 export const Switcher = ({
@@ -16,14 +16,20 @@ export const Switcher = ({
 	className?: string
 }) => {
 	return (
-		<div className={cn('flex flex-row items-center gap-20 p-4 hover:bg-muted', className)}>
+		<label
+			className={cn(
+				'flex cursor-pointer flex-row items-center gap-20 p-4 hover:bg-muted',
+				disabled && 'cursor-default opacity-50',
+				className
+			)}
+		>
 			<div className="flex flex-1 flex-col gap-0">
-				<Label className="leading-normal">{label}</Label>
+				<div className={cn(labelVariants(), 'leading-normal')}>{label}</div>
 				<div className="text-sm text-muted-foreground">{description}</div>
 			</div>
 			<div className="flex items-center gap-2">
 				<FormSwitch name={name} disabled={disabled} />
 			</div>
-		</div>
+		</label>
 	)
 }

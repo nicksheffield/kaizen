@@ -12,20 +12,18 @@ import {
 	PlusIcon,
 	TextIcon,
 	Trash2Icon,
-	XIcon,
 } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Switch } from '@/components/ui/switch'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Attribute, Model as BasicModel, AttributeType } from '@/lib/projectSchemas'
-import { PanelRow } from './PanelRow'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { cn, getIsUserAttr } from '@/lib/utils'
 import { useERDContext } from '@/lib/ERDContext'
 import { getLogicalRecommend, getSourceName, getTargetName, isReservedKeyword } from '@/lib/ERDHelpers'
 import { useAttrField } from '@/lib/useAttrField'
+import { SelectList } from '@/components/SelectList'
 
 type Model = BasicModel & {
 	attributes: Attribute[]
@@ -41,7 +39,7 @@ type AttributeRowProps = {
 // const zoomSelector = (s: ReactFlowState) => s.transform[2]
 
 export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowProps) => {
-	const { relations, nodes, attrTypeRecommends } = useERDContext()
+	const { relations, nodes, attrTypeRecommends, modalHasPopover, setModalHasPopover } = useERDContext()
 
 	const isUserAttr = getIsUserAttr(attr.id)
 	const isLocked = isUserAttr || attr.name === 'id'
@@ -100,7 +98,18 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 		transition,
 	}
 
-	const [open, setOpen] = useState(false)
+	const [isPopoverOpen, setPopoverOpen] = useState(false)
+	const onPopoverOpen = (val: boolean) => {
+		setPopoverOpen(val)
+		if (val) {
+			setModalHasPopover(model.id)
+		} else {
+			setModalHasPopover(null)
+		}
+	}
+
+	const isActiveModel = modalHasPopover === model.id
+	const openPopover = isActiveModel && isPopoverOpen
 
 	// const zoom = useStore(zoomSelector)
 	// const showContent = zoom > 0.5
@@ -108,28 +117,29 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 	if (!showContent) {
 		return (
 			<div className="h-[24px] p-1">
-				<div className="h-full rounded-md bg-gray-100"></div>
+				<div className="h-full rounded-md bg-gray-100" />
 			</div>
 		)
 	}
 
 	return (
 		<div key={attr.id} className="relative flex flex-col px-2" ref={setNodeRef} style={style}>
-			<Popover open={open} onOpenChange={setOpen}>
+			<Popover open={openPopover} onOpenChange={onPopoverOpen}>
 				<PopoverTrigger asChild>
 					<Button
 						variant="ghost"
 						size="xs"
 						className={cn(
 							'flex h-[24px] items-center justify-between gap-6 px-1 py-0 hover:bg-primary/20',
-							open && 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
+							isPopoverOpen &&
+								'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
 						)}
 					>
 						<div className="flex items-center gap-2">
 							<AttrIcon
 								className={cn(
 									'h-4 w-4 cursor-grab opacity-25 active:cursor-grabbing',
-									open && 'opacity-75'
+									isPopoverOpen && 'opacity-75'
 								)}
 								{...(attr.name !== 'id' ? { ...attributes, ...listeners } : {})}
 							/>
@@ -143,53 +153,65 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 								>{`${attr.name}${attr.nullable ? '?' : ''}`}</div>
 							) : (
 								<div
-									className={cn('text-xs italic text-destructive', open && 'text-primary-foreground')}
+									className={cn(
+										'text-xs italic text-destructive',
+										isPopoverOpen && 'text-primary-foreground'
+									)}
 								>
 									New Field
 								</div>
 							)}
 						</div>
-						<div className={cn('translate-y-px font-mono text-xs opacity-50', open && 'opacity-100')}>
+						<div
+							className={cn(
+								'translate-y-px font-mono text-xs opacity-50',
+								isPopoverOpen && 'opacity-100'
+							)}
+						>
 							{attr.type}
 						</div>
 					</Button>
 				</PopoverTrigger>
 
-				<PopoverContent align="center" side="right">
-					<div className="grid auto-rows-fr grid-cols-1">
-						<div className="flex items-center justify-between pb-3">
-							<div>Field Settings</div>
+				<PopoverContent align="start" side="right" sideOffset={18} alignOffset={-56} className="p-0">
+					<div className="flex flex-col divide-y">
+						<div className="flex h-10 items-center justify-between px-3 pr-2">
+							<div className="text-sm font-medium">Field</div>
 							{!isLocked && (
 								<Button variant="ghost" size="xs" onClick={remove}>
-									<Trash2Icon className="h-4 w-4" />
+									<Trash2Icon className="h-4 w-4 opacity-50" />
 								</Button>
 							)}
 						</div>
 
+						<div className="stripes h-4" />
+
 						{isUserAttr && (
-							<div className="mb-1 flex items-center justify-center rounded-md bg-muted p-2 text-sm text-muted-foreground">
+							<div className="flex h-10 items-center justify-center bg-accent px-3 text-sm text-muted-foreground">
 								This is an Auth field.
 							</div>
 						)}
 
 						{attr.name === 'id' ? (
 							<>
-								<PanelRow label="Type">
-									<Select value={attr.type} onValueChange={(val) => updateField('type', val)}>
-										<SelectTrigger className="h-8 px-2 py-1 text-sm">
-											<SelectValue placeholder="Type" />
-										</SelectTrigger>
-
-										<SelectContent position="item-aligned">
-											<SelectItem value="id">ID</SelectItem>
-											<SelectItem value="a_i">Auto-Increment</SelectItem>
-										</SelectContent>
-									</Select>
-								</PanelRow>
+								<label className="flex h-10 flex-row items-center px-3 pr-0">
+									<div className="text-sm font-medium text-muted-foreground">Type</div>
+									<SelectList
+										value={attr.type}
+										onValueChange={(val) => updateField('type', val)}
+										options={[
+											{ label: 'ID', value: 'id' },
+											{ label: 'Auto-Increment', value: 'a_i' },
+										]}
+										clearable={false}
+										className="-my-2 flex-1 justify-end gap-2 border-0 bg-transparent pr-3 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+									/>
+								</label>
 							</>
 						) : (
 							<>
-								<PanelRow label="Name">
+								<label className="flex h-10 flex-row items-center px-3 pr-0">
+									<div className="text-sm font-medium text-muted-foreground">Name</div>
 									<Input
 										value={name || ''}
 										size="sm"
@@ -210,104 +232,99 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 										}}
 										autoFocus
 										disabled={isLocked}
+										className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
 									/>
-								</PanelRow>
+								</label>
 
-								<PanelRow label="Type">
-									<Select value={attr.type} onValueChange={(val) => setType(val)} disabled={isLocked}>
-										<SelectTrigger className="h-8 px-2 py-1 text-sm">
-											<SelectValue placeholder="Type" />
-										</SelectTrigger>
+								<label className="flex h-10 flex-row items-center pl-3">
+									<div className="text-sm font-medium text-muted-foreground">Type</div>
 
-										<SelectContent position="item-aligned">
-											{/* <SelectItem value="cuid">CUID</SelectItem> */}
-											{Object.entries(AttributeType).map(([key, value]) => {
-												return (
-													<SelectItem key={key} value={value}>
-														{key}
-													</SelectItem>
-												)
-											})}
-										</SelectContent>
-									</Select>
-								</PanelRow>
+									<SelectList
+										value={attr.type}
+										onValueChange={(val) => setType(val)}
+										disabled={isLocked}
+										options={Object.entries(AttributeType).map(([key, value]) => ({
+											label: key,
+											value,
+										}))}
+										clearable={false}
+										className="-my-2 flex-1 justify-end gap-2 border-0 bg-transparent pr-3 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+									/>
+								</label>
 
-								<PanelRow label="Default">
+								<label className="flex h-10 flex-row items-center pl-3">
+									<div className="text-sm font-medium text-muted-foreground">Default</div>
+
 									{attr.type === 'id' || attr.type === 'datetime' || attr.type === 'boolean' ? (
-										<div className="relative w-full">
-											<Select
+										<>
+											<SelectList
 												value={def || ''}
+												clearable={!!def && !isLocked}
 												onValueChange={(val) => setDef(val === '' ? null : val)}
 												disabled={isLocked}
-											>
-												<SelectTrigger className="h-8 px-2 py-1 text-sm">
-													<SelectValue />
-												</SelectTrigger>
-
-												<SelectContent position="item-aligned">
-													{/* <SelectItem value="">None</SelectItem> */}
-													{attr.nullable && <SelectItem value="null">NULL</SelectItem>}
-													{attr.type === 'datetime' && (
-														<SelectItem value="CURRENT_TIMESTAMP">
-															CURRENT_TIMESTAMP
-														</SelectItem>
-													)}
-													{attr.type === 'boolean' && (
-														<>
-															<SelectItem value="true">TRUE</SelectItem>
-															<SelectItem value="false">FALSE</SelectItem>
-														</>
-													)}
-												</SelectContent>
-											</Select>
-											{def && !isLocked && (
-												<div className="absolute right-0 top-0 mr-6 flex h-full translate-x-px items-center">
-													<Button
-														size="pip-icon"
-														variant="outline"
-														className="h-5 w-5 border-0"
-														onClick={() => {
-															setDef('')
-														}}
-													>
-														<XIcon className="w-3" />
-													</Button>
-												</div>
-											)}
-										</div>
+												options={
+													attr.nullable
+														? [{ label: 'NULL', value: 'null' }]
+														: attr.type === 'datetime'
+															? [
+																	{
+																		label: 'CURRENT_TIMESTAMP',
+																		value: 'CURRENT_TIMESTAMP',
+																	},
+																]
+															: attr.type === 'boolean'
+																? [
+																		{ label: 'TRUE', value: 'true' },
+																		{ label: 'FALSE', value: 'false' },
+																	]
+																: []
+												}
+												className="-my-2 flex-1 justify-end gap-2 border-0 bg-transparent pr-3 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+											/>
+										</>
 									) : (
 										<Input
 											value={attr.default || ''}
 											onChange={(e) => updateField('default', e.currentTarget.value)}
 											disabled={isLocked}
 											size="sm"
+											className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
 										/>
 									)}
-								</PanelRow>
+								</label>
 
-								<PanelRow label="Nullable">
+								<label className="flex h-10 flex-row items-center justify-between px-3">
+									<div className="text-sm font-medium text-muted-foreground">Nullable</div>
 									<Switch
 										checked={attr.nullable}
 										onCheckedChange={(val) => updateField('nullable', val)}
 										disabled={isLocked}
+										className="h-4 w-7"
+										thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
 									/>
-								</PanelRow>
+								</label>
 
-								<PanelRow label="Selectable">
+								<label className="flex h-10 flex-row items-center justify-between px-3">
+									<div className="text-sm font-medium text-muted-foreground">Selectable</div>
 									<Switch
 										checked={attr.selectable}
 										onCheckedChange={(val) => updateField('selectable', val)}
 										disabled={isLocked}
+										className="h-4 w-7"
+										thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
 									/>
-								</PanelRow>
+								</label>
 
-								<PanelRow label="Insertable">
+								<label className="flex h-10 flex-row items-center justify-between px-3">
+									<div className="text-sm font-medium text-muted-foreground">Insertable</div>
 									<Switch
 										checked={attr.insertable}
 										onCheckedChange={(val) => updateField('insertable', val)}
 										disabled={isLocked}
+										className="h-4 w-7"
+										thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
 									/>
-								</PanelRow>
+								</label>
 
 								{/* <PanelRow
 									label="Enabled"

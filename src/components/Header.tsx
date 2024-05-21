@@ -7,13 +7,13 @@ export const Header = () => {
 		<div className="relative grid grid-cols-[auto,1fr,auto] gap-4 overflow-hidden p-4">
 			<div className="flex items-center">
 				{/* <Logo /> */}
-				<div className="group origin-left cursor-default text-2xl font-black tracking-tight transition-transform hover:scale-125">
-					<span className="transition-colors group-hover:text-indigo-500">K</span>
-					<span className="transition-colors group-hover:text-purple-500">a</span>
-					<span className="transition-colors group-hover:text-red-500">i</span>
-					<span className="transition-colors group-hover:text-orange-500">z</span>
-					<span className="transition-colors group-hover:text-yellow-500">e</span>
-					<span className="transition-colors group-hover:text-green-500">n</span>
+				<div className="group origin-left cursor-default text-2xl font-black tracking-tight transition-transform hover:scale-125 hover:italic">
+					<span className="transition-colors group-hover:text-primary/90">K</span>
+					<span className="transition-colors group-hover:text-primary/80">a</span>
+					<span className="transition-colors group-hover:text-primary/70">i</span>
+					<span className="transition-colors group-hover:text-primary/60">z</span>
+					<span className="transition-colors group-hover:text-primary/50">e</span>
+					<span className="transition-colors group-hover:text-primary/40">n</span>
 				</div>
 			</div>
 			<div className="flex w-full items-center justify-center">

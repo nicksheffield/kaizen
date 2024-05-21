@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { useStore, useUpdateNodeInternals, type NodeProps } from 'reactflow'
 import { camelize, cn, generateId } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -8,7 +8,6 @@ import { Switch } from '@/components/ui/switch'
 import { Input } from '@/components/ui/input'
 import { useERDContext } from '@/lib/ERDContext'
 import { z } from 'zod'
-import { PanelRow } from './PanelRow'
 import { FieldRow } from './FieldRow'
 import { AttributeRow } from './AttributeRow'
 import { RelationRow } from './RelationRow'
@@ -47,15 +46,24 @@ const isModelLocked = (model: Model) => {
 }
 
 export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
-	const { project, userModelId, setUserModelId, nodes, setNodes, detailed, relations, setRelations } = useERDContext()
+	const {
+		project,
+		userModelId,
+		setUserModelId,
+		nodes,
+		setNodes,
+		detailed,
+		relations,
+		setRelations,
+		modalHasPopover,
+		setModalHasPopover,
+		focusOn,
+	} = useERDContext()
 
 	const hasUserModel = nodes.some((x) => x.data.id === userModelId)
 
-	// const titleHSL = hexToCssHsl(data.color || stringToColor(data.name))
-	// const getTitleBG = (hsl: ReturnType<typeof hexToCssHsl>) => `hsl(${hsl.h},90%, ${hsl.l}%, 50%)`
-
-	const sourceRelations = relations.filter((x) => x.sourceId === data.id) //.sort((a) => new Date(a.createdAt).valueOf())
-	const targetRelations = relations.filter((x) => x.targetId === data.id) //.sort((a) => new Date(a.createdAt).valueOf())
+	const sourceRelations = relations.filter((x) => x.sourceId === data.id)
+	const targetRelations = relations.filter((x) => x.targetId === data.id)
 
 	const [name, setName] = useModelField(data.id, 'name')
 	const [key, setKey] = useModelField(data.id, 'key')
@@ -171,12 +179,26 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 
 	const addSelectedNodes = useStore((store) => store.addSelectedNodes)
 
+	const [isPopoverOpen, setPopoverOpen] = useState(false)
+	const onPopoverOpen = (val: boolean) => {
+		setPopoverOpen(val)
+		if (val) {
+			setModalHasPopover(data.id)
+		} else {
+			setModalHasPopover(null)
+		}
+	}
+
+	const isActiveModel = modalHasPopover === data.id
+	const openPopover = isActiveModel && isPopoverOpen
+
 	return (
 		<div
 			className={cn(
-				'flex min-w-[216px] cursor-default flex-col gap-4 overflow-hidden rounded-md border bg-muted pb-3 transition-shadow dark:border',
-				selected && 'ring-2 ring-ring dark:ring-offset-background',
-				!data.enabled && 'opacity-50'
+				'flex min-w-[216px] cursor-default flex-col gap-4 overflow-hidden rounded-md border bg-muted pb-3 shadow-xl transition-all',
+				selected && 'ring-2 ring-primary dark:ring-offset-background',
+				!data.enabled && 'opacity-50',
+				modalHasPopover && !isActiveModel && 'opacity-50'
 			)}
 			onMouseDown={() => {
 				addSelectedNodes([data.id])
@@ -184,10 +206,14 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 		>
 			<div
 				className={cn(
-					'drag-handle flex h-[36px] cursor-grab items-center justify-between bg-background pl-3 pr-3 text-foreground active:cursor-grabbing',
-					selected && 'text-primary dark:text-primary'
+					'drag-handle flex h-[36px] cursor-grab items-center justify-between pl-3 pr-3 text-foreground active:cursor-grabbing',
+					selected && 'text-foreground'
 				)}
-				// style={{ background: getTitleBG(titleHSL), color: 'black' }}
+				onDoubleClick={() => {
+					const node = nodes.find((x) => x.data.id === data.id)
+					if (!node) return
+					focusOn(node)
+				}}
 			>
 				{data.name ? (
 					<div className={cn('text-sm font-medium', nameConflicted && 'text-destructive')}>{data.name}</div>
@@ -195,17 +221,17 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 					<div className="italic text-destructive">New Model</div>
 				)}
 
-				<Popover>
+				<Popover open={openPopover} onOpenChange={onPopoverOpen}>
 					<PopoverTrigger asChild>
 						<Button variant="ghost" size="xs" className="h-5 w-5 px-0">
 							<Settings2Icon className="h-3 w-3" />
 						</Button>
 					</PopoverTrigger>
 
-					<PopoverContent align="center" side="right">
-						<div className="flex flex-col gap-3">
-							<div className="flex items-center justify-between pb-3">
-								<div>Model Settings</div>
+					<PopoverContent align="start" side="right" sideOffset={20} alignOffset={-56} className="p-0">
+						<div className="flex flex-col divide-y">
+							<div className="flex h-10 items-center justify-between px-3 pr-2">
+								<div className="text-sm font-medium">Model</div>
 
 								<div className="flex items-center gap-2">
 									{isModelLocked(data) ? (
@@ -218,16 +244,19 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 											size="xs"
 											onClick={() => {
 												removeSelf()
+												setModalHasPopover(null)
 											}}
 										>
-											<Trash2Icon className="h-4 w-4" />
+											<Trash2Icon className="h-4 w-4 opacity-50" />
 										</Button>
 									)}
 								</div>
 							</div>
 
+							<div className="stripes h-4" />
+
 							{!hasUserModel && (
-								<div className="flex flex-col gap-2 rounded-md border p-2">
+								<div className="flex flex-col gap-2 p-2">
 									<Button
 										size="sm"
 										onClick={() => {
@@ -236,24 +265,27 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 									>
 										Set as Auth Model
 									</Button>
-									<div className="rounded-md bg-muted p-2 text-sm text-muted-foreground">
+									<div className="rounded-md bg-accent p-2 text-sm text-muted-foreground">
 										The auth model comes with a set of required attributes.
 									</div>
 								</div>
 							)}
 
-							<PanelRow label="Name" hint="The name of the model used for...">
+							<label className="flex h-10 flex-row items-center pl-3">
+								<div className="text-sm font-medium text-muted-foreground">Name</div>
 								<Input
 									value={name}
 									onChange={(e) => {
 										setName(e.currentTarget.value.replace(/\s/g, ''))
 									}}
 									size="sm"
+									className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
 									autoFocus
 								/>
-							</PanelRow>
+							</label>
 
-							<PanelRow label="Key" hint="The name of the model used in code">
+							<label className="flex h-10 flex-row items-center pl-3">
+								<div className="text-sm font-medium text-muted-foreground">Key</div>
 								<Input
 									value={key}
 									onChange={(e) => {
@@ -262,35 +294,41 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 									size="sm"
 									disabled={isModelLocked(data)}
 									placeholder={keyPlaceholder}
+									className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
 								/>
-							</PanelRow>
+							</label>
 
-							<PanelRow label="Table" hint="The name of the database table">
+							<label className="flex h-10 flex-row items-center pl-3">
+								<div className="text-sm font-medium text-muted-foreground">Table</div>
 								<Input
 									value={tableName}
 									onChange={(e) => setTableName(e.currentTarget.value)}
 									placeholder={tablePlaceholder}
 									size="sm"
+									className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
 								/>
-							</PanelRow>
+							</label>
 
-							<PanelRow label="Audit Dates" hint="Whether to include createdAt, etc">
+							<label className="flex h-10 flex-row items-center justify-between px-3">
+								<div className="text-sm font-medium text-muted-foreground">Audit Dates</div>
 								<Switch
 									checked={data.auditDates}
 									onCheckedChange={(val) => updateModelField('auditDates', val)}
+									className="h-4 w-7"
+									thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
 								/>
-							</PanelRow>
+							</label>
 
-							<PanelRow
-								label="Enabled"
-								hint="If set to false, this model will be omitted from the generated app and db schema"
-							>
+							<label className="flex h-10 flex-row items-center justify-between px-3">
+								<div className="text-sm font-medium text-muted-foreground">Enabled</div>
 								<Switch
 									checked={data.enabled}
 									onCheckedChange={(val) => updateModelField('enabled', val)}
 									disabled={isUserModel}
+									className="h-4 w-7"
+									thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
 								/>
-							</PanelRow>
+							</label>
 						</div>
 					</PopoverContent>
 				</Popover>
@@ -306,7 +344,10 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 				<Attributes
 					model={data}
 					detailed={detailed}
-					remove={(id) => removeAttribute(id)}
+					remove={(id) => {
+						removeAttribute(id)
+						setModalHasPopover(null)
+					}}
 					updateAttributes={(attrs) => updateModel({ ...data, attributes: attrs })}
 					updateAttributeField={updateAttributeField}
 				/>
@@ -327,17 +368,16 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 				/>
 			</div>
 
-			{/* {!detailed && attrs.length + sourceRelations.length + targetRelations.length === 0 && (
-				<div className="flex flex-1 items-center justify-center">
-					<SparklesIcon className="h-10 w-10 opacity-10" />
-				</div>
-			)} */}
-
 			{data.auditDates && detailed && (
-				<div className="flex flex-col px-2">
-					<FieldRow title="createdAt" type="datetime" icon={CalendarIcon} />
-					<FieldRow title="updatedAt?" type="datetime" icon={CalendarIcon} />
-					<FieldRow title="deletedAt?" type="datetime" icon={CalendarIcon} />
+				<div className="pointer-events-none flex flex-col gap-1">
+					<div className="flex flex-row justify-between px-3">
+						<div className="text-xs font-medium text-muted-foreground/50">Audit Dates</div>
+					</div>
+					<div className="pointer-events-none flex flex-col px-2">
+						<FieldRow title="createdAt" type="datetime" icon={CalendarIcon} />
+						<FieldRow title="updatedAt?" type="datetime" icon={CalendarIcon} />
+						<FieldRow title="deletedAt?" type="datetime" icon={CalendarIcon} />
+					</div>
 				</div>
 			)}
 		</div>

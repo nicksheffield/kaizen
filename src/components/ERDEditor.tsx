@@ -1,13 +1,4 @@
-import ReactFlow, {
-	Background,
-	BackgroundVariant,
-	Node,
-	NodeChange,
-	ReactFlowProvider,
-	applyNodeChanges,
-	useReactFlow,
-	useStore,
-} from 'reactflow'
+import ReactFlow, { Node, NodeChange, ReactFlowProvider, applyNodeChanges, useReactFlow, useStore } from 'reactflow'
 import { ERDProvider } from './ERDProvider'
 import { getAttrTypeRecommends, getSourceName, getTargetName, isReservedKeyword } from '@/lib/ERDHelpers'
 import { useCallback, useMemo, useRef, useState } from 'react'
@@ -63,9 +54,9 @@ export const Editor = () => {
 
 	const flow = useReactFlow()
 
-	const center = (zoom: number = 0.8) => {
-		flow.fitView()
-		flow.zoomTo(zoom)
+	const center = (zoom?: number) => {
+		flow.fitView({ padding: 0.2, duration: 200 })
+		if (zoom) flow.zoomTo(zoom)
 	}
 
 	const wrapperRef = useRef<HTMLDivElement>(null)
@@ -192,6 +183,8 @@ export const Editor = () => {
 		`project-${project?.settings.id}-erd-showConnections`,
 		false
 	)
+
+	const [modalHasPopover, setModalHasPopover] = useState<string | null>(null)
 
 	const isDirty = useMemo(() => {
 		const models = nodes.map((x) => ({ ...x.data, posX: x.position.x, posY: x.position.y }))
@@ -402,6 +395,8 @@ export const Editor = () => {
 				focusOn,
 				userModelId,
 				setUserModelId: updateUserModelId,
+				modalHasPopover,
+				setModalHasPopover,
 			}}
 		>
 			<div
@@ -416,15 +411,11 @@ export const Editor = () => {
 									<RevealButton
 										variant="outline"
 										icon={<SearchIcon className="h-4 w-4 shrink-0" />}
-										className="pointer-events-auto m-2 h-10 min-w-10 rounded-full bg-background/50 px-[11px] py-0 shadow-md backdrop-blur-sm"
+										className="pointer-events-auto m-4 h-10 min-w-10 rounded-full bg-popover px-[11px] py-0 shadow-md"
 										label="Search Models"
 									/>
 								</PopoverTrigger>
-								<PopoverContent
-									side="bottom"
-									align="start"
-									className="bg-background/50 p-0 backdrop-blur-sm"
-								>
+								<PopoverContent side="bottom" align="start" className="bg-popover p-0">
 									<Command>
 										<CommandInput placeholder="Search for models..." />
 										<CommandList className="p-2">
@@ -446,7 +437,7 @@ export const Editor = () => {
 						</div>
 
 						<div className="flex justify-center">
-							<div className="pointer-events-auto mt-2 flex h-10 items-center justify-center gap-1.5 rounded-full border bg-background/50 px-1.5 shadow-md backdrop-blur-sm">
+							<div className="pointer-events-auto mt-4 flex h-10 items-center justify-center gap-1.5 rounded-full border bg-popover px-1.5 shadow-md">
 								<RevealButton
 									variant="ghost"
 									size="pip"
@@ -497,12 +488,12 @@ export const Editor = () => {
 							<RevealButton
 								variant="outline"
 								icon={<MaximizeIcon className="h-4 w-4" />}
-								className="pointer-events-auto m-2 rounded-full bg-background/50 px-3 shadow-md backdrop-blur-sm"
+								className="pointer-events-auto m-4 rounded-full bg-popover px-3 shadow-md"
 								label="Full Screen"
 								iconSide="right"
 								onClick={() => {
 									setMax((x) => !x)
-									setTimeout(() => center(max ? 0.8 : 1), 1)
+									setTimeout(() => center(), 1)
 								}}
 							/>
 						</div>
@@ -513,7 +504,7 @@ export const Editor = () => {
 							<div className="flex flex-col items-center gap-2">
 								{conflicts.map((message) => (
 									<div
-										className="rounded-full border bg-destructive/50 p-2 px-3 text-sm font-medium text-destructive-foreground backdrop-blur-sm"
+										className="rounded-full border bg-destructive p-2 px-3 text-sm font-medium text-destructive-foreground"
 										key={message}
 									>
 										{message}
@@ -539,13 +530,13 @@ export const Editor = () => {
 					deleteKeyCode={null}
 					className="h-full w-full"
 				>
-					<Background
+					{/* <Background
 						gap={12}
 						size={1}
 						variant={BackgroundVariant.Dots}
 						color="currentColor"
 						className="bg-muted/10 text-foreground/20"
-					/>
+					/> */}
 				</ReactFlow>
 			</div>
 		</ERDProvider>

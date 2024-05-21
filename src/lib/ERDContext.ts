@@ -20,6 +20,8 @@ type ERDContextType = {
 	focusOn: (node: Node<Model>) => void
 	userModelId: string
 	setUserModelId: (id: string) => void
+	modalHasPopover: string | null
+	setModalHasPopover: Dispatch<SetStateAction<string | null>>
 }
 
 export const ERDContext = createContext({} as ERDContextType)

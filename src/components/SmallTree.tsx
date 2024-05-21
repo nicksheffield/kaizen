@@ -18,14 +18,14 @@ export const SmallTree = () => {
 							className={cn(
 								'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 								selectedPath === 'project.json?models'
-									? 'bg-primary/10 text-primary hover:bg-primary/20'
-									: 'hover:bg-foreground/10'
+									? 'bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground'
+									: 'text-muted-foreground hover:bg-foreground/10'
 							)}
 							onClick={() => {
 								openFile('project.json?models')
 							}}
 						>
-							<TreeFileIcon path={'project.json?models'} className="h-6 w-6 opacity-50" />
+							<TreeFileIcon path={'project.json?models'} className="h-6 w-6" />
 						</Button>
 					</div>
 				</TooltipTrigger>
@@ -42,14 +42,14 @@ export const SmallTree = () => {
 							className={cn(
 								'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 								selectedPath === 'project.json?details'
-									? 'bg-primary/10 text-primary hover:bg-primary/20'
-									: 'hover:bg-foreground/10'
+									? 'bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground'
+									: 'text-muted-foreground hover:bg-foreground/10'
 							)}
 							onClick={() => {
 								openFile('project.json?details')
 							}}
 						>
-							<TreeFileIcon path={'project.json?details'} className="h-6 w-6 opacity-50" />
+							<TreeFileIcon path={'project.json?details'} className="h-6 w-6" />
 						</Button>
 					</div>
 				</TooltipTrigger>
@@ -66,14 +66,14 @@ export const SmallTree = () => {
 							className={cn(
 								'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 								selectedPath === 'project.json?auth'
-									? 'bg-primary/10 text-primary hover:bg-primary/20'
-									: 'hover:bg-foreground/10'
+									? 'bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground'
+									: 'text-muted-foreground hover:bg-foreground/10'
 							)}
 							onClick={() => {
 								openFile('project.json?auth')
 							}}
 						>
-							<TreeFileIcon path={'project.json?auth'} className="h-6 w-6 opacity-50" />
+							<TreeFileIcon path={'project.json?auth'} className="h-6 w-6" />
 						</Button>
 					</div>
 				</TooltipTrigger>
@@ -90,14 +90,14 @@ export const SmallTree = () => {
 							className={cn(
 								'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 								selectedPath === 'project.json?environment'
-									? 'bg-primary/10 text-primary hover:bg-primary/20'
-									: 'hover:bg-foreground/10'
+									? 'bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground'
+									: 'text-muted-foreground hover:bg-foreground/10'
 							)}
 							onClick={() => {
 								openFile('project.json?environment')
 							}}
 						>
-							<TreeFileIcon path={'project.json?environment'} className="h-6 w-6 opacity-50" />
+							<TreeFileIcon path={'project.json?environment'} className="h-6 w-6" />
 						</Button>
 					</div>
 				</TooltipTrigger>

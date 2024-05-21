@@ -1,20 +1,18 @@
 import { useCallback, useMemo, useState } from 'react'
 import { Handle, Position } from 'reactflow'
-import { alphabetical, camelize, cn, generateId } from '@/lib/utils'
+import { alphabetical, camelize, cn, generateId, uc } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { LinkIcon, Trash2Icon } from 'lucide-react'
+import { LinkIcon, RepeatIcon, Trash2Icon } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useERDContext } from '@/lib/ERDContext'
 import { plural, singular } from 'pluralize'
-import { PanelRow, SwitchPanelRow } from './PanelRow'
 import { RelationType, type Model, type Relation } from '@/lib/projectSchemas'
-import { Separator } from '@/components/ui/separator'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { getSourceName, getTargetName } from '@/lib/ERDHelpers'
+import { SelectList } from '@/components/SelectList'
+import { Switch } from '@/components/ui/switch'
 
 type Mode = 'source' | 'target'
 
@@ -27,7 +25,8 @@ type RelationRowProps = {
 // const zoomSelector = (s: ReactFlowState) => s.transform[2]
 
 export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
-	const { nodes, relations, setRelations, addNode, focusOn, userModelId } = useERDContext()
+	const { nodes, relations, setRelations, addNode, focusOn, userModelId, modalHasPopover, setModalHasPopover } =
+		useERDContext()
 	const attrs = nodes.flatMap((x) => x.data.attributes)
 
 	const sourceCardinality = rel.type === 'oneToMany' || rel.type === 'oneToOne' ? 'one' : 'many'
@@ -48,6 +47,7 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 
 	const removeSelf = () => {
 		setRelations((prev) => prev.filter((a) => a.id !== rel.id))
+		setModalHasPopover(null)
 	}
 
 	const update = useCallback(
@@ -105,6 +105,7 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 		setRelations((prev) => [...prev, newRelSource, newRelTarget])
 		setTimeout(() => {
 			removeSelf()
+			setModalHasPopover(null)
 		}, 1)
 	}
 
@@ -176,25 +177,37 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 			if (y.modelId === rel.targetId) return y.name === name
 		})
 
-	const [open, setOpen] = useState(false)
+	const [isPopoverOpen, setPopoverOpen] = useState(false)
+	const onPopoverOpen = (val: boolean) => {
+		setPopoverOpen(val)
+		if (val) {
+			setModalHasPopover(model.id)
+		} else {
+			setModalHasPopover(null)
+		}
+	}
+
+	const isActiveModel = modalHasPopover === model.id
+	const openPopover = isActiveModel && isPopoverOpen
 
 	return (
 		<div key={rel.id} className="relative flex flex-col px-2" ref={setNodeRef} style={style}>
-			<Popover open={open} onOpenChange={setOpen}>
+			<Popover open={openPopover} onOpenChange={onPopoverOpen}>
 				<PopoverTrigger asChild>
 					<Button
 						variant="ghost"
 						size="xs"
 						className={cn(
 							'flex h-[24px] items-center justify-between gap-6 px-1 py-0 hover:bg-primary/20',
-							open && 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
+							isPopoverOpen &&
+								'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
 						)}
 					>
 						<div className="flex items-center gap-2">
 							<LinkIcon
 								className={cn(
 									'h-4 w-4 cursor-grab opacity-25 active:cursor-grabbing',
-									open && 'opacity-75'
+									isPopoverOpen && 'opacity-75'
 								)}
 								{...attributes}
 								{...listeners}
@@ -207,21 +220,27 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 										!rel.enabled && 'text-muted-foreground',
 										!sourceModel?.enabled && 'text-muted-foreground',
 										!targetModel?.enabled && 'text-muted-foreground',
-										open && 'text-primary-foreground'
+										isPopoverOpen && 'text-primary-foreground'
 									)}
 								>
 									{name}
 								</div>
 							) : (
 								<div
-									className={cn('text-xs italic text-destructive', open && 'text-primary-foreground')}
+									className={cn(
+										'text-xs italic text-destructive',
+										isPopoverOpen && 'text-primary-foreground'
+									)}
 								>
 									New Relationship
 								</div>
 							)}{' '}
 						</div>
 						<div
-							className={cn('font-mono text-xs opacity-50 hover:underline', open && 'opacity-100')}
+							className={cn(
+								'font-mono text-xs opacity-50 hover:underline',
+								isPopoverOpen && 'opacity-100'
+							)}
 							onClick={(e) => {
 								const n = nodes.find((x) => {
 									if (mode === 'source') {
@@ -241,22 +260,22 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 					</Button>
 				</PopoverTrigger>
 
-				<PopoverContent align="center" side="right">
-					<div className="flex flex-col gap-3">
-						<div className="flex items-center justify-between pb-3">
-							<div>Relationship Settings</div>
+				<PopoverContent align="start" side="right" sideOffset={18} alignOffset={-56} className="p-0">
+					<div className="flex flex-col divide-y">
+						<div className="flex h-10 items-center justify-between px-3 pr-2">
+							<div className="text-sm font-medium">Relationship</div>
 
 							<Button variant="ghost" size="xs" onClick={removeSelf}>
-								<Trash2Icon className="h-4 w-4" />
+								<Trash2Icon className="h-4 w-4 opacity-50" />
 							</Button>
 						</div>
 
-						<div className="rounded-md border bg-accent px-2 py-1">
-							<div className="text-xs font-medium italic text-accent-foreground">{sourceDescription}</div>
-						</div>
+						<div className="stripes h-4" />
 
-						<PanelRow label="Model">
-							<Select
+						<label className="flex h-10 flex-row items-center px-3 pr-0">
+							<div className="text-sm font-medium text-muted-foreground">Model</div>
+
+							<SelectList
 								value={sourceModel?.id}
 								onValueChange={(id) => {
 									const source = nodes.find((x) => x.data.id === id)?.data
@@ -265,68 +284,70 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 									updateField('sourceId', source.id)
 								}}
 								disabled={sourceLocked}
-							>
-								<SelectTrigger className="h-8 px-2 py-1 text-sm">
-									<SelectValue placeholder="Select..." />
-								</SelectTrigger>
+								clearable={false}
+								options={nodes
+									.map((x) => x.data)
+									.slice()
+									.sort((a, b) => alphabetical(a.name, b.name))
+									.map((x) => ({ value: x.id, label: x.name }))}
+								className="-my-2 flex-1 justify-end gap-2 border-0 bg-transparent pr-3 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+							/>
+						</label>
 
-								<SelectContent position="item-aligned">
-									{nodes
-										.map((x) => x.data)
-										.slice()
-										.sort((a, b) => alphabetical(a.name, b.name))
-										.map((x) => (
-											<SelectItem key={x.id} value={x.id}>
-												{x.name}
-											</SelectItem>
-										))}
-								</SelectContent>
-							</Select>
-						</PanelRow>
-
-						<PanelRow label="Alias">
+						<label className="flex h-10 flex-row items-center px-3 pr-0">
+							<div className="text-sm font-medium text-muted-foreground">Alias</div>
 							<Input
 								value={rel.sourceName || ''}
 								onChange={(e) => updateField('sourceName', e.currentTarget.value)}
 								size="sm"
+								className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
 							/>
-						</PanelRow>
+						</label>
 
-						<PanelRow label="Cardinality">
-							<Tabs
-								value={sourceCardinality}
-								onValueChange={(sourceCardinality) => {
-									if (sourceCardinality === 'one') {
-										updateField('type', targetCardinality === 'one' ? 'oneToOne' : 'oneToMany')
-									} else {
-										updateField('type', targetCardinality === 'one' ? 'manyToOne' : 'manyToMany')
-									}
-								}}
-							>
-								<TabsList>
-									<TabsTrigger value="one">One</TabsTrigger>
-									<TabsTrigger value="many">Many</TabsTrigger>
-								</TabsList>
-							</Tabs>
-						</PanelRow>
-
-						{rel.sourceId === userModelId && (
-							<SwitchPanelRow
-								label="Default to Auth"
-								hint="If set to true, the authenticated user's id will be the default value"
-								checked={rel.sourceDefaultToAuth}
-								onCheckedChange={(val) => updateField('sourceDefaultToAuth', val)}
-							/>
-						)}
-
-						<Separator className="my-4" />
-
-						<div className="rounded-md border bg-accent px-2 py-1">
-							<div className="text-xs font-medium italic text-accent-foreground">{targetDescription}</div>
+						<div className="flex h-10 flex-row items-center px-3 pr-0">
+							<div className="text-sm font-medium text-muted-foreground">Cardinality</div>
+							<div className="-my-2 flex flex-1 justify-end">
+								<Button
+									variant="ghost"
+									size="sm"
+									onClick={() => {
+										if (sourceCardinality !== 'one') {
+											updateField('type', targetCardinality === 'one' ? 'oneToOne' : 'oneToMany')
+										} else {
+											updateField(
+												'type',
+												targetCardinality === 'one' ? 'manyToOne' : 'manyToMany'
+											)
+										}
+									}}
+								>
+									{uc(sourceCardinality)}
+								</Button>
+							</div>
 						</div>
 
-						<PanelRow label="Model">
-							<Select
+						<div className="bg-accent px-3 py-2">
+							<div className="text-xs font-medium italic text-accent-foreground">{sourceDescription}</div>
+						</div>
+
+						{rel.sourceId === userModelId && (
+							<label className="flex h-10 flex-row items-center justify-between px-3">
+								<div className="text-sm font-medium text-muted-foreground">Default to Auth</div>
+								<Switch
+									checked={rel.sourceDefaultToAuth}
+									onCheckedChange={(val) => updateField('sourceDefaultToAuth', val)}
+									className="h-4 w-7"
+									thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
+								/>
+							</label>
+						)}
+
+						<div className="stripes h-4" />
+
+						<label className="flex h-10 flex-row items-center px-3 pr-0">
+							<div className="text-sm font-medium text-muted-foreground">Model</div>
+
+							<SelectList
 								value={targetModel?.id}
 								onValueChange={(id) => {
 									const target = nodes.find((x) => x.data.id === id)?.data
@@ -335,67 +356,75 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 									updateField('targetId', target.id)
 								}}
 								disabled={targetLocked}
-							>
-								<SelectTrigger className="h-8 px-2 py-1 text-sm">
-									<SelectValue placeholder="Select..." />
-								</SelectTrigger>
+								clearable={false}
+								options={nodes
+									.map((x) => x.data)
+									.slice()
+									.sort((a, b) => alphabetical(a.name, b.name))
+									.map((x) => ({ value: x.id, label: x.name }))}
+								className="-my-2 flex-1 justify-end gap-2 border-0 bg-transparent pr-3 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+							/>
+						</label>
 
-								<SelectContent position="item-aligned" autoFocus>
-									{nodes
-										.map((x) => x.data)
-										.slice()
-										.sort((a, b) => alphabetical(a.name, b.name))
-										.map((x) => (
-											<SelectItem key={x.id} value={x.id}>
-												{x.name}
-											</SelectItem>
-										))}
-								</SelectContent>
-							</Select>
-						</PanelRow>
-
-						<PanelRow label="Alias">
+						<label className="flex h-10 flex-row items-center px-3 pr-0">
+							<div className="text-sm font-medium text-muted-foreground">Alias</div>
 							<Input
 								value={rel.targetName || ''}
 								onChange={(e) => updateField('targetName', e.currentTarget.value)}
 								size="sm"
+								className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
 							/>
-						</PanelRow>
+						</label>
 
-						<PanelRow label="Cardinality">
-							<Tabs
-								value={targetCardinality}
-								onValueChange={(targetCardinality) => {
-									if (targetCardinality === 'one') {
-										updateField('type', sourceCardinality === 'one' ? 'oneToOne' : 'manyToOne')
-									} else {
-										updateField('type', sourceCardinality === 'one' ? 'oneToMany' : 'manyToMany')
-									}
-								}}
-							>
-								<TabsList>
-									<TabsTrigger value="one">One</TabsTrigger>
-									<TabsTrigger value="many">Many</TabsTrigger>
-								</TabsList>
-							</Tabs>
-						</PanelRow>
+						<div className="flex h-10 flex-row items-center px-3 pr-0">
+							<div className="text-sm font-medium text-muted-foreground">Cardinality</div>
+							<div className="-my-2 flex flex-1 justify-end">
+								<Button
+									variant="ghost"
+									size="sm"
+									onClick={() => {
+										if (targetCardinality !== 'one') {
+											updateField('type', sourceCardinality === 'one' ? 'oneToOne' : 'manyToOne')
+										} else {
+											updateField(
+												'type',
+												sourceCardinality === 'one' ? 'oneToMany' : 'manyToMany'
+											)
+										}
+									}}
+								>
+									{uc(targetCardinality)}
+								</Button>
+							</div>
+						</div>
+
+						<div className="bg-accent px-3 py-2">
+							<div className="text-xs font-medium italic text-accent-foreground">{targetDescription}</div>
+						</div>
 
 						{rel.targetId === userModelId && (
-							<SwitchPanelRow
-								label="Default to Auth"
-								hint="If set to true, the authenticated user's id will be the default value"
-								checked={rel.targetDefaultToAuth}
-								onCheckedChange={(val) => updateField('targetDefaultToAuth', val)}
-							/>
+							<label className="flex h-10 flex-row items-center justify-between px-3">
+								<div className="text-sm font-medium text-muted-foreground">Default to Auth</div>
+								<Switch
+									checked={rel.targetDefaultToAuth}
+									onCheckedChange={(val) => updateField('targetDefaultToAuth', val)}
+									className="h-4 w-7"
+									thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
+								/>
+							</label>
 						)}
 
-						<Separator className="mb-2 mt-4" />
+						<div className="stripes h-4" />
 
-						<SwitchPanelRow
-							label="Optional"
-							checked={rel.optional}
-							onCheckedChange={(val) => updateField('optional', val)}
-						/>
+						<label className="flex h-10 flex-row items-center justify-between px-3">
+							<div className="text-sm font-medium text-muted-foreground">Optional</div>
+							<Switch
+								checked={rel.optional}
+								onCheckedChange={(val) => updateField('optional', val)}
+								className="h-4 w-7"
+								thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
+							/>
+						</label>
 
 						{/* <SwitchPanelRow
 							label="Enabled"
@@ -405,37 +434,38 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 						/> */}
 
 						{rel.type === 'manyToMany' && (
-							<Button
-								variant="outline"
-								size="xs"
-								className="w-full"
-								onClick={() => split()}
-								disabled={!targetModel || !sourceModel}
-							>
-								Expose joining table
-							</Button>
-						)}
-
-						{rel.type === 'oneToOne' && (
-							<>
-								<Separator className="mb-2 mt-2" />
-
-								<div className="rounded-md border bg-accent px-2 py-1">
-									<div className="text-xs font-medium italic text-accent-foreground">
-										{sourceModel?.name || 'source'} has a{' '}
-										{singular(targetModel?.name.toLowerCase() || 'target')}Id field
-									</div>
-								</div>
-
+							<div className="flex h-10 items-center px-1">
 								<Button
 									variant="outline"
 									size="xs"
 									className="w-full"
-									onClick={() => swap()}
+									onClick={() => split()}
 									disabled={!targetModel || !sourceModel}
 								>
-									Swap foreign keys
+									Expose joining table
 								</Button>
+							</div>
+						)}
+
+						{rel.type === 'oneToOne' && (
+							<>
+								<div className="stripes h-4" />
+
+								<div className="flex items-center justify-between bg-accent px-3 py-2 pr-1">
+									<div className="text-xs font-medium italic text-accent-foreground">
+										{sourceModel?.name || 'source'} has a{' '}
+										{singular(targetModel?.name.toLowerCase() || 'target')}Id field
+									</div>
+									<Button
+										variant="outline"
+										size="icon-sm"
+										className="-my-2 text-xs"
+										onClick={() => swap()}
+										disabled={!targetModel || !sourceModel}
+									>
+										<RepeatIcon className="h-3 w-3" />
+									</Button>
+								</div>
 							</>
 						)}
 					</div>

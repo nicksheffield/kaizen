@@ -79,7 +79,7 @@ export const ProjectDetails = () => {
 								/> */}
 
 								<div className="-mb-4 font-medium">Monorepo</div>
-								<Card className="divide-y overflow-hidden">
+								<Card className="divide-y overflow-hidden border-input">
 									<Switcher
 										name="hasClient"
 										label="Have Client"
@@ -88,7 +88,7 @@ export const ProjectDetails = () => {
 								</Card>
 
 								<div className="-mb-4 font-medium">Dev</div>
-								<Card className="divide-y overflow-hidden">
+								<Card className="divide-y overflow-hidden border-input">
 									<Switcher
 										name="useOrbStack"
 										label="Use Orb Stack"

@@ -26,6 +26,7 @@ import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifi
 import { useModelField } from '@/lib/useModelField'
 import { isReservedKeyword } from '@/lib/ERDHelpers'
 import { plural } from 'pluralize'
+import { Row, RowLabel } from '@/components/ERD/Rows'
 
 type Model = BasicModel & {
 	attributes: Attribute[]
@@ -68,7 +69,6 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 	const [name, setName] = useModelField(data.id, 'name')
 	const [key, setKey] = useModelField(data.id, 'key')
 	const [tableName, setTableName] = useModelField(data.id, 'tableName')
-	const isUserModel = key === 'user'
 
 	const keyPlaceholder = camelize(name)
 	const tablePlaceholder = plural(camelize(name))
@@ -253,7 +253,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 								</div>
 							</div>
 
-							<div className="stripes h-4" />
+							{/* <RowGap /> */}
 
 							{!hasUserModel && (
 								<div className="flex flex-col gap-2 p-2">
@@ -271,8 +271,8 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 								</div>
 							)}
 
-							<label className="flex h-10 flex-row items-center pl-3">
-								<div className="text-sm font-medium text-muted-foreground">Name</div>
+							<Row>
+								<RowLabel>Name</RowLabel>
 								<Input
 									value={name}
 									onChange={(e) => {
@@ -282,10 +282,10 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 									className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
 									autoFocus
 								/>
-							</label>
+							</Row>
 
-							<label className="flex h-10 flex-row items-center pl-3">
-								<div className="text-sm font-medium text-muted-foreground">Key</div>
+							<Row>
+								<RowLabel>Key</RowLabel>
 								<Input
 									value={key}
 									onChange={(e) => {
@@ -296,10 +296,10 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 									placeholder={keyPlaceholder}
 									className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
 								/>
-							</label>
+							</Row>
 
-							<label className="flex h-10 flex-row items-center pl-3">
-								<div className="text-sm font-medium text-muted-foreground">Table</div>
+							<Row>
+								<RowLabel>Table</RowLabel>
 								<Input
 									value={tableName}
 									onChange={(e) => setTableName(e.currentTarget.value)}
@@ -307,28 +307,28 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 									size="sm"
 									className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
 								/>
-							</label>
+							</Row>
 
-							<label className="flex h-10 flex-row items-center justify-between px-3">
-								<div className="text-sm font-medium text-muted-foreground">Audit Dates</div>
+							<Row>
+								<RowLabel>Audit Dates</RowLabel>
 								<Switch
 									checked={data.auditDates}
 									onCheckedChange={(val) => updateModelField('auditDates', val)}
-									className="h-4 w-7"
+									className="mr-3 h-4 w-7"
 									thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
 								/>
-							</label>
+							</Row>
 
-							<label className="flex h-10 flex-row items-center justify-between px-3">
-								<div className="text-sm font-medium text-muted-foreground">Enabled</div>
+							{/* <Row>
+								<RowLabel>Enabled</RowLabel>
 								<Switch
 									checked={data.enabled}
 									onCheckedChange={(val) => updateModelField('enabled', val)}
 									disabled={isUserModel}
-									className="h-4 w-7"
+									className="mr-3 h-4 w-7"
 									thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
 								/>
-							</label>
+							</Row> */}
 						</div>
 					</PopoverContent>
 				</Popover>

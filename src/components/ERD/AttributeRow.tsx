@@ -24,6 +24,7 @@ import { useERDContext } from '@/lib/ERDContext'
 import { getLogicalRecommend, getSourceName, getTargetName, isReservedKeyword } from '@/lib/ERDHelpers'
 import { useAttrField } from '@/lib/useAttrField'
 import { SelectList } from '@/components/SelectList'
+import { Row, RowLabel } from '@/components/ERD/Rows'
 
 type Model = BasicModel & {
 	attributes: Attribute[]
@@ -184,7 +185,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 							)}
 						</div>
 
-						<div className="stripes h-4" />
+						{/* <RowGap /> */}
 
 						{isUserAttr && (
 							<div className="flex h-10 items-center justify-center bg-accent px-3 text-sm text-muted-foreground">
@@ -194,8 +195,8 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 
 						{attr.name === 'id' ? (
 							<>
-								<label className="flex h-10 flex-row items-center px-3 pr-0">
-									<div className="text-sm font-medium text-muted-foreground">Type</div>
+								<Row>
+									<RowLabel>Type</RowLabel>
 									<SelectList
 										value={attr.type}
 										onValueChange={(val) => updateField('type', val)}
@@ -206,12 +207,12 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 										clearable={false}
 										className="-my-2 flex-1 justify-end gap-2 border-0 bg-transparent pr-3 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
 									/>
-								</label>
+								</Row>
 							</>
 						) : (
 							<>
-								<label className="flex h-10 flex-row items-center px-3 pr-0">
-									<div className="text-sm font-medium text-muted-foreground">Name</div>
+								<Row>
+									<RowLabel>Name</RowLabel>
 									<Input
 										value={name || ''}
 										size="sm"
@@ -234,10 +235,10 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 										disabled={isLocked}
 										className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
 									/>
-								</label>
+								</Row>
 
-								<label className="flex h-10 flex-row items-center pl-3">
-									<div className="text-sm font-medium text-muted-foreground">Type</div>
+								<Row>
+									<RowLabel>Type</RowLabel>
 
 									<SelectList
 										value={attr.type}
@@ -250,10 +251,10 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 										clearable={false}
 										className="-my-2 flex-1 justify-end gap-2 border-0 bg-transparent pr-3 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
 									/>
-								</label>
+								</Row>
 
-								<label className="flex h-10 flex-row items-center pl-3">
-									<div className="text-sm font-medium text-muted-foreground">Default</div>
+								<Row>
+									<RowLabel>Default</RowLabel>
 
 									{attr.type === 'id' || attr.type === 'datetime' || attr.type === 'boolean' ? (
 										<>
@@ -291,58 +292,45 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 											className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
 										/>
 									)}
-								</label>
+								</Row>
 
-								<label className="flex h-10 flex-row items-center justify-between px-3">
-									<div className="text-sm font-medium text-muted-foreground">Nullable</div>
+								<Row>
+									<RowLabel>Nullable</RowLabel>
 									<Switch
 										checked={attr.nullable}
 										onCheckedChange={(val) => updateField('nullable', val)}
 										disabled={isLocked}
-										className="h-4 w-7"
+										className="mr-3 h-4 w-7"
 										thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
 									/>
-								</label>
+								</Row>
 
-								<label className="flex h-10 flex-row items-center justify-between px-3">
-									<div className="text-sm font-medium text-muted-foreground">Selectable</div>
+								<Row>
+									<RowLabel>Selectable</RowLabel>
 									<Switch
 										checked={attr.selectable}
 										onCheckedChange={(val) => updateField('selectable', val)}
 										disabled={isLocked}
-										className="h-4 w-7"
+										className="mr-3 h-4 w-7"
 										thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
 									/>
-								</label>
+								</Row>
 
-								<label className="flex h-10 flex-row items-center justify-between px-3">
-									<div className="text-sm font-medium text-muted-foreground">Insertable</div>
+								<Row>
+									<RowLabel>Insertable</RowLabel>
 									<Switch
 										checked={attr.insertable}
 										onCheckedChange={(val) => updateField('insertable', val)}
 										disabled={isLocked}
-										className="h-4 w-7"
+										className="mr-3 h-4 w-7"
 										thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
 									/>
-								</label>
-
-								{/* <PanelRow
-									label="Enabled"
-									hint="If set to false, this field will be omitted from the generated app and db schema"
-								>
-									<Switch
-										checked={attr.enabled}
-										onCheckedChange={(val) => updateField('enabled', val)}
-										disabled={isLocked}
-									/>
-								</PanelRow> */}
+								</Row>
 							</>
 						)}
 					</div>
 				</PopoverContent>
 			</Popover>
-
-			{/* {attr.name === 'id' && <Handle type="target" position={Position.Left} id={attr.id} />} */}
 		</div>
 	)
 }

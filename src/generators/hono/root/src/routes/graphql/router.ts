@@ -91,6 +91,8 @@ const yoga = createYoga({
 					}, {}),
 				},
 				Mutation: isAuthenticated,
+			}, {
+				debug: isDev,
 			}),
 		]),
 	].filter(isNotFalse),

@@ -1,6 +1,7 @@
 const tmpl = () => {
 	return `import { and, eq } from 'drizzle-orm'
-	import { QueryModifiers, CreateModifiers, DeleteModifiers, UpdateModifiers, users } from 'server/src/schema'
+	import { QueryModifiers, CreateModifiers, DeleteModifiers, UpdateModifiers } from 'server/src/lib/modifiers'
+	import { users } from 'server/src/schema'
 	
 	export const queryModifiers: QueryModifiers = {
 		// modify the "users" graphql query

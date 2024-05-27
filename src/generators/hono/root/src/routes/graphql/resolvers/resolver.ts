@@ -1,7 +1,7 @@
 import { ModelCtx } from '@/generators/hono/contexts'
 import { mapAttrToGQLFilter, mapAttrToGarph } from '@/generators/hono/utils'
 import { ProjectCtx } from '@/generators/hono/types'
-import { isNotNone } from '@/lib/utils'
+import { isNotNone, removeDuplicates } from '@/lib/utils'
 
 const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	const nonSelectAttrs = model.attributes.filter((x) => !x.selectable)
@@ -28,11 +28,11 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	import { MySqlSelectDynamic } from 'drizzle-orm/mysql-core'
 	import { g, Infer } from 'garph'
 	${isAuthModel ? `import { createUser, updateUser } from '../../../lib/manageUser.js'` : `import { generateId } from 'lucia'`}
-	${model.relatedModels
-		.map((x) => {
+	${removeDuplicates(
+		model.relatedModels.map((x) => {
 			return `import * as ${x.otherModel.name} from './${x.drizzleName}.js'`
 		})
-		.join('\n')}
+	).join('\n')}
 	import { removeDuplicates } from '../../../lib/utils.js'
 	import { modifyQuery } from '../../../lib/modifiers.js'
 	import { OrderDir, DateType } from './_utils.js'
@@ -69,13 +69,14 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				})
 				.filter(isNotNone)
 				.join('\n')}
-			${model.relatedModels
-				.map((x) => {
-					// use id or string? lets go with id for now
-					return `${x.fieldName}: g.ref(() => ${x.otherModel.name}.types.type)${x.isArray ? '.list()' : ''}${x.optional ? '.optional()' : ''}.omitResolver(),`
-				})
-				.filter(isNotNone)
-				.join('\n')}
+			${removeDuplicates(
+				model.relatedModels
+					.map((x) => {
+						// use id or string? lets go with id for now
+						return `${x.fieldName}: g.ref(() => ${x.otherModel.name}.types.type)${x.isArray ? '.list()' : ''}${x.optional ? '.optional()' : ''}.omitResolver(),`
+					})
+					.filter(isNotNone)
+			).join('\n')}
 			${model.auditDates ? `createdAt: g.ref(DateType), updatedAt: g.ref(DateType).optional(), deletedAt: g.ref(DateType).optional(),` : ''}
 		}),
 	
@@ -98,8 +99,10 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				.join('\n')}
 			${model.foreignKeys
 				.map((x) => {
+					const isOptional = x.optional
+
 					// use id or string? lets go with id for now
-					return `${x.name}: g.id()${x.optional ? '.optional()' : ''},`
+					return `${x.name}: g.id()${isOptional ? '.optional()' : ''},`
 				})
 				.filter(isNotNone)
 				.join('\n')}

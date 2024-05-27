@@ -67,6 +67,10 @@ export const lc = (str: string) => {
 export const getSmallName = (model: { key: string; name: string }) => singular(model.key || camelize(model.name))
 export const getBigName = (model: { key: string; name: string }) => uc(getSmallName(model))
 
+export const removeDuplicates = <T>(list: T[]): T[] => {
+	return list.filter((x, i, a) => a.indexOf(x) === i)
+}
+
 export const safeParse = <T>(str: string, fallback: T): T => {
 	try {
 		return JSON.parse(str)

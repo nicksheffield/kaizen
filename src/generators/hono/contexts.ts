@@ -69,7 +69,7 @@ export const createModelCtx = (model: ProjectCtx['models'][number], ctx: Project
 					return {
 						id: rel.id,
 						name,
-						optional: rel.optional,
+						optional: rel.optional || !!rel.targetDefaultToAuth,
 						optionalOp: rel.optional ? '?' : '!',
 						order: rel.sourceOrder,
 						otherTable: getTableName(targetModel),
@@ -87,7 +87,7 @@ export const createModelCtx = (model: ProjectCtx['models'][number], ctx: Project
 					return {
 						id: rel.id,
 						name,
-						optional: rel.optional,
+						optional: rel.optional || !!rel.sourceDefaultToAuth,
 						order: rel.targetOrder,
 						otherTable: getTableName(sourceModel),
 						otherDrizzle: pluralize(getSmallName(sourceModel), 2),
@@ -104,7 +104,7 @@ export const createModelCtx = (model: ProjectCtx['models'][number], ctx: Project
 					return {
 						id: rel.id,
 						name,
-						optional: rel.optional,
+						optional: rel.optional || !!rel.targetDefaultToAuth,
 						order: rel.targetOrder,
 						otherTable: getTableName(targetModel),
 						otherDrizzle: pluralize(getSmallName(targetModel), 2),
@@ -125,7 +125,8 @@ export const createModelCtx = (model: ProjectCtx['models'][number], ctx: Project
 					const otherName = rel.targetName || camelize(otherModel.key || otherModel.name)
 
 					const isArray = rel.type === RelationType.oneToMany || rel.type === RelationType.manyToMany
-					const fieldName = isArray ? pluralize(getSmallName(otherModel), 2) : getSmallName(otherModel)
+
+					const fieldName = isArray ? pluralize(otherName, 2) : otherName
 
 					const thisKey = (() => {
 						if (rel.type === RelationType.oneToOne) return `${otherName}Id`
@@ -176,7 +177,7 @@ export const createModelCtx = (model: ProjectCtx['models'][number], ctx: Project
 					const otherName = rel.sourceName || camelize(otherModel.key || otherModel.name)
 
 					const isArray = rel.type === RelationType.manyToOne || rel.type === RelationType.manyToMany
-					const fieldName = isArray ? pluralize(getSmallName(otherModel), 2) : getSmallName(otherModel)
+					const fieldName = isArray ? pluralize(otherName, 2) : otherName
 
 					const thisKey = (() => {
 						if (rel.type === RelationType.oneToOne) return `id`

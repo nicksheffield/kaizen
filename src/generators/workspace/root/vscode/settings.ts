@@ -4,7 +4,7 @@ const tmpl = ({ project }: { project?: ProjectCtx }) => {
 	const object: Record<string, any> = {}
 
 	if (project?.settings.hasClient) {
-		object['typescript.tsdk'] = 'node_modules/typescript/lib'
+		object['typescript.tsdk'] = 'apps/client/node_modules/typescript/lib'
 		object['typescript.enablePromptUseWorkspaceTsdk'] = true
 	}
 

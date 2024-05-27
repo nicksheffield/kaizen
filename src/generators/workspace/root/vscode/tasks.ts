@@ -26,7 +26,7 @@ const tmpl = ({ project }: { project?: ProjectCtx }) => {
 		tasks.push({
 			label: 'tsc watch',
 			type: 'shell',
-			command: 'node_modules/.bin/tsc',
+			command: 'apps/client/node_modules/.bin/tsc',
 			isBackground: true,
 			args: ['--watch', '--noEmit', '--project', './apps/client'],
 			group: {

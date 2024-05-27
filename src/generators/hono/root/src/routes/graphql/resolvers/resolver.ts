@@ -172,9 +172,12 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				return `${rel.fieldName}: {
 				async loadBatch(queries) {
 					const ${rel.drizzleName} = await db.query.${rel.drizzleName}.findMany({
-						where: inArray(
-							tables.${rel.drizzleName}.${rel.oppositeKey},
-							removeDuplicates(queries.map((q) => q.parent.${rel.thisKey} ?? ''))
+						where: and(
+							inArray(
+								tables.${rel.drizzleName}.${rel.oppositeKey},
+								removeDuplicates(queries.map((q) => q.parent.${rel.thisKey} ?? ''))
+							),
+							${model.auditDates ? `isNull(tables.${rel.drizzleName}.deletedAt)` : ''}
 						),
 					})
 		

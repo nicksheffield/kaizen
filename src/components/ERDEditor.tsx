@@ -8,20 +8,18 @@ import { useApp } from '@/lib/AppContext'
 import { ModelNode } from '@/components/ERD/ModelNode'
 import { SimpleFloatingEdge } from '@/components/ERD/SimpleFloatingEdge'
 import { useLocalStorage } from 'usehooks-ts'
-import {
-	CableIcon,
-	ListCollapseIcon,
-	MaximizeIcon,
-	PlusIcon,
-	SaveIcon,
-	SearchIcon,
-	ShrinkIcon,
-	Undo2Icon,
-} from 'lucide-react'
+import { MaximizeIcon, PlusIcon, SaveIcon, SearchIcon, Settings2Icon, ShrinkIcon, Undo2Icon } from 'lucide-react'
 import { RevealButton } from '@/components/RevealButton'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn, generateId, getUserModelFields } from '@/lib/utils'
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { buttonVariants } from '@/components/ui/button'
+import {
+	DropdownMenu,
+	DropdownMenuCheckboxItem,
+	DropdownMenuContent,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 const snapSize = 24
 
@@ -409,9 +407,9 @@ export const Editor = () => {
 							<Popover>
 								<PopoverTrigger asChild>
 									<RevealButton
-										variant="outline"
+										variant="test"
 										icon={<SearchIcon className="h-4 w-4 shrink-0" />}
-										className="pointer-events-auto m-4 h-10 min-w-10 rounded-full bg-popover px-[11px] py-0 shadow-md"
+										className="pointer-events-auto m-4 h-10 min-w-10 rounded-full px-[11px] py-0 shadow-md backdrop-blur-sm"
 										label="Search Models"
 									/>
 								</PopoverTrigger>
@@ -437,13 +435,19 @@ export const Editor = () => {
 						</div>
 
 						<div className="flex justify-center">
-							<div className="pointer-events-auto mt-4 flex h-10 items-center justify-center gap-1.5 rounded-full border bg-popover px-1.5 shadow-md">
+							<div
+								className={cn(
+									buttonVariants({ variant: 'test' }),
+									'pointer-events-auto mt-4 flex h-10 items-center justify-center gap-1.5 rounded-full px-1.5 shadow-md backdrop-blur-sm'
+								)}
+							>
 								<RevealButton
 									variant="ghost"
 									size="pip"
 									onClick={() => addNode()}
 									icon={<PlusIcon className="h-4 w-4" />}
 									label="Add Model"
+									className="dark:hover:bg-foreground/10"
 								/>
 								<RevealButton
 									variant="ghost"
@@ -451,20 +455,18 @@ export const Editor = () => {
 									onClick={() => center()}
 									icon={<ShrinkIcon className="h-4 w-4" />}
 									label="Center"
+									className="dark:hover:bg-foreground/10"
 								/>
 								<RevealButton
 									variant="ghost"
 									size="pip"
-									onClick={() => setDetailed((x) => !x)}
-									icon={<ListCollapseIcon className="h-4 w-4" />}
-									label="Show Details"
-								/>
-								<RevealButton
-									variant="ghost"
-									size="pip"
-									onClick={() => setShowConnections((x) => !x)}
-									icon={<CableIcon className="h-4 w-4" />}
-									label="Show Connections"
+									onClick={() => {
+										setMax((x) => !x)
+										setTimeout(() => center(), 1)
+									}}
+									icon={<MaximizeIcon className="h-4 w-4" />}
+									label="Maximize"
+									className="dark:hover:bg-foreground/10"
 								/>
 								<RevealButton
 									variant="ghost"
@@ -472,6 +474,7 @@ export const Editor = () => {
 									onClick={reset}
 									icon={<Undo2Icon className="h-4 w-4" />}
 									label="Reset"
+									className="dark:hover:bg-foreground/10"
 								/>
 								<RevealButton
 									variant="ghost"
@@ -479,23 +482,42 @@ export const Editor = () => {
 									onClick={save}
 									icon={<SaveIcon className="h-4 w-4" />}
 									label="Save"
+									className="dark:hover:bg-foreground/10"
 									revealLabel={isDirty ? 'Save Changes' : ''}
 								/>
 							</div>
 						</div>
 
-						<div className="flex justify-end">
-							<RevealButton
-								variant="outline"
-								icon={<MaximizeIcon className="h-4 w-4" />}
-								className="pointer-events-auto m-4 rounded-full bg-popover px-3 shadow-md"
-								label="Full Screen"
-								iconSide="right"
-								onClick={() => {
-									setMax((x) => !x)
-									setTimeout(() => center(), 1)
-								}}
-							/>
+						<div className="flex justify-end p-4">
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<div>
+										<RevealButton
+											variant="test"
+											icon={<Settings2Icon className="h-4 w-4 shrink-0" />}
+											className="pointer-events-auto h-10 min-w-10 rounded-full px-[11px] py-0 shadow-md backdrop-blur-sm"
+											label="Settings"
+											iconSide="right"
+										/>
+									</div>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent side="bottom" align="end">
+									<DropdownMenuCheckboxItem
+										checked={detailed}
+										onCheckedChange={setDetailed}
+										onSelect={(e) => e.preventDefault()}
+									>
+										Show Details
+									</DropdownMenuCheckboxItem>
+									<DropdownMenuCheckboxItem
+										checked={showConnections}
+										onCheckedChange={setShowConnections}
+										onSelect={(e) => e.preventDefault()}
+									>
+										Show Connections
+									</DropdownMenuCheckboxItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
 						</div>
 					</div>
 
@@ -514,6 +536,32 @@ export const Editor = () => {
 						)}
 					</div>
 				</div>
+
+				{/* <div className="pointer-events-none absolute bottom-0 left-0 p-4">
+					<div
+						className={cn(
+							buttonVariants({ variant: 'test' }),
+							'pointer-events-auto flex h-10 items-center justify-center gap-1.5 rounded-full px-1.5 shadow-md backdrop-blur-sm'
+						)}
+					>
+						<RevealButton
+							variant="ghost"
+							size="pip"
+							onClick={() => setDetailed((x) => !x)}
+							icon={<ListCollapseIcon className="h-4 w-4" />}
+							label="Show Details"
+							className="dark:hover:bg-foreground/10"
+						/>
+						<RevealButton
+							variant="ghost"
+							size="pip"
+							onClick={() => setShowConnections((x) => !x)}
+							icon={<CableIcon className="h-4 w-4" />}
+							label="Show Connections"
+							className="dark:hover:bg-foreground/10"
+						/>
+					</div>
+				</div> */}
 
 				<ERDMarkers />
 

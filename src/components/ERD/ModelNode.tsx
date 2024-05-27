@@ -195,7 +195,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 	return (
 		<div
 			className={cn(
-				'flex min-w-[216px] cursor-default flex-col gap-4 overflow-hidden rounded-md border bg-muted pb-3 shadow-xl transition-all',
+				'flex min-w-[216px] cursor-default flex-col gap-4 rounded-md border bg-muted pb-3 shadow-xl transition-all dark:border-0',
 				selected && 'ring-2 ring-primary dark:ring-offset-background',
 				!data.enabled && 'opacity-50',
 				modalHasPopover && !isActiveModel && 'opacity-50'
@@ -206,7 +206,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 		>
 			<div
 				className={cn(
-					'drag-handle flex h-[36px] cursor-grab items-center justify-between pl-3 pr-3 text-foreground active:cursor-grabbing',
+					'drag-handle dark:highlight-white flex h-[36px] cursor-grab items-center justify-between rounded-t-md pl-3 pr-3 text-foreground active:cursor-grabbing',
 					selected && 'text-foreground'
 				)}
 				onDoubleClick={() => {

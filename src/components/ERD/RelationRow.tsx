@@ -319,10 +319,10 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 
 								<Row>
 									<RowLabel>Cardinality</RowLabel>
-									<div className="-my-2 flex flex-1 justify-end">
+									<div className="-my-2 mr-1 flex flex-1 justify-end">
 										<Button
 											variant="ghost"
-											size="sm"
+											size="xs"
 											onClick={() => {
 												if (sourceCardinality !== 'one') {
 													updateField(
@@ -396,10 +396,10 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 
 								<Row>
 									<RowLabel>Cardinality</RowLabel>
-									<div className="-my-2 flex flex-1 justify-end">
+									<div className="-my-2 mr-1 flex flex-1 justify-end">
 										<Button
 											variant="ghost"
-											size="sm"
+											size="xs"
 											onClick={() => {
 												if (targetCardinality !== 'one') {
 													updateField(

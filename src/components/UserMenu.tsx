@@ -21,7 +21,7 @@ export function UserMenu() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="outline" size="icon">
+				<Button variant="test" size="icon">
 					<UserIcon className="w-5" />
 				</Button>
 			</DropdownMenuTrigger>

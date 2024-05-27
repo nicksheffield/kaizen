@@ -1,6 +1,7 @@
 import { openConfirm } from '@/components/Alert'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { useApp } from '@/lib/AppContext'
+import { cn } from '@/lib/utils'
 import { PackageOpenIcon, RefreshCcwDotIcon, XIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -15,11 +16,16 @@ export const ProjectHeader = () => {
 	if (!root) return null
 
 	return (
-		<div className="flex h-10 w-full max-w-[600px] items-center justify-between rounded-full border bg-muted p-1.5">
+		<div
+			className={cn(
+				buttonVariants({ variant: 'test' }),
+				'flex h-10 w-full max-w-[600px] items-center justify-between rounded-full p-1.5'
+			)}
+		>
 			<div className="text-sm font-medium">
 				<Button
-					variant="pip"
-					className="group gap-1 rounded-full text-sm font-normal hover:bg-foreground/5"
+					variant="ghost"
+					className="group gap-1 rounded-full text-sm font-normal hover:bg-primary hover:text-primary-foreground"
 					size="pip"
 					onClick={() => {
 						openConfirm({
@@ -33,7 +39,7 @@ export const ProjectHeader = () => {
 				>
 					<span className="text-sm">{project?.settings.name || root.name}</span>
 					<div className="flex w-0 justify-end opacity-0 transition-all group-hover:w-4 group-hover:opacity-100">
-						<XIcon className="h-4 w-4 shrink-0 text-primary" />
+						<XIcon className="h-4 w-4 shrink-0" />
 					</div>
 				</Button>
 			</div>
@@ -42,9 +48,9 @@ export const ProjectHeader = () => {
 				<div className="flex flex-row gap-2">
 					{workspaceIsMissingFiles && (
 						<Button
-							variant="pip"
+							variant="ghost"
 							size="pip-icon"
-							className="rounded-full"
+							className="rounded-full hover:bg-primary hover:text-primary-foreground"
 							onClick={async () => {
 								await generateWorkspace(project)
 								toast.success('Workspace generated', { closeButton: true })
@@ -55,9 +61,9 @@ export const ProjectHeader = () => {
 					)}
 
 					<Button
-						variant="pip"
+						variant="ghost"
 						size="pip-icon"
-						className="rounded-full"
+						className="rounded-full hover:bg-primary hover:text-primary-foreground"
 						onClick={async () => {
 							await generateProject(project)
 							toast.success('Project generated', { closeButton: true })

@@ -12,12 +12,12 @@ type RevealButtonProps = ButtonProps & {
 }
 
 export const RevealButton = forwardRef<HTMLButtonElement, RevealButtonProps>(
-	({ onClick, icon, iconSide = 'left', label, revealLabel, ...props }, ref) => {
+	({ onClick, icon, iconSide = 'left', label, revealLabel, className, ...props }, ref) => {
 		const [hovered, setHovered] = useState(false)
 
 		return (
 			<Button
-				className={cn('rounded-full px-2', revealLabel && 'bg-primary text-primary-foreground')}
+				className={cn('rounded-full px-2', revealLabel && 'bg-primary text-primary-foreground', className)}
 				onMouseOver={() => setHovered(true)}
 				onMouseOut={() => setHovered(false)}
 				onClick={onClick}

@@ -1,3 +1,6 @@
+const plugin = require('tailwindcss/plugin')
+const { default: flattenColorPalette } = require('tailwindcss/lib/util/flattenColorPalette')
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
 	darkMode: ['class'],
@@ -70,5 +73,17 @@ module.exports = {
 			},
 		},
 	},
-	plugins: [require('tailwindcss-animate')],
+	plugins: [
+		require('tailwindcss-animate'),
+		plugin(function ({ matchUtilities, theme }) {
+			matchUtilities(
+				{
+					highlight: (color) => ({
+						boxShadow: `inset 0 1px 0 0 ${color}`,
+					}),
+				},
+				{ values: flattenColorPalette(theme('colors')), type: 'color' }
+			)
+		}),
+	],
 }

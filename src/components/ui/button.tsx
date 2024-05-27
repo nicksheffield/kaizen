@@ -17,7 +17,7 @@ const buttonVariants = cva(
 				link: 'text-primary underline-offset-4 hover:underline',
 				pip: 'text-sm font-medium hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 dark:hover:text-primary',
 				'pip-selected': 'text-sm font-medium bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary',
-				test: 'bg-slate-400/10 dark:highlight-white hover:bg-slate-400/20',
+				test: 'bg-slate-400/10 dark:highlight-white/5 hover:bg-slate-400/20',
 			},
 			size: {
 				default: 'h-10 px-4 py-2',

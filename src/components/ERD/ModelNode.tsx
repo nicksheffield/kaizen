@@ -206,7 +206,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 		>
 			<div
 				className={cn(
-					'drag-handle dark:highlight-white flex h-[36px] cursor-grab items-center justify-between rounded-t-md pl-3 pr-3 text-foreground active:cursor-grabbing',
+					'drag-handle dark:highlight-white/5 flex h-[36px] cursor-grab items-center justify-between rounded-t-md pl-3 pr-3 text-foreground active:cursor-grabbing',
 					selected && 'text-foreground'
 				)}
 				onDoubleClick={() => {

@@ -7,6 +7,7 @@ const tmpl = ({ project }: { project?: ProjectCtx }) => {
 
 	const dependencies: Record<string, string> = {
 		tsx: '^4.7.1',
+		typescript: '^5.2.2',
 	}
 
 	if (project?.settings.hasClient) {

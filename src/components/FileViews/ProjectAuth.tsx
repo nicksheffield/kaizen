@@ -26,6 +26,7 @@ export const ProjectAuth = () => {
 			enableBearer: true,
 			enableAuthenticator2fa: true,
 			enableEmail2fa: false,
+			enableMagicLink: false,
 		},
 	})
 
@@ -84,8 +85,14 @@ export const ProjectAuth = () => {
 									/>
 								</Card>
 
-								<div className="-mb-4 font-medium">Two Factor</div>
+								<div className="-mb-4 font-medium">Authentication</div>
 								<Card className="divide-y overflow-hidden border-input">
+									<Switcher
+										name="enableMagicLink"
+										label="Enable Magic Links"
+										description="Magic links allow users to login without a password."
+									/>
+
 									<Switcher
 										name="enableAuthenticator2fa"
 										label="Enable Authenticator 2fa"

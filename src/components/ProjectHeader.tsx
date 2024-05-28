@@ -25,7 +25,7 @@ export const ProjectHeader = () => {
 			<div className="text-sm font-medium">
 				<Button
 					variant="ghost"
-					className="group gap-1 rounded-full text-sm font-normal hover:bg-primary hover:text-primary-foreground"
+					className="hover:highlight-white/10 group gap-1 rounded-full text-sm font-normal hover:bg-primary hover:text-primary-foreground"
 					size="pip"
 					onClick={() => {
 						openConfirm({
@@ -50,7 +50,7 @@ export const ProjectHeader = () => {
 						<Button
 							variant="ghost"
 							size="pip-icon"
-							className="rounded-full hover:bg-primary hover:text-primary-foreground"
+							className="hover:highlight-white/10 rounded-full hover:bg-primary hover:text-primary-foreground"
 							onClick={async () => {
 								await generateWorkspace(project)
 								toast.success('Workspace generated', { closeButton: true })
@@ -63,7 +63,7 @@ export const ProjectHeader = () => {
 					<Button
 						variant="ghost"
 						size="pip-icon"
-						className="rounded-full hover:bg-primary hover:text-primary-foreground"
+						className="hover:highlight-white/10 rounded-full hover:bg-primary hover:text-primary-foreground"
 						onClick={async () => {
 							await generateProject(project)
 							toast.success('Project generated', { closeButton: true })

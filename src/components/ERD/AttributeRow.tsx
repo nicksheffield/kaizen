@@ -174,7 +174,13 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 					</Button>
 				</PopoverTrigger>
 
-				<PopoverContent align="start" side="right" sideOffset={18} alignOffset={-56} className="p-0">
+				<PopoverContent
+					align="start"
+					side="right"
+					sideOffset={18}
+					alignOffset={-56}
+					className="dark:highlight-white/10 p-0 dark:border-0"
+				>
 					<div className="flex flex-col divide-y">
 						<div className="flex h-10 items-center justify-between px-3 pr-2">
 							<div className="text-sm font-medium">Field</div>

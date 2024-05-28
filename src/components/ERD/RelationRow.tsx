@@ -266,7 +266,7 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 					side="right"
 					sideOffset={18}
 					alignOffset={-56}
-					className="w-[calc(143*0.25rem)] overflow-hidden p-0"
+					className="dark:highlight-white/10 w-[calc(143*0.25rem)] overflow-hidden p-0 dark:border-0"
 				>
 					<div className="flex flex-col divide-y">
 						<div className="flex h-10 items-center justify-between px-3 pr-2">

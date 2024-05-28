@@ -179,7 +179,7 @@ export const Editor = () => {
 	const [detailed, setDetailed] = useLocalStorage(`project-${project?.settings.id}-erd-detailed`, false)
 	const [showConnections, setShowConnections] = useLocalStorage(
 		`project-${project?.settings.id}-erd-showConnections`,
-		false
+		true
 	)
 
 	const [modalHasPopover, setModalHasPopover] = useState<string | null>(null)

@@ -5,17 +5,20 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
+	CommandShortcut,
 } from '@/components/ui/command'
-import { useEffect, useState } from 'react'
-import { useApp } from '@/lib/AppContext'
-import { openConfirm } from '@/components/Alert'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useTheme } from '@/lib/ThemeContext'
+import { EclipseIcon, MoonIcon, OrbitIcon, SunIcon } from 'lucide-react'
 
 export function CommandMenu() {
-	const files = useApp((v) => v.files)
-	const openFile = useApp((v) => v.openFile)
-	const clearRootHandle = useApp((v) => v.clearRootHandle)
-
 	const [open, setOpen] = useState(false)
+	const [search, setSearch] = useState('')
+
+	const close = useCallback(() => {
+		setOpen(false)
+		setSearch('')
+	}, [])
 
 	useEffect(() => {
 		const down = (e: KeyboardEvent) => {
@@ -28,35 +31,47 @@ export function CommandMenu() {
 		return () => document.removeEventListener('keydown', down)
 	}, [])
 
+	const { resolvedTheme, setTheme } = useTheme()
+	const themeActions = useMemo(() => {
+		return [
+			{
+				label: 'Toggle Dark Mode',
+				onClick: () => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark'),
+				icon: EclipseIcon,
+			},
+			{ label: 'Dark', onClick: () => setTheme('dark'), icon: MoonIcon },
+			{ label: 'Light', onClick: () => setTheme('light'), icon: SunIcon },
+			{ label: 'System', onClick: () => setTheme('system'), icon: OrbitIcon },
+		]
+	}, [setTheme])
+
 	return (
-		<CommandDialog open={open} onOpenChange={setOpen}>
-			<CommandInput placeholder="Type a command or search..." />
+		<CommandDialog
+			open={open}
+			onOpenChange={(isOpen) => {
+				if (isOpen) {
+					setOpen(true)
+				} else {
+					close()
+				}
+			}}
+		>
+			<CommandInput placeholder="Type a command or search..." value={search} onValueChange={setSearch} />
 			<CommandList>
 				<CommandEmpty>No results found.</CommandEmpty>
-				<CommandItem
-					onSelect={() => {
-						setOpen(false)
-						openConfirm({
-							title: 'Close this project?',
-							variant: 'destructive',
-							onSubmit: () => {
-								clearRootHandle()
-							},
-						})
-					}}
-				>
-					Close Project
-				</CommandItem>
-				<CommandGroup heading="Files">
-					{files.map((file) => (
+				<CommandGroup heading="Theme">
+					{themeActions.map((item) => (
 						<CommandItem
-							key={file.path}
+							key={item.label}
 							onSelect={() => {
-								openFile(file.path)
-								setOpen(false)
+								close()
+								item.onClick()
 							}}
+							className="p-4"
 						>
-							{file.path}
+							<item.icon className="mr-3 !w-4 text-muted-foreground" />
+							{item.label}
+							<CommandShortcut>Theme</CommandShortcut>
 						</CommandItem>
 					))}
 				</CommandGroup>

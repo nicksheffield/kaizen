@@ -77,11 +77,7 @@ module.exports = {
 		require('tailwindcss-animate'),
 		plugin(function ({ matchUtilities, theme }) {
 			matchUtilities(
-				{
-					highlight: (color) => ({
-						boxShadow: `inset 0 1px 0 0 ${color}`,
-					}),
-				},
+				{ highlight: (color) => ({ boxShadow: `inset 0 1px 0 0 ${color}` }) },
 				{ values: flattenColorPalette(theme('colors')), type: 'color' }
 			)
 		}),

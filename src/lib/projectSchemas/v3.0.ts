@@ -94,6 +94,7 @@ export const ProjectSchema = z.object({
 			enableAuthenticator2fa: z.boolean().default(true),
 			enableEmail2fa: z.boolean().default(false),
 			enableRegistration: z.boolean().default(true),
+			enableMagicLink: z.boolean().default(false),
 		}),
 	}),
 	models: z.array(ModelSchema),

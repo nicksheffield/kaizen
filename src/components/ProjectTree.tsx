@@ -28,7 +28,7 @@ export const ProjectTree = () => {
 						className={cn(
 							'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 							selectedPath === 'project.json?models'
-								? 'bg-primary/10 text-primary hover:bg-primary/20'
+								? 'bg-primary text-primary-foreground hover:bg-primary/80'
 								: 'hover:bg-foreground/10'
 						)}
 						onClick={() => {
@@ -43,7 +43,7 @@ export const ProjectTree = () => {
 						className={cn(
 							'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 							selectedPath === 'project.json?details'
-								? 'bg-primary/10 text-primary hover:bg-primary/20'
+								? 'bg-primary text-primary-foreground hover:bg-primary/80'
 								: 'hover:bg-foreground/10'
 						)}
 						onClick={() => {
@@ -58,7 +58,7 @@ export const ProjectTree = () => {
 						className={cn(
 							'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 							selectedPath === 'project.json?auth'
-								? 'bg-primary/10 text-primary hover:bg-primary/20'
+								? 'bg-primary text-primary-foreground hover:bg-primary/80'
 								: 'hover:bg-foreground/10'
 						)}
 						onClick={() => {
@@ -73,7 +73,7 @@ export const ProjectTree = () => {
 						className={cn(
 							'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 							selectedPath === 'project.json?environment'
-								? 'bg-primary/10 text-primary hover:bg-primary/20'
+								? 'bg-primary text-primary-foreground hover:bg-primary/80'
 								: 'hover:bg-foreground/10'
 						)}
 						onClick={() => {
@@ -98,7 +98,7 @@ export const ProjectTree = () => {
 						className={cn(
 							'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 							selectedPath === seedFilePath
-								? 'bg-primary/10 text-primary hover:bg-primary/20'
+								? 'bg-primary text-primary-foreground hover:bg-primary/80'
 								: 'hover:bg-foreground/10'
 						)}
 						onClick={() => {
@@ -114,7 +114,7 @@ export const ProjectTree = () => {
 							className={cn(
 								'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 								selectedPath === file.path
-									? 'bg-primary/10 text-primary hover:bg-primary/20'
+									? 'bg-primary text-primary-foreground hover:bg-primary/80'
 									: 'hover:bg-foreground/10'
 							)}
 							onClick={() => {
@@ -131,7 +131,7 @@ export const ProjectTree = () => {
 							className={cn(
 								'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 								selectedPath === file.path
-									? 'bg-primary/10 text-primary hover:bg-primary/20'
+									? 'bg-primary text-primary-foreground hover:bg-primary/80'
 									: 'hover:bg-foreground/10'
 							)}
 							onClick={() => {

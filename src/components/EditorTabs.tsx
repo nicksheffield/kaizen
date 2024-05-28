@@ -193,8 +193,7 @@ const FileTab = ({ filePath, index, onSelect }: FileTabProps) => {
 					<div
 						className={cn(
 							'group flex h-full cursor-pointer select-none items-center justify-center gap-2 pl-4 pr-2 text-sm font-medium hover:bg-muted',
-							filePath === selectedPath &&
-								'bg-primary/10 text-primary hover:bg-primary/15 dark:bg-primary/20 dark:text-primary'
+							filePath === selectedPath && 'bg-primary text-primary-foreground hover:bg-primary/80'
 						)}
 					>
 						<div {...attributes} {...listeners} className="flex items-center gap-2">

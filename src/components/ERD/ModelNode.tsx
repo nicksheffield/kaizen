@@ -195,7 +195,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 	return (
 		<div
 			className={cn(
-				'flex min-w-[216px] cursor-default flex-col gap-4 rounded-md border bg-muted pb-3 shadow-xl transition-all dark:border-0',
+				'flex min-w-[216px] cursor-default flex-col gap-4 rounded-md border bg-muted pb-3 shadow-xl dark:border-0',
 				selected && 'ring-2 ring-primary dark:ring-offset-background',
 				!data.enabled && 'opacity-50',
 				modalHasPopover && !isActiveModel && 'opacity-50'
@@ -206,7 +206,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 		>
 			<div
 				className={cn(
-					'drag-handle dark:highlight-white/5 flex h-[36px] cursor-grab items-center justify-between rounded-t-md pl-3 pr-3 text-foreground active:cursor-grabbing',
+					'drag-handle dark:highlight-white/10 flex h-[36px] cursor-grab items-center justify-between rounded-t-md pl-3 pr-3 text-foreground active:cursor-grabbing',
 					selected && 'text-foreground'
 				)}
 				onDoubleClick={() => {
@@ -228,7 +228,13 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 						</Button>
 					</PopoverTrigger>
 
-					<PopoverContent align="start" side="right" sideOffset={20} alignOffset={-56} className="p-0">
+					<PopoverContent
+						align="start"
+						side="right"
+						sideOffset={20}
+						alignOffset={-56}
+						className="dark:highlight-white/10 p-0 dark:border-0"
+					>
 						<div className="flex flex-col divide-y">
 							<div className="flex h-10 items-center justify-between px-3 pr-2">
 								<div className="text-sm font-medium">Model</div>

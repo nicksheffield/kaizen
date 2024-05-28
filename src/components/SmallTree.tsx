@@ -18,8 +18,8 @@ export const SmallTree = () => {
 							className={cn(
 								'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 								selectedPath === 'project.json?models'
-									? 'bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground'
-									: 'text-muted-foreground hover:bg-foreground/10'
+									? 'highlight-white/10 bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground'
+									: 'hover:highlight-white/5 text-muted-foreground hover:bg-foreground/10'
 							)}
 							onClick={() => {
 								openFile('project.json?models')
@@ -42,8 +42,8 @@ export const SmallTree = () => {
 							className={cn(
 								'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 								selectedPath === 'project.json?details'
-									? 'bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground'
-									: 'text-muted-foreground hover:bg-foreground/10'
+									? 'highlight-white/10 bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground'
+									: 'hover:highlight-white/5 text-muted-foreground hover:bg-foreground/10'
 							)}
 							onClick={() => {
 								openFile('project.json?details')
@@ -66,8 +66,8 @@ export const SmallTree = () => {
 							className={cn(
 								'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 								selectedPath === 'project.json?auth'
-									? 'bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground'
-									: 'text-muted-foreground hover:bg-foreground/10'
+									? 'highlight-white/10 bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground'
+									: 'hover:highlight-white/5 text-muted-foreground hover:bg-foreground/10'
 							)}
 							onClick={() => {
 								openFile('project.json?auth')
@@ -90,8 +90,8 @@ export const SmallTree = () => {
 							className={cn(
 								'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 								selectedPath === 'project.json?environment'
-									? 'bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground'
-									: 'text-muted-foreground hover:bg-foreground/10'
+									? 'highlight-white/10 bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground'
+									: 'hover:highlight-white/5 text-muted-foreground hover:bg-foreground/10'
 							)}
 							onClick={() => {
 								openFile('project.json?environment')

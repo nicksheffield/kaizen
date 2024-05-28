@@ -48,6 +48,8 @@ const tmpl = () => {
 				operation: 'update',
 				userId,
 			}))
+
+		if (Object.keys(values).length === 0) return
 	
 		await db.insert(history).values(values)
 	}

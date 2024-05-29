@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useState } from 'react'
 import { useStore, useUpdateNodeInternals, type NodeProps } from 'reactflow'
 import { camelize, cn, generateId } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { CalendarIcon, LockIcon, PlusIcon, Settings2Icon, Trash2Icon } from 'lucide-react'
+import { CalendarIcon, LockIcon, PlusIcon, Settings2Icon, Trash2Icon, UserIcon } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Switch } from '@/components/ui/switch'
 import { Input } from '@/components/ui/input'
@@ -62,6 +62,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 	} = useERDContext()
 
 	const hasUserModel = nodes.some((x) => x.data.id === userModelId)
+	const isUserModel = data.id === userModelId
 
 	const sourceRelations = relations.filter((x) => x.sourceId === data.id)
 	const targetRelations = relations.filter((x) => x.targetId === data.id)
@@ -206,7 +207,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 		>
 			<div
 				className={cn(
-					'drag-handle dark:highlight-white/10 flex h-[36px] cursor-grab items-center justify-between rounded-t-md pl-3 pr-3 text-foreground active:cursor-grabbing',
+					'drag-handle flex h-[36px] cursor-grab items-center justify-between rounded-t-md pl-3 pr-3 text-foreground active:cursor-grabbing dark:highlight-white/10',
 					selected && 'text-foreground'
 				)}
 				onDoubleClick={() => {
@@ -216,7 +217,15 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 				}}
 			>
 				{data.name ? (
-					<div className={cn('text-sm font-medium', nameConflicted && 'text-destructive')}>{data.name}</div>
+					<div
+						className={cn(
+							'flex items-center gap-2 text-sm font-medium',
+							nameConflicted && 'text-destructive'
+						)}
+					>
+						{isUserModel && <UserIcon className="mr-1 h-4 w-4" />}
+						{data.name}
+					</div>
 				) : (
 					<div className="italic text-destructive">New Model</div>
 				)}
@@ -233,7 +242,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 						side="right"
 						sideOffset={20}
 						alignOffset={-56}
-						className="dark:highlight-white/10 p-0 dark:border-0"
+						className="p-0 dark:border-0 dark:highlight-white/10"
 					>
 						<div className="flex flex-col divide-y">
 							<div className="flex h-10 items-center justify-between px-3 pr-2">
@@ -258,6 +267,13 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 									)}
 								</div>
 							</div>
+
+							{isUserModel && (
+								<div className="flex h-10 items-center justify-start px-3 text-sm text-muted-foreground">
+									<UserIcon className="mr-2 h-4 w-4" />
+									This is the Auth model.
+								</div>
+							)}
 
 							{/* <RowGap /> */}
 

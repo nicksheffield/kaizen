@@ -12,6 +12,7 @@ import {
 	PlusIcon,
 	TextIcon,
 	Trash2Icon,
+	UserIcon,
 } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Switch } from '@/components/ui/switch'
@@ -40,7 +41,7 @@ type AttributeRowProps = {
 // const zoomSelector = (s: ReactFlowState) => s.transform[2]
 
 export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowProps) => {
-	const { relations, nodes, attrTypeRecommends, modalHasPopover, setModalHasPopover } = useERDContext()
+	const { relations, nodes, attrTypeRecommends, modalHasPopover, setModalHasPopover, detailed } = useERDContext()
 
 	const isUserAttr = getIsUserAttr(attr.id)
 	const isLocked = isUserAttr || attr.name === 'id'
@@ -123,6 +124,8 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 		)
 	}
 
+	if (isUserAttr && !detailed) return null
+
 	return (
 		<div key={attr.id} className="relative flex flex-col px-2" ref={setNodeRef} style={style}>
 			<Popover open={openPopover} onOpenChange={onPopoverOpen}>
@@ -179,7 +182,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 					side="right"
 					sideOffset={18}
 					alignOffset={-56}
-					className="dark:highlight-white/10 p-0 dark:border-0"
+					className="p-0 dark:border-0 dark:highlight-white/10"
 				>
 					<div className="flex flex-col divide-y">
 						<div className="flex h-10 items-center justify-between px-3 pr-2">
@@ -194,7 +197,8 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 						{/* <RowGap /> */}
 
 						{isUserAttr && (
-							<div className="flex h-10 items-center justify-center bg-accent px-3 text-sm text-muted-foreground">
+							<div className="flex h-10 items-center justify-start px-3 text-sm text-muted-foreground">
+								<UserIcon className="mr-2 h-4 w-4" />
 								This is an Auth field.
 							</div>
 						)}

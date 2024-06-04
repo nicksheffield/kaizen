@@ -13,7 +13,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	import { generateId } from 'lucia'
 	import { TimeSpan, createDate } from 'oslo'
 	import { generateRandomString, alphabet } from 'oslo/crypto'
-	import { eq, or, SQL } from 'drizzle-orm'
+	import { eq, SQL } from 'drizzle-orm'
 	import { sendVerificationEmail } from './email.js'
 	import { HTTPException } from 'hono/http-exception'
 	import { hashPassword, validatePassword } from './password.js'
@@ -71,37 +71,28 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 		_userId: string
 	) => {
 		const userId = fields.id || generateId(15)
+
+		const hashedPassword = await validateUser(email, password)
 	
-		const newUser = {
+		const values = {
 			...fields,
 			email,
 			id: userId,
+			password: hashedPassword,
 		}
 	
-		await validatePassword(password)
-	
-		const existingUser = await db
-			.select()
-			.from(${user.drizzleName})
-			.where(
-				or(
-					eq(${user.drizzleName}.email, newUser.email),
-					eq(${user.drizzleName}.id, newUser.id)
-				)
-			)
-	
-		if (existingUser.length) {
-			throw new HTTPException(400, {
-				message: 'Email already in use',
-			})
-		}
-	
-		const hashedPassword = await hashPassword(password)
-	
-		await db.insert(${user.drizzleName}).values({ ...newUser, password: hashedPassword })
+		await db.insert(${user.drizzleName}).values(values)
 
-		await history.create('${user.tableName}', userId, { ...newUser }, _userId)
+		await history.create('${user.tableName}', userId, values, _userId)
 	
+		await userVerification(userId, email)
+	
+		return db.query.${user.drizzleName}.findFirst({
+			where: eq(${user.drizzleName}.id, userId),
+		})
+	}
+
+	export const userVerification = async (userId: string, email: string) => {
 		${
 			project.settings.auth.requireAccountConfirmation
 				? `
@@ -111,89 +102,27 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 		`
 				: ''
 		}
-	
-		return db.query.${user.drizzleName}.findFirst({
-			where: eq(${user.drizzleName}.id, userId),
-		})
 	}
 
-	type UpdateUserFields = {
-		${user?.attributes
-			.map((x) => {
-				if (!x.insertable) return null
-				if (x.name === 'password') return null
-				if (x.name === 'email') return null
-				if (x.name === 'id') return null
-
-				return `${x.name}?: ${mapAttributeTypeToJs(x.type)} | null | undefined`
+	export const throwOnUserExists = async (email: string) => {
+		const existingUser = await db
+			.select()
+			.from(${user.drizzleName})
+			.where(eq(${user.drizzleName}.email, email))
+	
+		if (existingUser.length) {
+			throw new HTTPException(400, {
+				message: 'Email already in use',
 			})
-			.filter(isNotNone)
-			.join('; ')}
-		${user.foreignKeys
-			.map((x) => {
-				return `${x.name}${x.optional ? '?' : ''}: string | null | undefined`
-			})
-			.filter(isNotNone)
-			.join('; ')}
+		}
 	}
 	
-	export const updateUser = async (
-		userId: string,
-		email: string | undefined,
-		password: string | undefined,
-		fields: UpdateUserFields,
-		_userId: string
-	) => {
-		const user = await db.query.${user.drizzleName}.findFirst({
-			where: eq(${user.drizzleName}.id, userId),
-		})
-	
-		if (!user) {
-			throw new HTTPException(404, {
-				message: 'User not found',
-			})
-		}
-	
-		let hashedPassword: string | undefined = undefined
-	
-		if (password) {
-			await validatePassword(password)
-			hashedPassword = await hashPassword(password)
-		}
-
-		const newData = {
-			email,
-			password: hashedPassword,
-			${user?.attributes
-				.map((x) => {
-					if (!x.insertable) return null
-					if (x.name === 'password') return null
-					if (x.name === 'email') return null
-					if (x.name === 'id') return null
-
-					return `${x.name}: fields.${x.name} ?? undefined`
-				})
-				.filter(isNotNone)
-				.join(', ')},
-			${user.foreignKeys
-				.map((x) => {
-					return `${x.name}: fields.${x.name} ?? undefined`
-				})
-				.filter(isNotNone)
-				.join(', ')}
-		}
-	
-		await db
-			.update(${user.drizzleName})
-			.set(newData)
-			.where(eq(${user.drizzleName}.id, userId))
-
-		await history.update('${user.tableName}', userId, newData, user, _userId)
-	
-		return db.query.${user.drizzleName}.findFirst({
-			where: eq(${user.drizzleName}.id, userId),
-		})
-	}
+	export const validateUser = async (email: string, password: string) => {
+		await validatePassword(password)
+		await throwOnUserExists(email)
+		const hashedPassword = await hashPassword(password)
+		return hashedPassword
+	}	
 	`
 }
 

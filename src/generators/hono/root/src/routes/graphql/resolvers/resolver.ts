@@ -25,19 +25,21 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 		isNull,
 		sql
 	} from 'drizzle-orm'
-	import { MySqlSelectDynamic } from 'drizzle-orm/mysql-core'
+	import { MySqlSelectDynamic, MySqlInsertDynamic, MySqlUpdateDynamic } from 'drizzle-orm/mysql-core'
 	import { g, Infer } from 'garph'
-	${isAuthModel ? `import { createUser, updateUser } from '../../../lib/manageUser.js'` : `import { generateId } from 'lucia'`}
+	${isAuthModel ? `import { validateUser, userVerification } from '../../../lib/manageUser.js'` : ''}
+	import { generateId } from 'lucia'
 	${removeDuplicates(
 		model.relatedModels.map((x) => {
 			return `import * as ${x.otherModel.name} from './${x.drizzleName}.js'`
 		})
 	).join('\n')}
 	import { removeDuplicates } from '../../../lib/utils.js'
-	import { modifyQuery } from '../../../lib/modifiers.js'
+	import { modifyQuery, modifyInsertMutation, modifyUpdateMutation } from '../../../lib/modifiers.js'
 	import { OrderDir, DateType } from './_utils.js'
 	import * as filters from './_filters.js'
 	import * as history from '../../../lib/history.js'
+	${isAuthModel ? `import { hashPassword, validatePassword } from 'lib/password.js'` : ''}
 	
 	const OrderBys = g.enumType('${model.name}OrderBy', [
 		${model.attributes
@@ -351,55 +353,68 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 			const results: ${relatedModels.length ? 'Omit<' : ''}Infer<typeof types.type>${relatedModels.length ? `, ${model.relatedModels.map((x) => `'${x.fieldName}'`).join('|')}>` : ''}[] = []
 	
 			for (const data of args.data) {
-				${
-					isAuthModel
-						? `const { email, password, ...fields} = data
-						const item = await createUser(email, password, {
-							...fields,
-							id: fields.id ?? undefined,
-							${model.attributes
-								.filter((x) => x.default !== null)
-								.filter((x) => x.insertable)
-								.map((x) => `${x.name}: data.${x.name} ?? ${`sql\`${x.default}\`` || undefined}`)
-								.join(',\n')}
-						}, c.get('user').id)`
-						: `const newId = data.id ?? generateId(15)
-	
-					await db.insert(tables.${model.drizzleName}).values({
-						...data,
-						id: newId,
-						${model.attributes
-							.filter((x) => x.default !== null)
-							.map((x) => `${x.name}: data.${x.name} ?? undefined,`)
-							.join('\n')}
-						${model.relatedModels
-							.map((x) => {
-								if (x.otherModel.id !== authModel?.id) return null
-								if (!x.defaultToAuth) return null
-								return `${x.fieldName}Id: data.${x.fieldName}Id ?? c.get('user').id`
-							})
-							.filter(isNotNone)
-							.join(',\n')}
-					})
-		
-					const item = await db.query.${model.drizzleName}.findFirst({
-						${
-							nonSelectAttrs.length > 0
-								? `columns: {
-							${nonSelectAttrs.map((x) => `${x.name}: false`).join(',\n')}
-							},`
-								: ''
-						}
-						where: eq(tables.${model.drizzleName}.id, newId),
-					})
-					
-					await history.create(
-						'${model.tableName}',
-						newId,
-						data,
-						c.get('user').id
-					)`
+				const newId = data.id ?? generateId(15)
+
+				const values = {
+					...data,
+					id: newId,
+					${model.attributes
+						// .filter((x) => x.default !== null)
+						.filter((x) => x.insertable)
+						.map((x) => {
+							if (isAuthModel && x.type === 'password')
+								return `password: await validateUser(data.email, data.password),`
+							if (x.name === 'id') return null
+							return `${x.name}: data.${x.name} ?? undefined,`
+						})
+						.filter(isNotNone)
+						.join('\n')}
+					${model.relatedModels
+						.map((x) => {
+							if (x.otherModel.id !== authModel?.id) return null
+							if (!x.defaultToAuth) return null
+							return `${x.fieldName}Id: data.${x.fieldName}Id ?? c.get('user').id`
+						})
+						.filter(isNotNone)
+						.join(',\n')}
 				}
+	
+				const mainQ: MySqlInsertDynamic<any> = db
+					.insert(tables.${model.drizzleName})
+					.values(values)
+					.$dynamic()
+
+				const moddedQuery = await modifyInsertMutation(
+					'create${model.name}',
+					mainQ,
+					{
+						values,
+						user: c.get('user'),
+					}
+				)
+
+				if (moddedQuery) {
+					await moddedQuery
+					${isAuthModel ? `userVerification(newId, data.email)` : ''}
+				}
+	
+				const item = await db.query.${model.drizzleName}.findFirst({
+					${
+						nonSelectAttrs.length > 0
+							? `columns: {
+						${nonSelectAttrs.map((x) => `${x.name}: false`).join(',\n')}
+						},`
+							: ''
+					}
+					where: eq(tables.${model.drizzleName}.id, newId),
+				})
+				
+				await history.create(
+					'${model.tableName}',
+					newId,
+					data,
+					c.get('user').id
+				)
 	
 				if (item) results.push(item)
 			}
@@ -424,22 +439,24 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 
 				${
 					isAuthModel
-						? `const { id, email, password, ...fields} = data
-						
-						await updateUser(
-					id,
-					email ?? undefined,
-					password ?? undefined,
-					fields,
-					c.get('user').id
-				)`
-						: `await db
-				.update(tables.${model.drizzleName})
-				.set({
+						? `
+					let hashedPassword: string | undefined = undefined
+		
+					if (data.password) {
+						await validatePassword(data.password)
+						hashedPassword = await hashPassword(data.password)
+					}
+				`
+						: ''
+				}
+
+				const values = {
 					${model.attributes
-						.filter((x) => x.type !== 'a_i')
+						.filter((x) => x.insertable)
 						.map((x) => {
+							if (x.type === 'a_i') return null
 							if (x.name === 'id') return null
+							if (x.type === 'password') return `password: hashedPassword,`
 							return `${x.name}: data.${x.name} ?? undefined,`
 						})
 						.filter(isNotNone)
@@ -449,8 +466,27 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 							return `${x.name}: data.${x.name} ?? undefined,`
 						})
 						.join('\n')}
-				})
-				.where(eq(tables.${model.drizzleName}.id, data.id))`
+				}
+				
+				const mainQ: MySqlUpdateDynamic<any> = db
+					.update(tables.${model.drizzleName})
+					.set(values)
+					.where(eq(tables.${model.drizzleName}.id, data.id))
+					.$dynamic()
+				
+				const moddedQuery = await modifyUpdateMutation(
+					'update${model.name}',
+					mainQ,
+					{
+						// where,
+						original,
+						values,
+						user: c.get('user'),
+					}
+				)
+
+				if (moddedQuery) {
+					await moddedQuery
 				}
 	
 				const item = await db.query.${model.drizzleName}.findFirst({

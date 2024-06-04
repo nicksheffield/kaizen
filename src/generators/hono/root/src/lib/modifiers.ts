@@ -14,11 +14,57 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 		MySqlUpdate,
 	} from 'drizzle-orm/mysql-core'
 	${hasQueryMods ? `import queryMods from 'mods/src/queries.js'` : ''}
+	import * as tables from '../schema.js'
+
+	type Ctx = {
+		user: { id: string; roles: string; email: string }
+	}	
 
 	type QueryKey =
 	${models.map((x) => `| '${x.drizzleNameSingular}' | '${x.drizzleName}'`).join('\n\t')}
-	type CreateKey = ${models.map((x) => `| 'create${uc(x.drizzleName)}'`).join('\n\t')}
-	type UpdateKey = ${models.map((x) => `| 'update${uc(x.drizzleName)}'`).join('\n\t')}
+	
+	type CreateKey = keyof Creaters
+	export type CreaterFns = {
+		[K in keyof Creaters]: <T extends MySqlInsert>(
+			query: T,
+			data: Ctx & {
+				values: Partial<Creaters[K]['insert']>
+			}
+		) => T | Promise<T> | null | void
+	}
+	export type CreateModifiers = Partial<CreaterFns>
+	type Creaters = {
+		${models.map((model) => {
+			return `
+				create${model.name}: {
+					insert: typeof tables.${model.drizzleName}.$inferInsert
+				}
+			`
+		})}
+	}
+	
+	type UpdateKey = keyof Updaters
+	export type UpdaterFns = {
+		[K in keyof Updaters]: <T extends MySqlUpdate>(
+			query: T,
+			data: Ctx & {
+				original?: Partial<Updaters[K]['select']>
+				values: Partial<Updaters[K]['insert']>
+			}
+		) => T | Promise<T> | null | void
+	}
+	export type UpdateModifiers = Partial<UpdaterFns>
+	type Updaters = {
+		${models.map((model) => {
+			return `
+				update${model.name}: {
+					select: typeof tables.${model.drizzleName}.$inferSelect
+					insert: typeof tables.${model.drizzleName}.$inferInsert
+				}
+			`
+		})}
+	}
+
 	type DeleteKey = ${models.map((x) => `| 'delete${uc(x.drizzleName)}'`).join('\n\t')}
 	
 	export type QueryModifiers = Partial<Record<QueryKey, QueryModifier>>
@@ -29,24 +75,6 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 			user: { id: string; roles: string; email: string }
 		}
 	) => AnyMySqlSelect | null
-	
-	export type CreateModifiers = Partial<Record<CreateKey, CreateModifier>>
-	export type CreateModifier = <T extends MySqlInsert>(
-		query: T,
-		ctx: {
-			where?: SQL<unknown>
-			user: { id: string; roles: string; email: string }
-		}
-	) => T | null
-	
-	export type UpdateModifiers = Partial<Record<UpdateKey, UpdateModifier>>
-	export type UpdateModifier = <T extends MySqlUpdate>(
-		query: T,
-		ctx: {
-			where?: SQL<unknown>
-			user: { id: string; roles: string; email: string }
-		}
-	) => T | null
 	
 	export type DeleteModifiers = Partial<Record<DeleteKey, DeleteModifier>>
 	export type DeleteModifier = <T extends MySqlDelete>(
@@ -73,39 +101,39 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 		}
 		return query
 	}
-	
-	export const modifyInsertMutation = <T extends MySqlInsert>(
-		modifier: CreateKey,
+
+	export const modifyInsertMutation = <
+		T extends MySqlInsert,
+		S extends CreateKey,
+	>(
+		modifier: S,
 		query: T,
-		ctx: Parameters<CreateModifier>[1]
-	): T | null => {
+		ctx: Parameters<CreaterFns[S]>[1]
+	): ReturnType<CreaterFns[S]> => {
 		${
 			hasQueryMods
-				? `const mod: CreateModifier | undefined = (
-			queryMods.createModifiers as Record<CreateKey, CreateModifier>
-		)[modifier as keyof typeof queryMods.createModifiers]
-	
-		if (mod) return mod(query, ctx)`
+				? `const mod = queryMods.createModifiers[modifier]
+		if (mod) return mod(query, ctx) as ReturnType<CreaterFns[S]>`
 				: ''
 		}
-		return query
+		return query as ReturnType<CreaterFns[S]>
 	}
-	
-	export const modifyUpdateMutation = <T extends MySqlUpdate>(
-		modifier: UpdateKey,
+
+	export const modifyUpdateMutation = <
+		T extends MySqlUpdate,
+		S extends UpdateKey,
+	>(
+		modifier: S,
 		query: T,
-		ctx: Parameters<UpdateModifier>[1]
-	): T | null => {
+		ctx: Parameters<UpdaterFns[S]>[1]
+	): ReturnType<UpdaterFns[S]> => {
 		${
 			hasQueryMods
-				? `const mod: UpdateModifier | undefined = (
-			queryMods.updateModifiers as Record<UpdateKey, UpdateModifier>
-		)[modifier as keyof typeof queryMods.updateModifiers]
-	
-		if (mod) return mod(query, ctx)`
+				? `const mod = queryMods.updateModifiers[modifier]
+		if (mod) return mod(query, ctx) as ReturnType<UpdaterFns[S]>`
 				: ''
 		}
-		return query
+		return query as ReturnType<UpdaterFns[S]>
 	}
 	
 	export const modifyDeleteMutation = <T extends MySqlDelete>(

@@ -34,7 +34,7 @@ const tmpl = () => {
 			'mime-types': '^2.1.35',
 			mysql2: '^3.9.2',
 			nodemailer: '^6.9.12',
-			'ns-migrate': '0.1.6',
+			'ns-migrate': '0.1.7',
 			oslo: '^1.1.3',
 			resend: '^3.2.0',
 			svix: '^1.23.0',

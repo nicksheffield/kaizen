@@ -69,7 +69,7 @@
 /* match this with the erd markers */
 .react-flow .react-flow__edge-path {
 	/* @apply stroke-ring dark:stroke-foreground; */
-	@apply stroke-gray-400 dark:stroke-gray-400;
+	@apply stroke-gray-300 dark:stroke-gray-600;
 }
 
 .react-flow .react-flow__edge-path.relation-disabled {

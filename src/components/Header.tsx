@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 
 export const Header = () => {
 	return (
-		<div className="relative grid grid-cols-[auto,1fr,auto] gap-4 overflow-hidden p-4">
+		<div className="relative grid grid-cols-[1fr,1fr,1fr] gap-4 overflow-hidden bg-muted p-4">
 			<div className="flex items-center">
 				{/* <Logo /> */}
 				<div className="group origin-left cursor-default text-2xl font-black tracking-tight transition-transform hover:scale-125 hover:italic">

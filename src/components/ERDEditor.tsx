@@ -8,7 +8,7 @@ import { useApp } from '@/lib/AppContext'
 import { ModelNode } from '@/components/ERD/ModelNode'
 import { SimpleFloatingEdge } from '@/components/ERD/SimpleFloatingEdge'
 import { useLocalStorage } from 'usehooks-ts'
-import { MaximizeIcon, PlusIcon, SaveIcon, SearchIcon, Settings2Icon, ShrinkIcon, Undo2Icon } from 'lucide-react'
+import { EyeIcon, MaximizeIcon, PlusIcon, SaveIcon, SearchIcon, ShrinkIcon, Undo2Icon } from 'lucide-react'
 import { RevealButton } from '@/components/RevealButton'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn, generateId, getUserModelFields } from '@/lib/utils'
@@ -177,6 +177,10 @@ export const Editor = () => {
 	}
 
 	const [detailed, setDetailed] = useLocalStorage(`project-${project?.settings.id}-erd-detailed`, false)
+	const [showAuthAttributes, setShowAuthAttributes] = useLocalStorage(
+		`project-${project?.settings.id}-show-auth-attributes`,
+		false
+	)
 	const [showConnections, setShowConnections] = useLocalStorage(
 		`project-${project?.settings.id}-erd-showConnections`,
 		true
@@ -389,6 +393,8 @@ export const Editor = () => {
 				setShowConnections,
 				detailed,
 				setDetailed,
+				showAuthAttributes,
+				setShowAuthAttributes,
 				attrTypeRecommends,
 				focusOn,
 				userModelId,
@@ -438,7 +444,7 @@ export const Editor = () => {
 							<div
 								className={cn(
 									buttonVariants({ variant: 'test' }),
-									'pointer-events-auto mt-4 flex h-10 items-center justify-center gap-1.5 rounded-full px-1.5 shadow-md backdrop-blur-sm'
+									'pointer-events-auto mt-4 flex h-10 items-center justify-center gap-1.5 rounded-full border px-1.5 backdrop-blur-sm dark:border-0'
 								)}
 							>
 								<RevealButton
@@ -447,7 +453,7 @@ export const Editor = () => {
 									onClick={() => addNode()}
 									icon={<PlusIcon className="h-4 w-4" />}
 									label="Add Model"
-									className="dark:hover:bg-foreground/10"
+									className="hover:bg-background dark:hover:bg-light/20"
 								/>
 								<RevealButton
 									variant="ghost"
@@ -455,7 +461,7 @@ export const Editor = () => {
 									onClick={() => center()}
 									icon={<ShrinkIcon className="h-4 w-4" />}
 									label="Center"
-									className="dark:hover:bg-foreground/10"
+									className="hover:bg-background dark:hover:bg-light/20"
 								/>
 								<RevealButton
 									variant="ghost"
@@ -466,7 +472,7 @@ export const Editor = () => {
 									}}
 									icon={<MaximizeIcon className="h-4 w-4" />}
 									label="Maximize"
-									className="dark:hover:bg-foreground/10"
+									className="hover:bg-background dark:hover:bg-light/20"
 								/>
 								<RevealButton
 									variant="ghost"
@@ -474,7 +480,7 @@ export const Editor = () => {
 									onClick={reset}
 									icon={<Undo2Icon className="h-4 w-4" />}
 									label="Reset"
-									className="dark:hover:bg-foreground/10"
+									className="hover:bg-background dark:hover:bg-light/20"
 								/>
 								<RevealButton
 									variant="ghost"
@@ -482,7 +488,7 @@ export const Editor = () => {
 									onClick={save}
 									icon={<SaveIcon className="h-4 w-4" />}
 									label="Save"
-									className="dark:hover:bg-foreground/10"
+									className="hover:bg-background dark:hover:bg-light/20"
 									revealLabel={isDirty ? 'Save Changes' : ''}
 								/>
 							</div>
@@ -494,7 +500,7 @@ export const Editor = () => {
 									<div>
 										<RevealButton
 											variant="test"
-											icon={<Settings2Icon className="h-4 w-4 shrink-0" />}
+											icon={<EyeIcon className="h-4 w-4 shrink-0" />}
 											className="pointer-events-auto h-10 min-w-10 rounded-full px-[11px] py-0 shadow-md backdrop-blur-sm"
 											label="Settings"
 											iconSide="right"
@@ -507,14 +513,21 @@ export const Editor = () => {
 										onCheckedChange={setDetailed}
 										onSelect={(e) => e.preventDefault()}
 									>
-										Show Details
+										Show Common Attributes
+									</DropdownMenuCheckboxItem>
+									<DropdownMenuCheckboxItem
+										checked={showAuthAttributes}
+										onCheckedChange={setShowAuthAttributes}
+										onSelect={(e) => e.preventDefault()}
+									>
+										Show Auth Attributes
 									</DropdownMenuCheckboxItem>
 									<DropdownMenuCheckboxItem
 										checked={showConnections}
 										onCheckedChange={setShowConnections}
 										onSelect={(e) => e.preventDefault()}
 									>
-										Show Connections
+										Show Relationship Lines
 									</DropdownMenuCheckboxItem>
 								</DropdownMenuContent>
 							</DropdownMenu>

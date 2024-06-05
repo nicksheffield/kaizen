@@ -14,6 +14,8 @@ type ERDContextType = {
 	setRelations: Dispatch<SetStateAction<Relation[]>>
 	detailed: boolean
 	setDetailed: Dispatch<SetStateAction<boolean>>
+	showAuthAttributes: boolean
+	setShowAuthAttributes: Dispatch<SetStateAction<boolean>>
 	showConnections: boolean
 	setShowConnections: Dispatch<SetStateAction<boolean>>
 	attrTypeRecommends: AttrTypeRecommend[]

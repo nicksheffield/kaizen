@@ -9,7 +9,7 @@ export const SmallTree = () => {
 	const selectedPath = useApp((v) => v.selectedPath)
 
 	return (
-		<div className="flex flex-col gap-2 p-2">
+		<div className="flex flex-col gap-4 p-4">
 			<Tooltip delayDuration={0}>
 				<TooltipTrigger asChild>
 					<div>
@@ -18,8 +18,8 @@ export const SmallTree = () => {
 							className={cn(
 								'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 								selectedPath === 'project.json?models'
-									? 'highlight-white/10 bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground'
-									: 'hover:highlight-white/5 text-muted-foreground hover:bg-foreground/10'
+									? 'bg-primary text-primary-foreground highlight-white/10 hover:bg-primary/80 hover:text-primary-foreground'
+									: 'text-muted-foreground hover:bg-foreground/10 hover:highlight-white/5'
 							)}
 							onClick={() => {
 								openFile('project.json?models')
@@ -42,8 +42,8 @@ export const SmallTree = () => {
 							className={cn(
 								'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 								selectedPath === 'project.json?details'
-									? 'highlight-white/10 bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground'
-									: 'hover:highlight-white/5 text-muted-foreground hover:bg-foreground/10'
+									? 'bg-primary text-primary-foreground highlight-white/10 hover:bg-primary/80 hover:text-primary-foreground'
+									: 'text-muted-foreground hover:bg-foreground/10 hover:highlight-white/5'
 							)}
 							onClick={() => {
 								openFile('project.json?details')
@@ -66,8 +66,8 @@ export const SmallTree = () => {
 							className={cn(
 								'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 								selectedPath === 'project.json?auth'
-									? 'highlight-white/10 bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground'
-									: 'hover:highlight-white/5 text-muted-foreground hover:bg-foreground/10'
+									? 'bg-primary text-primary-foreground highlight-white/10 hover:bg-primary/80 hover:text-primary-foreground'
+									: 'text-muted-foreground hover:bg-foreground/10 hover:highlight-white/5'
 							)}
 							onClick={() => {
 								openFile('project.json?auth')
@@ -90,8 +90,8 @@ export const SmallTree = () => {
 							className={cn(
 								'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
 								selectedPath === 'project.json?environment'
-									? 'highlight-white/10 bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground'
-									: 'hover:highlight-white/5 text-muted-foreground hover:bg-foreground/10'
+									? 'bg-primary text-primary-foreground highlight-white/10 hover:bg-primary/80 hover:text-primary-foreground'
+									: 'text-muted-foreground hover:bg-foreground/10 hover:highlight-white/5'
 							)}
 							onClick={() => {
 								openFile('project.json?environment')

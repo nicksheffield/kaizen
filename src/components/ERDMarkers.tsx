@@ -1,7 +1,7 @@
 // https://reactflow.dev/docs/examples/edges/markers/
 
 // match this with index.css -> .react-flow .react-flow__edge-path
-const stroke = 'stroke-gray-400 dark:stroke-gray-400'
+const stroke = 'stroke-gray-300 dark:stroke-gray-600'
 
 export const ERDMarkers = () => {
 	return (

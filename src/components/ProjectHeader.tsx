@@ -1,7 +1,7 @@
 import { openConfirm } from '@/components/Alert'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { RevealButton } from '@/components/RevealButton'
+import { Button } from '@/components/ui/button'
 import { useApp } from '@/lib/AppContext'
-import { cn } from '@/lib/utils'
 import { PackageOpenIcon, RefreshCcwDotIcon, XIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -16,16 +16,11 @@ export const ProjectHeader = () => {
 	if (!root) return null
 
 	return (
-		<div
-			className={cn(
-				buttonVariants({ variant: 'test' }),
-				'flex h-10 w-full max-w-[600px] items-center justify-between rounded-full p-1.5'
-			)}
-		>
+		<div className="flex h-10 w-full max-w-[600px] items-center justify-between rounded-full bg-slate-400/20 p-1.5 dark:highlight-white/5">
 			<div className="text-sm font-medium">
 				<Button
 					variant="ghost"
-					className="hover:highlight-white/10 group gap-1 rounded-full text-sm font-normal hover:bg-primary hover:text-primary-foreground"
+					className="group gap-1 rounded-full text-sm font-normal hover:bg-primary hover:text-primary-foreground hover:highlight-white/10"
 					size="pip"
 					onClick={() => {
 						openConfirm({
@@ -50,7 +45,7 @@ export const ProjectHeader = () => {
 						<Button
 							variant="ghost"
 							size="pip-icon"
-							className="hover:highlight-white/10 rounded-full hover:bg-primary hover:text-primary-foreground"
+							className="rounded-full hover:bg-primary hover:text-primary-foreground hover:highlight-white/10"
 							onClick={async () => {
 								await generateWorkspace(project)
 								toast.success('Workspace generated', { closeButton: true })
@@ -60,17 +55,30 @@ export const ProjectHeader = () => {
 						</Button>
 					)}
 
-					<Button
+					<RevealButton
+						variant="ghost"
+						size="pip"
+						className="rounded-full hover:bg-primary hover:text-primary-foreground hover:highlight-white/10"
+						onClick={async () => {
+							await generateProject(project)
+							toast.success('Project generated', { closeButton: true })
+						}}
+						icon={<RefreshCcwDotIcon className="h-4 w-4" />}
+						label={'Regenerate'}
+						iconSide="right"
+					/>
+
+					{/* <Button
 						variant="ghost"
 						size="pip-icon"
-						className="hover:highlight-white/10 rounded-full hover:bg-primary hover:text-primary-foreground"
+						className="rounded-full hover:bg-primary hover:text-primary-foreground hover:highlight-white/10"
 						onClick={async () => {
 							await generateProject(project)
 							toast.success('Project generated', { closeButton: true })
 						}}
 					>
 						<RefreshCcwDotIcon className="h-4 w-4" />
-					</Button>
+					</Button> */}
 				</div>
 			)}
 		</div>

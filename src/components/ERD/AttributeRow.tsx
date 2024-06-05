@@ -41,7 +41,8 @@ type AttributeRowProps = {
 // const zoomSelector = (s: ReactFlowState) => s.transform[2]
 
 export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowProps) => {
-	const { relations, nodes, attrTypeRecommends, modalHasPopover, setModalHasPopover, detailed } = useERDContext()
+	const { relations, nodes, attrTypeRecommends, modalHasPopover, setModalHasPopover, showAuthAttributes } =
+		useERDContext()
 
 	const isUserAttr = getIsUserAttr(attr.id)
 	const isLocked = isUserAttr || attr.name === 'id'
@@ -124,7 +125,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 		)
 	}
 
-	if (isUserAttr && !detailed) return null
+	if (isUserAttr && !showAuthAttributes) return null
 
 	return (
 		<div key={attr.id} className="relative flex flex-col px-2" ref={setNodeRef} style={style}>
@@ -184,7 +185,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 					alignOffset={-56}
 					className="p-0 dark:border-0 dark:highlight-white/10"
 				>
-					<div className="flex flex-col divide-y">
+					<div className="flex flex-col divide-y divide-white/5">
 						<div className="flex h-10 items-center justify-between px-3 pr-2">
 							<div className="text-sm font-medium">Field</div>
 							{!isLocked && (

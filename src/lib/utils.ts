@@ -175,6 +175,7 @@ export const getIsUserAttr = (id: string) => {
 }
 
 export const roundToNearest = (n: number, t: number) => Math.round(n / t) * t
+export const ceilToNearest = (n: number, t: number) => Math.ceil(n / t) * t
 
 export const format = async (content: string, settings: Partial<prettier.Options> = {}) => {
 	try {

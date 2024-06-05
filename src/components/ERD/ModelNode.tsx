@@ -196,7 +196,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 	return (
 		<div
 			className={cn(
-				'flex min-w-[216px] cursor-default flex-col gap-4 rounded-md border bg-muted pb-3 shadow-xl dark:border-0',
+				'flex min-w-[216px] cursor-default flex-col gap-4 rounded-md border bg-muted pb-3 dark:border-0',
 				selected && 'ring-2 ring-primary dark:ring-offset-background',
 				!data.enabled && 'opacity-50',
 				modalHasPopover && !isActiveModel && 'opacity-50'
@@ -232,7 +232,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 
 				<Popover open={openPopover} onOpenChange={onPopoverOpen}>
 					<PopoverTrigger asChild>
-						<Button variant="ghost" size="xs" className="h-5 w-5 px-0">
+						<Button variant="ghost" size="xs" className="h-5 w-5 px-0 hover:highlight-white/5">
 							<Settings2Icon className="h-3 w-3" />
 						</Button>
 					</PopoverTrigger>
@@ -359,7 +359,12 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 			<div className="flex flex-col gap-1">
 				<div className="flex flex-row justify-between px-3">
 					<div className="text-xs font-medium text-muted-foreground/50">Fields</div>
-					<Button variant="ghost" size="xs" className="h-5 w-5 px-0" onClick={() => addAttribute()}>
+					<Button
+						variant="ghost"
+						size="xs"
+						className="h-5 w-5 px-0 hover:highlight-white/5"
+						onClick={() => addAttribute()}
+					>
 						<PlusIcon className="h-3 w-3" />
 					</Button>
 				</div>
@@ -378,7 +383,12 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 			<div className="flex flex-col gap-1">
 				<div className="flex flex-row justify-between px-3">
 					<div className="text-xs font-medium text-muted-foreground/50">Relationships</div>
-					<Button variant="ghost" size="xs" className="h-5 w-5 px-0" onClick={() => addRelation()}>
+					<Button
+						variant="ghost"
+						size="xs"
+						className="h-5 w-5 px-0 hover:highlight-white/5"
+						onClick={() => addRelation()}
+					>
 						<PlusIcon className="h-3 w-3" />
 					</Button>
 				</div>
@@ -462,7 +472,7 @@ const Attributes = ({ model, detailed, remove, updateAttributeField, updateAttri
 				/>
 			)}
 
-			<div className="flex flex-col">
+			<div className="flex flex-col gap-y-px">
 				<DndContext
 					sensors={sensors}
 					collisionDetection={closestCenter}

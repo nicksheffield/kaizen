@@ -18,6 +18,8 @@ import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
@@ -428,15 +430,16 @@ export const Editor = () => {
 				)}
 				<div className="pointer-events-none absolute left-0 top-0 z-10 flex w-full flex-col items-center gap-2">
 					<div className="grid w-full grid-cols-[40px,1fr,40px]">
-						<div>
+						<div className="p-4">
 							<Popover>
 								<PopoverTrigger asChild>
-									<RevealButton
+									<Button
+										size="icon"
 										variant="test"
-										icon={<SearchIcon className="h-4 w-4 shrink-0" />}
-										className="pointer-events-auto m-4 h-10 min-w-10 rounded-full border px-[11px] py-0 backdrop-blur-sm dark:border-0"
-										label="Search Models"
-									/>
+										className="pointer-events-auto h-10 min-w-10 rounded-full border px-[11px] py-0 backdrop-blur-sm dark:border-0"
+									>
+										<SearchIcon className="h-4 w-4 shrink-0" />
+									</Button>
 								</PopoverTrigger>
 								<PopoverContent side="bottom" align="start" className="bg-popover p-0">
 									<Command>
@@ -516,17 +519,17 @@ export const Editor = () => {
 						<div className="flex justify-end p-4">
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
-									<div>
-										<RevealButton
-											variant="test"
-											icon={<EyeIcon className="h-4 w-4 shrink-0" />}
-											className="pointer-events-auto h-10 min-w-10 rounded-full border px-[11px] py-0 backdrop-blur-sm dark:border-0"
-											label="Settings"
-											iconSide="right"
-										/>
-									</div>
+									<Button
+										size="icon"
+										variant="test"
+										className="pointer-events-auto h-10 min-w-10 rounded-full border px-[11px] py-0 backdrop-blur-sm dark:border-0"
+									>
+										<EyeIcon className="h-4 w-4 shrink-0" />
+									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent side="bottom" align="end">
+									<DropdownMenuLabel>View Options</DropdownMenuLabel>
+									<DropdownMenuSeparator />
 									<DropdownMenuCheckboxItem
 										checked={detailed}
 										onCheckedChange={setDetailed}

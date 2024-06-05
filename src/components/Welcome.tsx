@@ -49,7 +49,10 @@ const Init = () => {
 										await generateWorkspace({ name })
 										await saveFile(
 											`${SERVER_PATH}/.env`,
-											generateDBURI({ useOrbStack: false, name })
+											`DB_URI=${generateDBURI({ useOrbStack: false, name })}`,
+											{
+												showToast: false,
+											}
 										)
 										toast.success('Workspace initiated')
 										openFile('project.json?models')

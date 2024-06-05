@@ -46,12 +46,12 @@ export const workspaceFiles = (project?: Project) => {
 	return files
 }
 
-export const generate: WorkspaceGeneratorFn = async ({ project }) => {
+export const generate: WorkspaceGeneratorFn = async ({ project, name }) => {
 	const dir: Record<string, string> = {}
 
 	dir['.gitignore'] = gitignore()
 	dir['package.json'] = packageJson({ project })
-	dir['project.json'] = projectJson()
+	dir['project.json'] = projectJson({ name })
 	dir['tsconfig.json'] = tsconfigJson()
 	dir['pnpm-workspace.yaml'] = pnpmWorkspace()
 

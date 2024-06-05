@@ -45,7 +45,7 @@ export const ProjectDetails = () => {
 		}
 
 		if (clientChange) {
-			await generateWorkspace(newProject, true)
+			await generateWorkspace({ projectObj: newProject, clientChange: true })
 		}
 
 		await saveProject(newProject)

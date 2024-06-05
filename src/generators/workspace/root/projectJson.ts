@@ -1,11 +1,11 @@
 import { generateId } from '@/lib/utils'
 
-const tmpl = () => {
+const tmpl = ({ name }: { name?: string }) => {
 	const json = {
 		v: 3,
 		settings: {
 			id: generateId(15),
-			name: 'New project',
+			name: name || 'New project',
 			generator: 'hono',
 			userModelId: undefined,
 			useOrbStack: false,

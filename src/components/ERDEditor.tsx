@@ -11,9 +11,9 @@ import { useLocalStorage } from 'usehooks-ts'
 import { EyeIcon, MaximizeIcon, PlusIcon, SaveIcon, SearchIcon, ShrinkIcon, Undo2Icon } from 'lucide-react'
 import { RevealButton } from '@/components/RevealButton'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { cn, generateId, getUserModelFields } from '@/lib/utils'
+import { cn, generateId, getUserModelFields, roundToNearest } from '@/lib/utils'
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import { buttonVariants } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -97,6 +97,25 @@ export const Editor = () => {
 	}, [relations])
 
 	const addNode = (data?: Partial<Model>) => {
+		const rect = wrapperRef.current?.getBoundingClientRect()
+
+		const position = flow.screenToFlowPosition({
+			x: (rect?.x || 0) + (rect?.width || 0) / 2,
+			y: (rect?.y || 0) + (rect?.height || 0) / 3,
+		})
+
+		position.x = position.x - 214 / 2
+
+		let foundSamePos = nodes.find((x) => x.position.x === position.x && x.position.y === position.y)
+		while (foundSamePos) {
+			position.x += snapSize
+			position.y += snapSize
+			foundSamePos = nodes.find((x) => x.position.x === position.x && x.position.y === position.y)
+		}
+
+		position.x = roundToNearest(position.x, snapSize)
+		position.y = roundToNearest(position.y, snapSize)
+
 		const id = generateId()
 
 		const model: Model = {
@@ -104,8 +123,8 @@ export const Editor = () => {
 			name: '',
 			key: '',
 			tableName: '',
-			posX: 0,
-			posY: 0,
+			posX: position.x,
+			posY: position.y,
 			auditDates: true,
 			enabled: true,
 			...data,
@@ -123,22 +142,6 @@ export const Editor = () => {
 					default: null,
 				},
 			],
-		}
-
-		const rect = wrapperRef.current?.getBoundingClientRect()
-
-		const position = flow.screenToFlowPosition({
-			x: (rect?.x || 0) + (rect?.width || 0) / 2,
-			y: (rect?.y || 0) + (rect?.height || 0) / 3,
-		})
-
-		position.x = position.x - 214 / 2
-
-		let foundSamePos = nodes.find((x) => x.position.x === position.x && x.position.y === position.y)
-		while (foundSamePos) {
-			position.x += snapSize
-			position.y += snapSize
-			foundSamePos = nodes.find((x) => x.position.x === position.x && x.position.y === position.y)
 		}
 
 		setNodes((nds) => [
@@ -407,6 +410,22 @@ export const Editor = () => {
 				ref={wrapperRef}
 				className={cn('relative flex flex-1 flex-col bg-background', max && 'fixed inset-0 z-50')}
 			>
+				{nodes.length === 0 && (
+					<div className="absolute inset-0 z-10">
+						<div className="flex h-full flex-col items-center justify-center">
+							<div className="text-sm text-muted-foreground">Add a model to get started</div>
+							<Button
+								variant="default"
+								className="mt-4"
+								onClick={() => {
+									addNode()
+								}}
+							>
+								Add Model
+							</Button>
+						</div>
+					</div>
+				)}
 				<div className="pointer-events-none absolute left-0 top-0 z-10 flex w-full flex-col items-center gap-2">
 					<div className="grid w-full grid-cols-[40px,1fr,40px]">
 						<div>
@@ -415,7 +434,7 @@ export const Editor = () => {
 									<RevealButton
 										variant="test"
 										icon={<SearchIcon className="h-4 w-4 shrink-0" />}
-										className="pointer-events-auto m-4 h-10 min-w-10 rounded-full px-[11px] py-0 shadow-md backdrop-blur-sm"
+										className="pointer-events-auto m-4 h-10 min-w-10 rounded-full border px-[11px] py-0 backdrop-blur-sm dark:border-0"
 										label="Search Models"
 									/>
 								</PopoverTrigger>
@@ -501,7 +520,7 @@ export const Editor = () => {
 										<RevealButton
 											variant="test"
 											icon={<EyeIcon className="h-4 w-4 shrink-0" />}
-											className="pointer-events-auto h-10 min-w-10 rounded-full px-[11px] py-0 shadow-md backdrop-blur-sm"
+											className="pointer-events-auto h-10 min-w-10 rounded-full border px-[11px] py-0 backdrop-blur-sm dark:border-0"
 											label="Settings"
 											iconSide="right"
 										/>

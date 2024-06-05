@@ -47,7 +47,7 @@ export const ProjectHeader = () => {
 							size="pip-icon"
 							className="rounded-full hover:bg-primary hover:text-primary-foreground hover:highlight-white/10"
 							onClick={async () => {
-								await generateWorkspace(project)
+								await generateWorkspace({ projectObj: project })
 								toast.success('Workspace generated', { closeButton: true })
 							}}
 						>

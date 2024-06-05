@@ -1,6 +1,12 @@
+import { generateDBURI } from '@/components/FileViews/ProjectEnv'
+import { openPrompt } from '@/components/modals/openPrompt'
 import { Button } from '@/components/ui/button'
 import { useApp } from '@/lib/AppContext'
+import { SERVER_PATH } from '@/lib/constants'
+import { cn } from '@/lib/utils'
 import { FolderSearchIcon, RocketIcon } from 'lucide-react'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
 const Browse = () => {
 	const getRootHandle = useApp((v) => v.getRootHandle)
@@ -23,6 +29,10 @@ const Browse = () => {
 
 const Init = () => {
 	const generateWorkspace = useApp((v) => v.generateWorkspace)
+	const openFile = useApp((v) => v.openFile)
+	const saveFile = useApp((v) => v.saveFile)
+
+	const [initiating, setInitiating] = useState(false)
 
 	return (
 		<div className="h-full p-8">
@@ -32,10 +42,23 @@ const Init = () => {
 						<Button
 							variant="default"
 							onClick={() => {
-								generateWorkspace()
+								openPrompt({
+									title: 'Project name?',
+									onSubmit: async (name) => {
+										setInitiating(true)
+										await generateWorkspace({ name })
+										await saveFile(
+											`${SERVER_PATH}/.env`,
+											generateDBURI({ useOrbStack: false, name })
+										)
+										toast.success('Workspace initiated')
+										openFile('project.json?models')
+										setInitiating(false)
+									},
+								})
 							}}
 						>
-							<RocketIcon className="mr-2 h-4 w-4" />
+							<RocketIcon className={cn('mr-2 h-4 w-4', initiating && 'animate-spin')} />
 							Initiate workspace
 						</Button>
 					</div>

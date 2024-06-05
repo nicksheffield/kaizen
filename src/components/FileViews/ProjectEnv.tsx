@@ -8,7 +8,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useApp } from '@/lib/AppContext'
 import { SERVER_PATH, envHints, envKeys } from '@/lib/constants'
 import { isFile } from '@/lib/handle'
-import { Project } from '@/lib/projectSchemas'
 import { cn, isNotNone } from '@/lib/utils'
 import { XIcon } from 'lucide-react'
 import { useCallback, useState } from 'react'
@@ -16,8 +15,8 @@ import { useDebounceCallback } from 'usehooks-ts'
 
 type EnvData = { key: string; value: string }[]
 
-const generateDBURI = ({ settings }: Project) => {
-	return `mysql://user:password@${settings.useOrbStack ? `db.${settings.name.toLowerCase().replace(/\s/g, '-')}.orb.local` : 'localhost'}:3306/db`
+export const generateDBURI = (settings: { useOrbStack?: boolean; name?: string }) => {
+	return `mysql://user:password@${settings.useOrbStack ? `db.${settings.name?.toLowerCase().replace(/\s/g, '-')}.orb.local` : 'localhost'}:3306/db`
 }
 
 export const ProjectEnv = () => {
@@ -52,7 +51,7 @@ export const ProjectEnv = () => {
 	}
 
 	const addEnvRow = (key: string) => {
-		const value = key === 'DB_URI' && project ? generateDBURI(project) : ''
+		const value = key === 'DB_URI' && project ? generateDBURI(project.settings) : ''
 		updateEnv([...envData, { key, value }])
 	}
 

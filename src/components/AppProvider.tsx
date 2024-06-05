@@ -215,14 +215,29 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 
 			if (fileHandle) {
 				const writable = await fileHandle.createWritable({ keepExistingData: false })
+
 				if (format) {
 					await writable.write(await formatFile(content))
 				} else {
 					await writable.write(content)
 				}
+
 				await writable.close()
-				if (showToast) toast.success(`File saved: ${fileName}`, { closeButton: true })
-				await loadFiles(rootHandle)
+
+				if (showToast) {
+					toast.success(`File saved: ${fileName}`, { closeButton: true })
+				}
+
+				setFiles((files) => {
+					const existingFile = files.find((x) => x.path === path)
+					if (!existingFile) return files
+					if (!isFile(existingFile)) return files
+
+					existingFile.content = content
+					return [...files]
+				})
+
+				// await loadFiles(rootHandle)
 			}
 		},
 		[rootHandle, files, getFileHandle, loadFiles]
@@ -258,14 +273,16 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 	 * Generate the project files, and write them to the devDir
 	 */
 	const generateProject = useCallback(
-		async (project?: Project) => {
-			if (!project || !rootHandle || !project.settings.generator) return
+		async (projectObj?: Project) => {
+			const proj = projectObj || project
 
-			const generate: GeneratorFn | undefined = generators[project.settings.generator as keyof typeof generators]
+			if (!proj || !rootHandle || !proj.settings.generator) return
+
+			const generate: GeneratorFn | undefined = generators[proj.settings.generator as keyof typeof generators]
 
 			if (!generate) return
 
-			const generated = await generate(project, {
+			const generated = await generate(proj, {
 				seeder: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/seed.ts`)),
 				api: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/api.ts`)),
 				queries: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/queries.ts`)),
@@ -313,14 +330,14 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 	 * Generate the workspace files, and write them to the root directory
 	 */
 	const generateWorkspace = useCallback(
-		async (projectObj?: Project, clientChange = false) => {
+		async (options: { projectObj?: Project; clientChange?: boolean; name?: string }) => {
 			if (!root || !root.handle) return
+
+			const { projectObj = project, clientChange = false, name } = options || {}
 
 			const clientRelatedFilePaths = ['package.json', '.vscode/settings.json', '.vscode/tasks.json']
 
-			const proj = projectObj || project
-
-			const workspace = await workspaceGenerator({ project: proj })
+			const workspace = await workspaceGenerator({ project: projectObj, name })
 
 			const filteredWorkspaceFiles = Object.fromEntries(
 				Object.entries(workspace).filter(([path]) => {

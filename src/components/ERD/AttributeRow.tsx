@@ -185,7 +185,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 					alignOffset={-56}
 					className="p-0 dark:border-0 dark:highlight-white/10"
 				>
-					<div className="flex flex-col divide-y divide-white/5">
+					<div className="flex flex-col divide-y divide-foreground/5">
 						<div className="flex h-10 items-center justify-between px-3 pr-2">
 							<div className="text-sm font-medium">Field</div>
 							{!isLocked && (

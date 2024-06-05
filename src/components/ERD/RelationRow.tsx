@@ -266,9 +266,9 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 					side="right"
 					sideOffset={18}
 					alignOffset={-56}
-					className="w-[calc(143*0.25rem)] overflow-hidden p-0 dark:border-0 dark:highlight-white/10"
+					className="w-[calc(143*0.25rem)] overflow-hidden p-0 dark:border-0 dark:highlight-foreground/10"
 				>
-					<div className="flex flex-col divide-y divide-white/5">
+					<div className="flex flex-col divide-y divide-foreground/5">
 						<div className="flex h-10 items-center justify-between px-3 pr-2">
 							<div className="text-sm font-medium">Relationship</div>
 
@@ -277,8 +277,8 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 							</Button>
 						</div>
 
-						<div className="grid grid-cols-[1fr,0.75rem,1fr] divide-x divide-white/5">
-							<div className="flex flex-col divide-y divide-white/5">
+						<div className="grid grid-cols-[1fr,0.75rem,1fr] divide-x divide-foreground/5">
+							<div className="flex flex-col divide-y divide-foreground/5">
 								<div className="bg-accent px-3 py-2">
 									<div className="text-xs font-medium italic text-accent-foreground">
 										{sourceDescription}
@@ -355,7 +355,7 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 								)}
 							</div>
 							<div className="stripes" />
-							<div className="flex flex-col divide-y divide-white/5">
+							<div className="flex flex-col divide-y divide-foreground/5">
 								<div className="bg-accent px-3 py-2">
 									<div className="text-xs font-medium italic text-accent-foreground">
 										{targetDescription}

@@ -14,6 +14,7 @@ import {
 	SproutIcon,
 	DatabaseIcon,
 	TentTreeIcon,
+	DraftingCompassIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useApp } from '@/lib/AppContext'
@@ -64,6 +65,10 @@ export const TreeFileIcon = ({ path, open = true, className }: TreeFileIconProps
 
 	if (path === 'project.json?environment') {
 		return <TentTreeIcon className={classNames} />
+	}
+
+	if (path === 'project.json?helpers') {
+		return <DraftingCompassIcon className={classNames} />
 	}
 
 	if (file?.type === 'file') {

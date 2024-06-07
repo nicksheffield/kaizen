@@ -467,7 +467,7 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 									</div>
 									<Button
 										variant="outline"
-										size="icon-sm"
+										size="icon-tiny"
 										className="-my-2 text-xs"
 										onClick={() => swap()}
 										disabled={!targetModel || !sourceModel}

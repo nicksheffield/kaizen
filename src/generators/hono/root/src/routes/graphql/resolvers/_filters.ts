@@ -33,11 +33,25 @@ export const filterOperators: Record<string, FilterOperator> = {
 	gte: (col, val) => gte(col, val),
 	lt: (col, val) => lt(col, val),
 	lte: (col, val) => lte(col, val),
+	isSameSecond: (col, val) => sql\`SECOND(\${col}) = SECOND(\${new Date(val)})\`,
+	isSameMinute: (col, val) => sql\`MINUTE(\${col}) = MINUTE(\${new Date(val)})\`,
+	isSameHour: (col, val) => sql\`HOUR(\${col}) = HOUR(\${new Date(val)})\`,
+	isSameDay: (col, val) => sql\`DATE(\${col}) = DATE(\${new Date(val)})\`,
+	isSameMonth: (col, val) => sql\`MONTH(\${col}) = MONTH(\${new Date(val)})\`,
+	isSameYear: (col, val) => sql\`YEAR(\${col}) = YEAR(\${new Date(val)})\`,
+	isBefore: (col, val) => lt(col, new Date(val)),
+	isBeforeInclusive: (col, val) => lte(col, new Date(val)),
+	isAfter: (col, val) => gt(col, new Date(val)),
+	isAfterInclusive: (col, val) => gte(col, new Date(val)),
+	isBetween: (col, { from, to }) =>
+		and(gt(col, new Date(from)), lt(col, new Date(to)))!,
+	isBetweenInclusive: (col, { from, to }) =>
+		and(gte(col, new Date(from)), lte(col, new Date(to)))!,
 	isNull: (col, _) => isNull(col),
 	isNotNull: (col, _) => not(isNull(col)),
 } as const
 
-export const String = g.inputType('StringFilter', {
+export const StringFilter = g.inputType('StringFilter', {
 	eq: g.string().optional(),
 	neq: g.string().optional(),
 	includes: g.string().optional(),
@@ -52,14 +66,14 @@ export const String = g.inputType('StringFilter', {
 	isNotNull: g.boolean().optional(),
 })
 
-export const Boolean = g.inputType('BooleanFilter', {
+export const BooleanFilter = g.inputType('BooleanFilter', {
 	eq: g.boolean().optional(),
 	neq: g.boolean().optional(),
 	isNull: g.boolean().optional(),
 	isNotNull: g.boolean().optional(),
 })
 
-export const Number = g.inputType('NumberFilter', {
+export const NumberFilter = g.inputType('NumberFilter', {
 	eq: g.float().optional(),
 	neq: g.float().optional(),
 	in: g.float().list().optional(),
@@ -70,6 +84,33 @@ export const Number = g.inputType('NumberFilter', {
 	lte: g.float().optional(),
 	isNull: g.boolean().optional(),
 	isNotNull: g.boolean().optional(),
+})
+
+const DateBetweenFilter = g.inputType('DateBetween', {
+	from: g.string().optional(),
+	to: g.string().optional(),
+})
+
+export const DateFilter = g.inputType('DateFilter', {
+	isSameSecond: g.string().optional(),
+	isSameMinute: g.string().optional(),
+	isSameHour: g.string().optional(),
+	isSameDay: g.string().optional(),
+	isSameMonth: g.string().optional(),
+	isSameYear: g.string().optional(),
+	isBefore: g.string().optional(),
+	isBeforeInclusive: g.string().optional(),
+	isAfter: g.string().optional(),
+	isAfterInclusive: g.string().optional(),
+	isBetween: g.ref(DateBetweenFilter).optional(),
+	isBetweenInclusive: g.ref(DateBetweenFilter).optional(),
+	isNull: g.boolean().optional(),
+	isNotNull: g.boolean().optional(),
+})
+
+const DateBetweenFilter = g.inputType('DateBetween', {
+	from: g.string().optional(),
+	to: g.string().optional(),
 })
 
 export type FilterHandler<T> = (

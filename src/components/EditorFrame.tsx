@@ -9,6 +9,7 @@ import { ProjectDetails } from '@/components/FileViews/ProjectDetails'
 import { ProjectAuth } from '@/components/FileViews/ProjectAuth'
 import { ProjectEnv } from '@/components/FileViews/ProjectEnv'
 import { useLocalStorage } from 'usehooks-ts'
+import { ProjectHelpers } from '@/components/FileViews/ProjectHelpers'
 
 export const EditorFrame = () => {
 	const project = useApp((v) => v.project)
@@ -27,6 +28,8 @@ export const EditorFrame = () => {
 			<ProjectAuth key={project?.settings.id} />
 		) : selectedPath === 'project.json?environment' ? (
 			<ProjectEnv key={project?.settings.id} />
+		) : selectedPath === 'project.json?helpers' ? (
+			<ProjectHelpers key={project?.settings.id} />
 		) : project && selectedPath.startsWith(SERVER_PATH) ? (
 			<ReadonlyCodeView key={`${project?.settings.id}-${selectedPath}`} />
 		) : (

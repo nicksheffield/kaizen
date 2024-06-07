@@ -108,11 +108,6 @@ export const DateFilter = g.inputType('DateFilter', {
 	isNotNull: g.boolean().optional(),
 })
 
-const DateBetweenFilter = g.inputType('DateBetween', {
-	from: g.string().optional(),
-	to: g.string().optional(),
-})
-
 export type FilterHandler<T> = (
 	table: Table,
 	field: string,

@@ -142,7 +142,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 			${model.foreignKeys
 				.map((x) => {
 					// use id or string? lets go with id for now
-					return `${x.name}: g.ref(filters.String).optional(),`
+					return `${x.name}: g.ref(filters.StringFilter).optional(),`
 				})
 				.filter(isNotNone)
 				.join('\n')}

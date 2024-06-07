@@ -13,6 +13,7 @@ const tmpl = () => `import {
 	gte,
 	lt,
 	lte,
+	sql
 } from 'drizzle-orm'
 import { Infer, g } from 'garph'
 

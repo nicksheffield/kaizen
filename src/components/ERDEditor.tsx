@@ -1,4 +1,5 @@
 import ReactFlow, { Node, NodeChange, ReactFlowProvider, applyNodeChanges, useReactFlow, useStore } from 'reactflow'
+import { flushSync } from 'react-dom'
 import { ERDProvider } from './ERDProvider'
 import { getAttrTypeRecommends, getSourceName, getTargetName, isReservedKeyword } from '@/lib/ERDHelpers'
 import { useCallback, useMemo, useRef, useState } from 'react'
@@ -32,6 +33,20 @@ export const Editor = () => {
 	const saveProject = useApp((v) => v.saveProject)
 
 	const [max, setMax] = useState(false)
+	const toggleMax = () => {
+		if ('startViewTransition' in document) {
+			// @ts-ignore - view transitions are supported, just not typed
+			document.startViewTransition(() => {
+				flushSync(() => {
+					setMax((x) => !x)
+					setTimeout(() => center(), 1)
+				})
+			})
+		} else {
+			setMax((x) => !x)
+			setTimeout(() => center(), 1)
+		}
+	}
 
 	const [defaultModels, setDefaultModels] = useState(draft?.content.models || [])
 	const [defaultRelations, setDefaultRelations] = useState(draft?.content.relations || [])
@@ -410,7 +425,10 @@ export const Editor = () => {
 		>
 			<div
 				ref={wrapperRef}
-				className={cn('relative flex flex-1 flex-col bg-background', max && 'fixed inset-0 z-50')}
+				className={cn(
+					'relative flex flex-1 flex-col bg-background [view-transition-name:editor]',
+					max && 'fixed inset-0 z-50'
+				)}
 			>
 				{nodes.length === 0 && (
 					<div className="absolute inset-0 z-10">
@@ -489,8 +507,7 @@ export const Editor = () => {
 									variant="ghost"
 									size="pip"
 									onClick={() => {
-										setMax((x) => !x)
-										setTimeout(() => center(), 1)
+										toggleMax()
 									}}
 									icon={<MaximizeIcon className="h-4 w-4" />}
 									label="Maximize"

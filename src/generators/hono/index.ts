@@ -91,7 +91,7 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['src/routes/auth/two-factor.ts'] = await format(src_routes_auth_twoFactor({ models, project }))
 
 	dir['src/routes/graphql/router.ts'] = await format(src_routes_graphql_router({ models, project }))
-	dir['src/routes/graphql/resolvers/_filters.ts'] = await format(src_routes_graphql_resolvers_filters())
+	dir['src/routes/graphql/resolvers/_filters.ts'] = await format(src_routes_graphql_resolvers_filters({ models }))
 	dir['src/routes/graphql/resolvers/_utils.ts'] = await format(src_routes_graphql_resolvers_utils())
 
 	for (const model of models) {

@@ -1,4 +1,7 @@
-const tmpl = () => `import {
+import { ModelCtx } from '@/generators/hono/contexts'
+
+const tmpl = ({ models }: { models: ModelCtx[] }) => {
+	return `import {
 	Table,
 	SQLWrapper,
 	and,
@@ -13,9 +16,38 @@ const tmpl = () => `import {
 	gte,
 	lt,
 	lte,
-	sql
+	sql,
+	getTableName,
+	getTableColumns
 } from 'drizzle-orm'
 import { Infer, g } from 'garph'
+import { db } from '../../../lib/db.js'
+import * as tables from '../../../schema.js'
+import { MySqlTable } from 'drizzle-orm/mysql-core'
+
+type RelationFilter = {
+	pk: Column
+	fk: Column
+	table: MySqlTable
+}
+
+const relationFilters: Record<string, Record<string, RelationFilter>> = {
+	${models
+		.flatMap((model) => {
+			return `${model.tableName}: {
+				${model.relatedModels
+					.map((rel) => {
+						return `${rel.fieldName}: {
+				pk: tables.${model.drizzleName}.${rel.thisKey},
+				fk: tables.${rel.drizzleName}.${rel.oppositeKey},
+				table: tables.${rel.drizzleName},
+			},`
+					})
+					.join('')}
+			},`
+		})
+		.join('')}
+}
 
 type FilterOperator = (col: Column, value: any) => SQLWrapper
 
@@ -121,7 +153,8 @@ export const toWhere = (
 ) => {
 	let queries: (SQLWrapper | undefined)[] = []
 
-	const entries = Object.entries(search || {})
+	const searchFields = search || {}
+	const entries = Object.entries(searchFields)
 
 	for (const [field, filters] of entries) {
 		if (field === 'and') {
@@ -154,19 +187,47 @@ export const toWhere = (
 			continue
 		}
 
-		const col = table[field as keyof typeof table] as Column
+		const col = table[field as keyof typeof table] as Column | undefined
 
-		const filterEntry = Object.entries(filters)
-		for (const [filterName, value] of filterEntry) {
-			if (filterOperators[filterName] !== undefined) {
-				const query = filterOperators[filterName]?.(col, value)
-				queries = [...queries, query]
+		if (col) {
+			const filterEntry = Object.entries(filters)
+			for (const [filterName, value] of filterEntry) {
+				if (filterOperators[filterName] !== undefined) {
+					const query = filterOperators[filterName]?.(col, value)
+					queries = [...queries, query]
+				}
 			}
+		} else {
+			const filter = searchFields[field]
+			const rf = relationFilters[getTableName(table)]?.[field]
+
+			if (!rf) continue
+
+			queries = [
+				...queries,
+				inArray(
+					rf.pk,
+					db
+						// @ts-expect-error - we dont know which table it is (but they all have id)
+						.select({ id: rf.fk })
+						.from(rf.table)
+						.where(
+							and(
+								...toWhere(rf.table, filter),
+								getTableColumns(rf.table).deletedAt
+									? // @ts-expect-error - we are checking if deletedAt is available first
+										isNull(rf.table.deletedAt)
+									: undefined
+							)
+						)
+				),
+			]
 		}
 	}
 
 	return queries
 }
 `
+}
 
 export default tmpl

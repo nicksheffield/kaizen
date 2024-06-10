@@ -201,6 +201,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 				!data.enabled && 'opacity-50',
 				modalHasPopover && !isActiveModel && 'opacity-50'
 			)}
+			style={{ viewTransitionName: `model-${data.id}` }}
 			onMouseDown={() => {
 				addSelectedNodes([data.id])
 			}}

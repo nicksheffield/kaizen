@@ -79,7 +79,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 					})
 					.filter(isNotNone)
 			).join('\n')}
-			${model.auditDates ? `createdAt: g.ref(DateType), updatedAt: g.ref(DateType).optional(), deletedAt: g.ref(DateType).optional(),` : ''}
+			${model.auditDates ? `createdAt: g.ref(() => DateType), updatedAt: g.ref(() => DateType).optional(), deletedAt: g.ref(() => DateType).optional(),` : ''}
 		}),
 	
 		collection: g.type('${model.name}Collection', {
@@ -139,12 +139,11 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				})
 				.filter(isNotNone)
 				.join('\n')}
-			${model.foreignKeys
+			${model.foreignKeys.map((x) => `${x.name}: g.ref(filters.StringFilter).optional(),`).join('\n')}
+			${model.relatedModels
 				.map((x) => {
-					// use id or string? lets go with id for now
-					return `${x.name}: g.ref(filters.StringFilter).optional(),`
+					return `${x.fieldName}: g.ref(() => ${x.otherModel.name}.types.filter).optional(),`
 				})
-				.filter(isNotNone)
 				.join('\n')}
 			and: g
 				.ref(() => types.filter)

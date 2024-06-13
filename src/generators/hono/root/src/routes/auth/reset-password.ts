@@ -78,7 +78,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	
 			await sendPasswordResetToken(email, verificationToken)
 	
-			return c.json({ email: 'sent (not really)' })
+			return c.json({ message: 'Password reset email sent' })
 		}
 	)
 	

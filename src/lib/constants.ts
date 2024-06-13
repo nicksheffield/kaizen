@@ -18,6 +18,7 @@ export const envKeys = [
 	'DEV_EMAIL_TO',
 	'RESEND_WEBHOOK_SECRET',
 	'EMAIL_BASEURL',
+	'LOG_REQUESTS',
 ] as const
 
 export const envHints: Record<string, string> = {
@@ -32,4 +33,5 @@ export const envHints: Record<string, string> = {
 	RESEND_WEBHOOK_SECRET: 'The secret used to verify webhook requests from resend.',
 	SENDGRID_API_KEY: 'The API key to use for sending emails via sendgrid.',
 	EMAIL_BASEURL: 'The base URL to use for links in emails.',
+	LOG_REQUESTS: 'Set this to "true" in production to log all requests.',
 }

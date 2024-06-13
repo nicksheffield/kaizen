@@ -9,7 +9,6 @@ import { Hono } from 'hono'
 import { showRoutes } from 'hono/dev'
 import { cors } from 'hono/cors'
 import { secureHeaders } from 'hono/secure-headers'
-import { logger } from 'hono/logger'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { env, isDev } from './lib/env.js'
@@ -17,7 +16,7 @@ import { migrate } from './migrate.js'
 import { readFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import mime from 'mime-types'
-import { fileExtensions } from './lib/utils.js'
+import { fileExtensions, logger } from './lib/utils.js'
 import { router } from './routes/index.js'
 ${hasSeeder ? `import seed from '${MODS_DIRNAME}/src/seed.js'` : ''}
 
@@ -33,12 +32,9 @@ migrate().then(() => {
 	}
 })
 
-app.use(
-	logger((str) => {
-		if (str.includes('<--')) return
-		console.log(str.replace('  --> ', '- '))
-	})
-)
+if (env.LOG_REQUESTS === 'true' || isDev) {
+	app.use(logger)
+}
 
 app.use(
 	cors({

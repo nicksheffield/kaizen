@@ -10,7 +10,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	import * as schema from '../schema.js'
 	import { env } from './env.js'
 	
-	const connection = mysql.createPool({ uri: env.DB_URI })
+	export const connection = mysql.createPool({ uri: env.DB_URI })
 	
 	export const db = drizzle(connection, {
 		mode: 'default',

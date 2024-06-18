@@ -1,6 +1,7 @@
 import { mapAttrToDrizzleTypeFn, mapAttrToDrizzleTypeName } from '../../utils'
 import { ModelCtx } from '../../contexts'
 import { ProjectCtx } from '@/generators/hono/types'
+import { clean } from '@/generators/utils'
 
 const tmpl = (ctx: { models: ModelCtx[]; project: ProjectCtx }) => {
 	const attrTypeImports = ctx.models.flatMap((x) => x.attributes).map((x) => mapAttrToDrizzleTypeName(x.type))
@@ -144,7 +145,7 @@ export const recoveryCodesRelations = relations(recoveryCodes, ({ one }) => ({
  */
 ${models
 	.map((model) => {
-		return `export const ${model.drizzleName} = mysqlTable('${model.tableName}', {
+		return clean`export const ${model.drizzleName} = mysqlTable('${model.tableName}', {
 	id: varchar('id', { length: 15 }).primaryKey(),
 	${model.attributes
 		.map((attr) => {
@@ -154,7 +155,7 @@ ${models
 			// const def = isDateType && attr.default === "'CURRENT_TIMESTAMP'" ? 'sql`CURRENT_TIMESTAMP`' : attr.default
 			const def = attr.default
 
-			return `${attr.name}: ${mapAttrToDrizzleTypeFn(attr)}${def !== null ? `.default(sql\`${def}\`)` : ''}${!attr.optional ? '.notNull()' : ''},`
+			return clean`${attr.name}: ${mapAttrToDrizzleTypeFn(attr)}${def !== null && `.default(sql\`${def}\`)`}${!attr.optional && '.notNull()'},`
 		})
 		.filter((x) => x !== undefined)
 		.join('\n\t')}
@@ -162,12 +163,12 @@ ${models
 	${model.foreignKeys
 		.map((fk) => {
 			if (fk.name === 'id') return
-			return `${fk.name}: varchar('${fk.name}', { length: 15 })${fk.optional ? '' : '.notNull()'}.references((): AnyMySqlColumn => ${fk.otherDrizzle}.id),`
+			return clean`${fk.name}: varchar('${fk.name}', { length: 15 })${!fk.optional && '.notNull()'}.references((): AnyMySqlColumn => ${fk.otherDrizzle}.id),`
 		})
 		.filter((x) => x !== undefined)
 		.join('\n\t')}
 		
-	${model.auditDates ? '...auditDates' : ''}
+	${model.auditDates && '...auditDates'}
 })
 `
 	})
@@ -186,14 +187,13 @@ ${models
 		if (relationTypes.length === 0) return null
 
 		// ${relationTypes.join(', ')}
-		return `export const ${model.drizzleName}Relations = relations(${model.drizzleName}, ({ one, many }) => ({
+		return clean`export const ${model.drizzleName}Relations = relations(${model.drizzleName}, ({ one, many }) => ({
 	${
-		model.id === ctx.project.settings.userModelId
-			? `sessions: many(sessions),
+		model.id === ctx.project.settings.userModelId &&
+		`sessions: many(sessions),
 	emailVerificationCodes: many(emailVerificationCodes),
 	passwordResetTokens: many(passwordResetToken),
 	recoveryCodes: many(recoveryCodes),`
-			: ''
 	}
 	${model.relatedModels
 		.map((rel) => {

@@ -17,6 +17,7 @@ import httpTest_test from './root/http-test/test.http'
 import src_index from './root/src/index'
 import src_migrate from './root/src/migrate'
 import src_schema from './root/src/schema'
+import src_seed from './root/src/seed'
 
 import src_lib_db from './root/src/lib/db'
 import src_lib_email from './root/src/lib/email'
@@ -65,6 +66,7 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['src/index.ts'] = await format(src_index({ extras }))
 	dir['src/migrate.ts'] = await format(src_migrate())
 	dir['src/schema.ts'] = await format(src_schema({ models, project }))
+	dir['src/seed.ts'] = await format(src_seed())
 
 	dir['src/lib/db.ts'] = await format(src_lib_db({ models, project }))
 	dir['src/lib/email.ts'] = await format(src_lib_email({ project, extras }))

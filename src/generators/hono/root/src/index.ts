@@ -22,12 +22,17 @@ ${hasSeeder ? `import seed from '${MODS_DIRNAME}/src/seed.js'` : ''}
 
 const app = new Hono()
 
-migrate().then(() => {
+migrate().then(async () => {
 	${
 		hasSeeder
-			? `
+			? `if (!('default' in seed)) return
+
+	if ('isInitial' in seed) {
+		if (await seed.isInitial()) seed.default()
+	} else {
 		// @ts-ignore
-		return seed.default()`
+		return seed.default()
+	}`
 			: ''
 	}
 })

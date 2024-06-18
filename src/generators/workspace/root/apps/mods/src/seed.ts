@@ -9,6 +9,14 @@ const tmpl = () => {
 		return generateRandomString(length, alphabet('a-z', '0-9'))
 	}
 	
+	export const isInitial = async () => {
+		const adminUser = await db.query.users.findFirst({
+			where: eq(t.users.email, 'admin@example.com'),
+		})
+
+		return !adminUser
+	}
+	
 	export default async () => {
 		// create admin user if it doesn't exist
 		const adminUser = await db.query.users.findFirst({

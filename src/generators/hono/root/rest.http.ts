@@ -4,8 +4,11 @@
 const tmpl = () => {
 	const port = 3000
 
-	return `### @name Login
-POST http://localhost:${port}/api/auth/login
+	return `@baseUrl = http://localhost:${port}
+  @api = {{baseUrl}}/api
+  
+  ### @name Login
+POST {{api}}/auth/login
 Content-Type: application/json
 
 {
@@ -15,10 +18,10 @@ Content-Type: application/json
 }
 
 ### @name Logout
-POST http://localhost:${port}/api/auth/logout
+POST {{api}}/auth/logout
 
 ### @name ConfirmAccount
-POST http://localhost:${port}/api/auth/confirm-account
+POST {{api}}/auth/confirm-account
 Content-Type: application/json
 
 {
@@ -27,19 +30,19 @@ Content-Type: application/json
 }
 
 ### @name Setup2FA
-POST http://localhost:${port}/api/auth/setup-twofactor
+POST {{api}}/auth/setup-twofactor
 
 ### @name Confirm2FA
-POST http://localhost:${port}/api/auth/confirm-twofactor
+POST {{api}}/auth/confirm-twofactor
 
 ### @name Disable2FA
-POST http://localhost:${port}/api/auth/disable-twofactor
+POST {{api}}/auth/disable-twofactor
 
 ### @name Profile
-GET http://localhost:${port}/api/auth/profile
+GET {{api}}/auth/profile
 
 ### @name ResetPassword
-POST http://localhost:${port}/api/auth/reset-password
+POST {{api}}/auth/reset-password
 Content-Type: application/json
 
 {
@@ -47,7 +50,7 @@ Content-Type: application/json
 }
 
 ### @name ResetPasswordWithCode
-POST http://localhost:${port}/api/auth/reset-password/bydmrkqn8u71o6k7qmay17rir4k9nigzrj5kfemt
+POST {{api}}/auth/reset-password/bydmrkqn8u71o6k7qmay17rir4k9nigzrj5kfemt
 Content-Type: application/json
 
 {

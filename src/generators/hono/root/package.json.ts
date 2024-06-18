@@ -6,6 +6,7 @@ const tmpl = () => {
 		scripts: {
 			dev: 'tsx --watch src/index.ts',
 			studio: 'npx drizzle-kit studio',
+			seed: 'tsx src/seed.ts',
 			start: 'tsx src/index.ts',
 		},
 		peerDependencies: {

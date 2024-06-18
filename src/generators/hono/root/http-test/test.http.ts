@@ -4,8 +4,11 @@ import { uc } from '@/lib/utils'
 const tmpl = ({ model }: { model: ModelCtx }) => {
 	const port = 3000
 
-	return `### @name Login
-POST http://localhost:${port}/api/auth/login
+	return `@baseUrl = http://localhost:${port}
+  @api = {{baseUrl}}/api
+  
+### @name Login
+POST {{api}}/auth/login
 Content-Type: application/json
 
 {
@@ -15,10 +18,10 @@ Content-Type: application/json
 }
 
 ### @name Logout
-POST http://localhost:${port}/api/auth/logout
+POST {{api}}/auth/logout
 
 ### @name Get${uc(model.drizzleName)}
-POST http://localhost:${port}/api/graphql
+POST {{api}}/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
@@ -35,7 +38,7 @@ ${model.attributes
 }
 
 ### @name Get${uc(model.drizzleNameSingular)}
-POST http://localhost:${port}/api/graphql
+POST {{api}}/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
@@ -53,7 +56,7 @@ ${model.attributes
 }
 
 ### @name Create${uc(model.drizzleNameSingular)}
-POST http://localhost:${port}/api/graphql
+POST {{api}}/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
@@ -88,7 +91,7 @@ ${model.attributes
 
 
 ### @name Update${uc(model.drizzleNameSingular)}
-POST http://localhost:${port}/api/graphql
+POST {{api}}/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
@@ -122,7 +125,7 @@ ${model.attributes
 }
 
 ### @name Delete${uc(model.drizzleNameSingular)}
-POST http://localhost:${port}/api/graphql
+POST {{api}}/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 

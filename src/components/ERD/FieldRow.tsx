@@ -23,9 +23,9 @@ export const FieldRow = forwardRef<HTMLButtonElement, FieldRowProps>(
 				<div className="flex items-center gap-2">
 					{Icon && <Icon className="-ml-1 h-4 w-4 opacity-25" />}
 					{title ? (
-						<div className="font-mono text-xs">{title}</div>
+						<div className="text-xs font-medium">{title}</div>
 					) : (
-						<div className="font-mono text-xs italic opacity-50">{placeholder}</div>
+						<div className="text-xs font-medium italic opacity-50">{placeholder}</div>
 					)}
 				</div>
 				<div className="font-mono text-xs opacity-50">{type}</div>

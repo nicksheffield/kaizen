@@ -163,7 +163,7 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 			address: email,
 			subject: 'Reset your password',
 			${
-				hasConfirmAccount
+				hasResetPassword
 					? `react: ResetPassword.default({
 					resetPasswordUrl: \`\${env.EMAIL_BASEURL}/reset-password\` || 'http://localhost:3001/reset-password',
 					resetCode: code,

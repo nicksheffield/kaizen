@@ -41,6 +41,7 @@ import src_routes_auth_logout from './root/src/routes/auth/logout'
 import src_routes_auth_profile from './root/src/routes/auth/profile'
 import src_routes_auth_confirmAccount from './root/src/routes/auth/confirm-account'
 import src_routes_auth_resetPassword from './root/src/routes/auth/reset-password'
+import src_routes_auth_changePassword from './root/src/routes/auth/change-password'
 import src_routes_auth_twoFactor from './root/src/routes/auth/two-factor'
 
 import src_routes_graphql_router from './root/src/routes/graphql/router'
@@ -90,6 +91,7 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['src/routes/auth/profile.ts'] = await format(src_routes_auth_profile({ models, project }))
 	dir['src/routes/auth/confirm-account.ts'] = await format(src_routes_auth_confirmAccount({ models, project }))
 	dir['src/routes/auth/reset-password.ts'] = await format(src_routes_auth_resetPassword({ models, project }))
+	dir['src/routes/auth/change-password.ts'] = await format(src_routes_auth_changePassword({ models, project }))
 	dir['src/routes/auth/two-factor.ts'] = await format(src_routes_auth_twoFactor({ models, project }))
 
 	dir['src/routes/graphql/router.ts'] = await format(src_routes_graphql_router({ models, project }))

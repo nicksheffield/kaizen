@@ -5,9 +5,9 @@ const tmpl = () => {
 	const port = 3000
 
 	return `@baseUrl = http://localhost:${port}
-  @api = {{baseUrl}}/api
+@api = {{baseUrl}}/api
   
-  ### @name Login
+### @name Login
 POST {{api}}/auth/login
 Content-Type: application/json
 

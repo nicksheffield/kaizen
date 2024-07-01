@@ -153,7 +153,7 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 					validationCode: code,
 				})
 			`
-					: `body: \`Your verification code is: \${code}. Enter it <a href="\${env.EMAIL_BASEURL || http://localhost:3001}/confirm-account?userId=\${userId}">here</a>.\``
+					: `body: \`Your verification code is: \${code}. Enter it <a href="\${env.EMAIL_BASEURL || 'http://localhost:3001'}/confirm-account?userId=\${userId}">here</a>.\``
 			}
 		})
 	}
@@ -169,7 +169,7 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 					resetCode: code,
 				})
 			`
-					: `body: \`Enter your new password <a href="\${env.EMAIL_BASEURL || http://localhost:3001}/reset-password?code=\${code}">here</a>.\``
+					: `body: \`Enter your new password <a href="\${env.EMAIL_BASEURL || 'http://localhost:3001'}/reset-password?code=\${code}">here</a>.\``
 			}
 		})
 	}

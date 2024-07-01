@@ -66,8 +66,8 @@ ${
 
 const isAuthenticated = rule({ cache: 'contextual' })(
 	async (parent, args, ctx, info) => {
-		const { user } = await getSession(ctx)
-		if (!user) return new Error('Unauthenticated')
+		const { session } = await getSession(ctx)
+		if (!session) return new Error('Unauthenticated')
 		return true
 	}
 )

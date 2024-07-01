@@ -22,7 +22,9 @@ const tmpl = (ctx: { models: ModelCtx[]; project: ProjectCtx }) => {
 	const authModel = models.find((x) => ctx.project.settings.userModelId === x.id)
 	const authModelName = authModel?.drizzleName || 'users'
 
-	return `import { SQL, relations, sql } from 'drizzle-orm'
+	const hasApiKeys = ctx.project.settings.auth?.enableApiKeys
+
+	return clean`import { SQL, relations, sql } from 'drizzle-orm'
 import { ${drizzleTypeImports.join(', ')} } from 'drizzle-orm/mysql-core'
 
 const auditDates = {
@@ -102,6 +104,17 @@ export const emailLogs = mysqlTable('_email_logs', {
 	delivered: datetime('delivered'),
 	bounced: datetime('bounced'),
 })
+
+${
+	hasApiKeys &&
+	`export const apiKeys = mysqlTable('_api_keys', {
+	id: varchar('id', { length: 15 }).primaryKey(),
+	name: varchar('name', { length: 255 }).notNull(),
+	key: varchar('key', { length: 64 }).notNull(),
+	createdAt: timestamp('createdAt').defaultNow().notNull(),
+	revokedAt: timestamp('revokedAt'),
+})`
+}
 
 /**
  * Auth Relations

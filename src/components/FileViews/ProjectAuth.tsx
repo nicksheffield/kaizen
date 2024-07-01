@@ -24,6 +24,7 @@ export const ProjectAuth = () => {
 			sessionExpiry: '60',
 			enableCookies: false,
 			enableBearer: true,
+			enableApiKeys: false,
 			enableAuthenticator2fa: true,
 			enableEmail2fa: false,
 			enableMagicLink: false,
@@ -82,6 +83,12 @@ export const ProjectAuth = () => {
 										name="enableBearer"
 										label="Enable Bearer Tokens"
 										description="Use Bearer tokens for auth."
+									/>
+
+									<Switcher
+										name="enableApiKeys"
+										label="Enable Api Keys"
+										description="Use API Keys for auth."
 									/>
 								</Card>
 

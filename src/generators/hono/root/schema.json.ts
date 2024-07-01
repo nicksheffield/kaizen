@@ -3,7 +3,7 @@ import { ModelCtx } from '../contexts'
 import { ProjectCtx } from '@/generators/hono/types'
 import pluralize from 'pluralize'
 import { z } from 'zod'
-import { isNotNone } from '@/lib/utils'
+import { isNotFalsish, isNotNone } from '@/lib/utils'
 import { RelationType } from '@/lib/projectSchemas'
 
 const AttributeSchema = z.object({
@@ -392,6 +392,78 @@ const historyModel: z.infer<typeof ModelSchema> = {
 	],
 }
 
+const apiKeysModel: z.infer<typeof ModelSchema> = {
+	id: 'api_keys',
+	name: 'ApiKeys',
+	tableName: '_api_keys',
+	auditDates: false,
+	posX: 0,
+	posY: 0,
+	enabled: true,
+	attributes: [
+		{
+			id: 'api_keys-id',
+			name: 'id',
+			type: 'varchar',
+			default: null,
+			nullable: false,
+			selectable: false,
+			order: 0,
+			enabled: true,
+			modelId: 'api_keys',
+			foreignKey: false,
+		},
+		{
+			id: 'api_keys-name',
+			name: 'name',
+			type: 'varchar',
+			default: null,
+			nullable: false,
+			selectable: false,
+			order: 1,
+			enabled: true,
+			modelId: 'api_keys',
+			foreignKey: false,
+		},
+		{
+			id: 'api_keys-key',
+			name: 'key',
+			type: 'varchar',
+			default: null,
+			nullable: false,
+			selectable: false,
+			order: 2,
+			enabled: true,
+			modelId: 'api_keys',
+			foreignKey: false,
+		},
+		{
+			id: 'api_keys-createdAt',
+			name: 'createdAt',
+			type: 'datetime',
+			default: 'CURRENT_TIMESTAMP',
+			nullable: false,
+			selectable: false,
+			order: 3,
+			enabled: true,
+			modelId: 'api_keys',
+			foreignKey: false,
+		},
+		{
+			id: 'api_keys-revokedAt',
+			name: 'revokedAt',
+			type: 'datetime',
+			default: null,
+			nullable: true,
+			selectable: false,
+			order: 4,
+			enabled: true,
+			modelId: 'api_keys',
+			foreignKey: false,
+		},
+	],
+}
+
 const emailLogsModel: z.infer<typeof ModelSchema> = {
 	id: 'h19mm',
 	name: 'emailLog',
@@ -638,7 +710,13 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 
 	return JSON.stringify(
 		{
-			models: [...appModels, ...authModels, historyModel, emailLogsModel],
+			models: [
+				...appModels,
+				...authModels,
+				historyModel,
+				emailLogsModel,
+				project.settings.auth.enableApiKeys && apiKeysModel,
+			].filter(isNotFalsish),
 			relations: appRelations,
 		},
 		null,

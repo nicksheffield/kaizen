@@ -91,6 +91,7 @@ export const ProjectSchema = z.object({
 			sessionExpiry: z.string().default('60'),
 			enableCookies: z.boolean().default(false),
 			enableBearer: z.boolean().default(true),
+			enableApiKeys: z.boolean().default(false),
 			enableAuthenticator2fa: z.boolean().default(true),
 			enableEmail2fa: z.boolean().default(false),
 			enableRegistration: z.boolean().default(true),

@@ -19,6 +19,7 @@ import src_migrate from './root/src/migrate'
 import src_schema from './root/src/schema'
 import src_seed from './root/src/seed'
 
+import src_lib_apiKeys from './root/src/lib/apiKeys'
 import src_lib_db from './root/src/lib/db'
 import src_lib_email from './root/src/lib/email'
 import src_lib_env from './root/src/lib/env'
@@ -69,6 +70,9 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['src/schema.ts'] = await format(src_schema({ models, project }))
 	dir['src/seed.ts'] = await format(src_seed())
 
+	if (project.settings.auth?.enableApiKeys) {
+		dir['src/lib/apiKeys.ts'] = await format(src_lib_apiKeys())
+	}
 	dir['src/lib/db.ts'] = await format(src_lib_db({ models, project }))
 	dir['src/lib/email.ts'] = await format(src_lib_email({ project, extras }))
 	dir['src/lib/env.ts'] = await format(src_lib_env())

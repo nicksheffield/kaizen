@@ -15,6 +15,7 @@ import {
 	DatabaseIcon,
 	TentTreeIcon,
 	DraftingCompassIcon,
+	TelescopeIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useApp } from '@/lib/AppContext'
@@ -61,6 +62,10 @@ export const TreeFileIcon = ({ path, open = true, className }: TreeFileIconProps
 
 	if (path === 'project.json?auth') {
 		return <FingerprintIcon className={classNames} />
+	}
+
+	if (path === 'project.json?sandbox') {
+		return <TelescopeIcon className={classNames} />
 	}
 
 	if (path === 'project.json?environment') {

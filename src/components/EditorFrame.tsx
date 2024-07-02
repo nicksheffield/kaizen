@@ -10,6 +10,7 @@ import { ProjectAuth } from '@/components/FileViews/ProjectAuth'
 import { ProjectEnv } from '@/components/FileViews/ProjectEnv'
 import { useLocalStorage } from 'usehooks-ts'
 import { ProjectHelpers } from '@/components/FileViews/ProjectHelpers'
+import { ProjectSandbox } from '@/components/FileViews/ProjectSandbox'
 
 export const EditorFrame = () => {
 	const project = useApp((v) => v.project)
@@ -26,6 +27,8 @@ export const EditorFrame = () => {
 			<ProjectDetails key={project?.settings.id} />
 		) : selectedPath === 'project.json?auth' ? (
 			<ProjectAuth key={project?.settings.id} />
+		) : selectedPath === 'project.json?sandbox' ? (
+			<ProjectSandbox key={project?.settings.id} />
 		) : selectedPath === 'project.json?environment' ? (
 			<ProjectEnv key={project?.settings.id} />
 		) : selectedPath === 'project.json?helpers' ? (

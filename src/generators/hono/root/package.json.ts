@@ -13,6 +13,8 @@ const tmpl = () => {
 			typescript: '^5.0.0',
 		},
 		dependencies: {
+			"@aws-sdk/client-s3": "^3.606.0",
+        	"@aws-sdk/s3-request-presigner": "^3.608.0",
 			'@envelop/graphql-middleware': '^6.0.0',
 			'@escape.tech/graphql-armor': '^2.4.0',
 			'@faker-js/faker': '^8.4.1',
@@ -36,7 +38,7 @@ const tmpl = () => {
 			'mime-types': '^2.1.35',
 			mysql2: '^3.9.2',
 			nodemailer: '^6.9.12',
-			'ns-migrate': '0.1.9',
+			'ns-migrate': '0.1.10',
 			oslo: '^1.1.3',
 			resend: '^3.2.0',
 			svix: '^1.23.0',

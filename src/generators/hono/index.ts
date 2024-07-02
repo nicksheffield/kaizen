@@ -20,6 +20,7 @@ import src_schema from './root/src/schema'
 import src_seed from './root/src/seed'
 
 import src_lib_apiKeys from './root/src/lib/apiKeys'
+import src_lib_crud from './root/src/lib/crud'
 import src_lib_db from './root/src/lib/db'
 import src_lib_email from './root/src/lib/email'
 import src_lib_env from './root/src/lib/env'
@@ -27,6 +28,7 @@ import src_lib_history from './root/src/lib/history'
 import src_lib_lucia from './root/src/lib/lucia'
 import src_lib_manageUser from './root/src/lib/manageUser'
 import src_lib_password from './root/src/lib/password'
+import src_lib_storage from './root/src/lib/storage'
 import src_lib_utils from './root/src/lib/utils'
 import src_lib_modifiers from './root/src/lib/modifiers'
 
@@ -73,6 +75,7 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	if (project.settings.auth?.enableApiKeys) {
 		dir['src/lib/apiKeys.ts'] = await format(src_lib_apiKeys())
 	}
+	dir['src/lib/crud.ts'] = await format(src_lib_crud())
 	dir['src/lib/db.ts'] = await format(src_lib_db({ models, project }))
 	dir['src/lib/email.ts'] = await format(src_lib_email({ project, extras }))
 	dir['src/lib/env.ts'] = await format(src_lib_env())
@@ -80,6 +83,7 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['src/lib/lucia.ts'] = await format(src_lib_lucia({ project }))
 	dir['src/lib/manageUser.ts'] = await format(src_lib_manageUser({ models, project }))
 	dir['src/lib/password.ts'] = await format(src_lib_password())
+	dir['src/lib/storage.ts'] = await format(src_lib_storage())
 	dir['src/lib/utils.ts'] = await format(src_lib_utils())
 	dir['src/lib/modifiers.ts'] = await format(src_lib_modifiers({ models, extras }))
 

@@ -129,6 +129,30 @@ export const SmallTree = () => {
 					Helpers
 				</TooltipContent>
 			</Tooltip>
+
+			<Tooltip delayDuration={0}>
+				<TooltipTrigger asChild>
+					<div>
+						<Button
+							variant="ghost"
+							className={cn(
+								'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
+								selectedPath === 'project.json?sandbox'
+									? 'bg-primary text-primary-foreground highlight-white/10 hover:bg-primary/80 hover:text-primary-foreground'
+									: 'text-muted-foreground hover:bg-foreground/10 hover:highlight-white/5'
+							)}
+							onClick={() => {
+								openFile('project.json?sandbox')
+							}}
+						>
+							<TreeFileIcon path={'project.json?sandbox'} className="h-6 w-6" />
+						</Button>
+					</div>
+				</TooltipTrigger>
+				<TooltipContent side="right" align="center">
+					Sandbox
+				</TooltipContent>
+			</Tooltip>
 		</div>
 	)
 }

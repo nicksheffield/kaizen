@@ -46,6 +46,7 @@ import src_routes_auth_confirmAccount from './root/src/routes/auth/confirm-accou
 import src_routes_auth_resetPassword from './root/src/routes/auth/reset-password'
 import src_routes_auth_changePassword from './root/src/routes/auth/change-password'
 import src_routes_auth_twoFactor from './root/src/routes/auth/two-factor'
+import src_routes_auth_impersonate from './root/src/routes/auth/impersonate'
 
 import src_routes_graphql_router from './root/src/routes/graphql/router'
 import src_routes_graphql_resolvers_filters from './root/src/routes/graphql/resolvers/_filters'
@@ -101,6 +102,10 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['src/routes/auth/reset-password.ts'] = await format(src_routes_auth_resetPassword({ models, project }))
 	dir['src/routes/auth/change-password.ts'] = await format(src_routes_auth_changePassword({ models, project }))
 	dir['src/routes/auth/two-factor.ts'] = await format(src_routes_auth_twoFactor({ models, project }))
+	
+	if (project.settings.auth?.enableImpersonation) {
+		dir['src/routes/auth/impersonate.ts'] = await format(src_routes_auth_impersonate())
+	}
 
 	dir['src/routes/graphql/router.ts'] = await format(src_routes_graphql_router({ models, project }))
 	dir['src/routes/graphql/resolvers/_filters.ts'] = await format(src_routes_graphql_resolvers_filters({ models }))

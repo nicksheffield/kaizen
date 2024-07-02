@@ -90,6 +90,12 @@ export const ProjectAuth = () => {
 										label="Enable Api Keys"
 										description="Use API Keys for auth."
 									/>
+
+									<Switcher
+										name="enableImpersonation"
+										label="Enable Impersonation"
+										description="Users with the 'impersonator' role can use the `/auth/impersonate` endpoint to impersonate users."
+									/>
 								</Card>
 
 								<div className="-mb-4 font-medium">Authentication</div>

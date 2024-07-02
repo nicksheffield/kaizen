@@ -31,7 +31,9 @@ Tasks
 [x] add endpoint to clear all other login sessions for the current user, maybe `/api/auth/clear`
 [x] since we use mysql, we can use AFTER in sql to order table columns
 [x] api keys
+[x] add user impersonation
 
+[ ] need to protect against privilege escalation
 [ ] add the ability to mark files as "// keep" or maybe add a .kzignore file where you list files/directories to not remove upon generation
 [ ] make it so you can turn off one side of a relationship
 [ ] make email templates entirely optional by providing a default design.

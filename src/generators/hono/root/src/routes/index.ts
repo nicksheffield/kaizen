@@ -9,6 +9,7 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 	import { router as profile } from './auth/profile.js'
 	import { router as twoFactor } from './auth/two-factor.js'
 	${project.settings.auth.requireAccountConfirmation ? `import { router as confirmAccount } from './auth/confirm-account.js'` : ''}
+	${project.settings.auth.enableImpersonation ? `import { router as impersonate } from './auth/impersonate.js'` : ''}
 	import { router as resetPassword } from './auth/reset-password.js'
 	import { router as changePassword } from './auth/change-password.js'
 	import { router as graphql } from './graphql/router.js'
@@ -23,6 +24,7 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 	router.route('/auth', profile)
 	router.route('/auth', twoFactor)
 	${project.settings.auth.requireAccountConfirmation ? `router.route('/auth', confirmAccount)` : ''}
+	${project.settings.auth.enableImpersonation ? `router.route('/auth', impersonate)` : ''}
 	router.route('/auth', resetPassword)
 	router.route('/auth', changePassword)
 	router.route('/graphql', graphql)

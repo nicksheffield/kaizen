@@ -19,21 +19,21 @@ type UploadFileOptions = {
 }
 
 export const storageExists = () => {
-	if (!process.env.AWS_BUCKET_NAME) return false
-	if (!process.env.AWS_BUCKET_ORIGIN) return false
-	if (!process.env.AWS_BUCKET_REGION) return false
-	if (!process.env.AWS_ACCESS_KEY_ID) return false
-	if (!process.env.AWS_SECRET_ACCESS_KEY) return false
+	if (!process.env.S3_BUCKET_NAME) return false
+	if (!process.env.S3_BUCKET_ORIGIN) return false
+	if (!process.env.S3_BUCKET_REGION) return false
+	if (!process.env.S3_ACCESS_KEY_ID) return false
+	if (!process.env.S3_SECRET_ACCESS_KEY) return false
 
 	return true
 }
 
 export const client = new S3Client({
-	region: process.env.AWS_BUCKET_REGION!,
-	endpoint: process.env.AWS_BUCKET_ORIGIN!,
+	region: process.env.S3_BUCKET_REGION!,
+	endpoint: process.env.S3_BUCKET_ORIGIN!,
 	credentials: {
-		accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-		secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+		accessKeyId: process.env.S3_ACCESS_KEY_ID!,
+		secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
 	},
 })
 
@@ -53,7 +53,7 @@ export const uploadFile = async (
 
 	const buffer = Buffer.from(await file.arrayBuffer())
 
-	const Bucket = options.bucket || process.env.AWS_BUCKET_NAME!
+	const Bucket = options.bucket || process.env.S3_BUCKET_NAME!
 
 	if (!Bucket) {
 		throw new Error('No bucket provided')
@@ -73,17 +73,17 @@ export const uploadFile = async (
 	return Key
 }
 
-export const getFileUrl = async (key: string, bucket?: string) => {
+export const getFileUrl = (
+	key: string,
+	bucket?: string,
+	expiresIn: number = 60
+) => {
 	const command = new GetObjectCommand({
-		Bucket: bucket || process.env.AWS_BUCKET_NAME,
+		Bucket: bucket || process.env.S3_BUCKET_NAME,
 		Key: key,
 	})
 
-	const url = await getSignedUrl(client, command, {
-		expiresIn: 60,
-	})
-
-	return url
+	return getSignedUrl(client, command, { expiresIn })
 }
 
 export const getFileFromBucket = async (key: string, bucket?: string) => {

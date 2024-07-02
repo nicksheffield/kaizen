@@ -19,6 +19,11 @@ export const envKeys = [
 	'RESEND_WEBHOOK_SECRET',
 	'EMAIL_BASEURL',
 	'LOG_REQUESTS',
+	'S3_BUCKET_NAME',
+	'S3_BUCKET_ORIGIN',
+	'S3_BUCKET_REGION',
+	'S3_ACCESS_KEY_ID',
+	'S3_SECRET_ACCESS_KEY',
 ] as const
 
 export const envHints: Record<string, string> = {
@@ -34,4 +39,9 @@ export const envHints: Record<string, string> = {
 	SENDGRID_API_KEY: 'The API key to use for sending emails via sendgrid.',
 	EMAIL_BASEURL: 'The base URL to use for links in emails.',
 	LOG_REQUESTS: 'Set this to "true" in production to log all requests.',
+	S3_BUCKET_NAME: 'The name of your S3 bucket.',
+	S3_BUCKET_ORIGIN: 'The origin of your S3 bucket (including https://).',
+	S3_BUCKET_REGION: 'The region of your S3 bucket.',
+	S3_ACCESS_KEY_ID: 'The access key ID for your S3 bucket.',
+	S3_SECRET_ACCESS_KEY: 'The secret access key for your S3 bucket.',
 }

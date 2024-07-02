@@ -6,7 +6,7 @@ import { Hono } from 'hono'
 import { authenticate, getSession } from '../../middleware/authenticate.js'
 import { db } from 'lib/db.js'
 import { and, eq, not } from 'drizzle-orm'
-import { sessions } from 'schema.js'
+import { _sessions } from 'schema.js'
 ${project.settings.auth?.enableCookies ? `import { setCookie } from 'hono/cookie'` : ''}
 
 export const router = new Hono()
@@ -35,11 +35,11 @@ router.post('/purge-sessions', authenticate, async (c) => {
 	
 	// log the user out of everywhere else
 	await db
-		.delete(sessions)
+		.delete(_sessions)
 		.where(
 			and(
-				eq(sessions.userId, user.id),
-				not(eq(sessions.id, session.id))
+				eq(_sessions.userId, user.id),
+				not(eq(_sessions.id, session.id))
 			)
 		)
 

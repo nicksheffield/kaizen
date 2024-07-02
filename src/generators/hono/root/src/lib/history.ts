@@ -1,6 +1,6 @@
 const tmpl = () => {
 	return `import { db } from './db.js'
-	import { history } from '../schema.js'
+	import { _history } from '../schema.js'
 	import { and, eq } from 'drizzle-orm'
 	
 	export const create = async (
@@ -21,7 +21,7 @@ const tmpl = () => {
 				operation: 'create',
 				userId,
 			}))
-		await db.insert(history).values(values)
+		await db.insert(_history).values(values)
 	}
 	
 	export const update = async (
@@ -51,11 +51,11 @@ const tmpl = () => {
 
 		if (Object.keys(values).length === 0) return
 	
-		await db.insert(history).values(values)
+		await db.insert(_history).values(values)
 	}
 
 	export const softDelete = async (table: string, rowId: string, userId: string) => {
-		await db.insert(history).values({
+		await db.insert(_history).values({
 			table: table,
 			column: '',
 			value: '',
@@ -67,11 +67,11 @@ const tmpl = () => {
 	
 	export const hardDelete = async (table: string, rowId: string) => {
 		await db
-			.delete(history)
+			.delete(_history)
 			.where(
 				and(
-					eq(history.table, 'venues'),
-					eq(history.rowId, rowId)
+					eq(_history.table, 'venues'),
+					eq(_history.rowId, rowId)
 				)
 			)
 	}

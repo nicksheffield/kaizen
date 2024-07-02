@@ -29,11 +29,10 @@ Tasks
 [x] massively improve new project experience
 [x] make seeding a command, but it does run on "first run" of an app
 [x] add endpoint to clear all other login sessions for the current user, maybe `/api/auth/clear`
+[x] since we use mysql, we can use AFTER in sql to order table columns
+[x] api keys
 
-[ ] since we use mysql, we can use AFTER in sql to order table columns
-[ ] api keys
 [ ] add the ability to mark files as "// keep" or maybe add a .kzignore file where you list files/directories to not remove upon generation
-[ ] add environment variable that disables all create/update/delete functionality. Maybe call it maintenance mode
 [ ] make it so you can turn off one side of a relationship
 [ ] make email templates entirely optional by providing a default design.
 	These defaults are included via the generator, unless a mod version is present.

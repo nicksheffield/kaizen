@@ -36,7 +36,7 @@ const auditDates = {
 /**
  * Auth Tables
  */
-export const sessions = mysqlTable('_sessions', {
+export const _sessions = mysqlTable('_sessions', {
 	id: varchar('id', { length: 15 }).primaryKey(),
 	userId: varchar('userId', { length: 255 })
 		.notNull()
@@ -44,7 +44,7 @@ export const sessions = mysqlTable('_sessions', {
 	expiresAt: datetime('expiresAt').notNull(),
 })
 
-export const emailVerificationCodes = mysqlTable('_email_verification_codes', {
+export const _emailVerificationCodes = mysqlTable('_email_verification_codes', {
 	id: varchar('id', { length: 15 }).primaryKey(),
 	code: varchar('code', { length: 255 }).notNull(),
 	userId: varchar('userId', { length: 15 })
@@ -54,7 +54,7 @@ export const emailVerificationCodes = mysqlTable('_email_verification_codes', {
 	expiresAt: datetime('expiresAt').notNull(),
 })
 
-export const passwordResetToken = mysqlTable('_password_reset_token', {
+export const _passwordResetToken = mysqlTable('_password_reset_token', {
 	tokenHash: varchar('tokenHash', { length: 255 }).unique(),
 	userId: varchar('userId', { length: 15 })
 		.notNull()
@@ -62,7 +62,7 @@ export const passwordResetToken = mysqlTable('_password_reset_token', {
 	expiresAt: datetime('expiresAt').notNull(),
 })
 
-export const twoFactorTokens = mysqlTable('_2fa_tokens', {
+export const _twoFactorTokens = mysqlTable('_2fa_tokens', {
 	tokenHash: varchar('tokenHash', { length: 255 }).unique().notNull(),
 	userId: varchar('userId', { length: 15 })
 		.notNull()
@@ -70,14 +70,14 @@ export const twoFactorTokens = mysqlTable('_2fa_tokens', {
 	expiresAt: datetime('expiresAt').notNull(),
 })
 
-export const recoveryCodes = mysqlTable('_recovery_codes', {
+export const _recoveryCodes = mysqlTable('_recovery_codes', {
 	codeHash: varchar('codeHash', { length: 255 }).unique().notNull(),
 	userId: varchar('userId', { length: 15 })
 		.notNull()
 		.references(() => ${authModelName}.id),
 })
 
-export const history = mysqlTable('_history', {
+export const _history = mysqlTable('_history', {
 	id: int('id').primaryKey().autoincrement().notNull(),
 	table: varchar('table', { length: 255 }).notNull(),
 	column: varchar('column', { length: 255 }).notNull(),
@@ -90,7 +90,7 @@ export const history = mysqlTable('_history', {
 	userId: varchar('userId', { length: 15 }).notNull(),
 })
 
-export const emailLogs = mysqlTable('_email_logs', {
+export const _emailLogs = mysqlTable('_email_logs', {
 	id: varchar('id', { length: 15 }).primaryKey(),
 	emailId: varchar('emailId', { length: 255 }),
 	provider: varchar('provider', { length: 255 }),
@@ -107,10 +107,21 @@ export const emailLogs = mysqlTable('_email_logs', {
 
 ${
 	hasApiKeys &&
-	`export const apiKeys = mysqlTable('_api_keys', {
+	`export const _apps = mysqlTable('_apps', {
 	id: varchar('id', { length: 15 }).primaryKey(),
 	name: varchar('name', { length: 255 }).notNull(),
+	email: varchar('email', { length: 255 }).notNull(),
+	roles: mediumtext('roles')
+		.default(sql\`'default'\`)
+		.notNull(),
+	createdAt: timestamp('createdAt').defaultNow().notNull(),
+	deletedAt: timestamp('deletedAt'),
+})
+
+export const _apiKeys = mysqlTable('_api_keys', {
+	id: varchar('id', { length: 15 }).primaryKey(),
 	key: varchar('key', { length: 64 }).notNull(),
+	appId: varchar('appId', { length: 15 }).notNull().references(() => _apps.id),
 	createdAt: timestamp('createdAt').defaultNow().notNull(),
 	revokedAt: timestamp('revokedAt'),
 })`
@@ -119,36 +130,36 @@ ${
 /**
  * Auth Relations
  */
-export const sessionsRelations = relations(sessions, ({ one }) => ({
+export const _sessionsRelations = relations(_sessions, ({ one }) => ({
 	user: one(${authModelName}, {
-		fields: [sessions.userId],
+		fields: [_sessions.userId],
 		references: [${authModelName}.id],
 	}),
 }))
 
-export const emailVerificationCodeRelations = relations(
-	emailVerificationCodes,
+export const _emailVerificationCodeRelations = relations(
+	_emailVerificationCodes,
 	({ one }) => ({
 		user: one(${authModelName}, {
-			fields: [emailVerificationCodes.userId],
+			fields: [_emailVerificationCodes.userId],
 			references: [${authModelName}.id],
 		}),
 	})
 )
 
-export const passwordResetTokenRelations = relations(
-	passwordResetToken,
+export const _passwordResetTokenRelations = relations(
+	_passwordResetToken,
 	({ one }) => ({
 		user: one(${authModelName}, {
-			fields: [passwordResetToken.userId],
+			fields: [_passwordResetToken.userId],
 			references: [${authModelName}.id],
 		}),
 	})
 )
 
-export const recoveryCodesRelations = relations(recoveryCodes, ({ one }) => ({
+export const _recoveryCodesRelations = relations(_recoveryCodes, ({ one }) => ({
 	user: one(${authModelName}, {
-		fields: [recoveryCodes.userId],
+		fields: [_recoveryCodes.userId],
 		references: [${authModelName}.id],
 	}),
 }))
@@ -203,10 +214,10 @@ ${models
 		return clean`export const ${model.drizzleName}Relations = relations(${model.drizzleName}, ({ one, many }) => ({
 	${
 		model.id === ctx.project.settings.userModelId &&
-		`sessions: many(sessions),
-	emailVerificationCodes: many(emailVerificationCodes),
-	passwordResetTokens: many(passwordResetToken),
-	recoveryCodes: many(recoveryCodes),`
+		`sessions: many(_sessions),
+	emailVerificationCodes: many(_emailVerificationCodes),
+	passwordResetTokens: many(_passwordResetToken),
+	recoveryCodes: many(_recoveryCodes),`
 	}
 	${model.relatedModels
 		.map((rel) => {

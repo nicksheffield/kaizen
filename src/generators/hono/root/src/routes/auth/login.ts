@@ -15,7 +15,7 @@ import { TOTPController } from 'oslo/otp'
 import { z } from 'zod'
 import { TimeSpan } from 'lucia'
 import { db } from '../../lib/db.js'
-import { recoveryCodes, twoFactorTokens, ${authModelName} } from '../../schema.js'
+import { _recoveryCodes, _twoFactorTokens, ${authModelName} } from '../../schema.js'
 import { rateLimit } from '../../middleware/rateLimit.js'
 import { doLogin } from '../../middleware/authenticate.js'
 import { verifyPassword } from '../../lib/password.js'
@@ -26,14 +26,14 @@ import { send2faToken } from 'lib/email.js'
 const create2faLoginToken = async (userId: string): Promise<string> => {
 	await db
 		.select()
-		.from(twoFactorTokens)
-		.where(eq(twoFactorTokens.userId, userId))
+		.from(_twoFactorTokens)
+		.where(eq(_twoFactorTokens.userId, userId))
 
 	const token = generateRandomString(6, alphabet('0-9'))
 
 	const tokenHash = encodeHex(await sha256(new TextEncoder().encode(token)))
 
-	await db.insert(twoFactorTokens).values({
+	await db.insert(_twoFactorTokens).values({
 		tokenHash,
 		userId: userId,
 		expiresAt: createDate(new TimeSpan(5, 'm')),
@@ -113,12 +113,12 @@ router.post(
 					// lets check if it's a valid two factor token
 					// to do this, we try to delete the token from the database
 					const [result] = await db
-						.delete(twoFactorTokens)
+						.delete(_twoFactorTokens)
 						.where(
 							and(
-								eq(twoFactorTokens.userId, user.id),
-								eq(twoFactorTokens.tokenHash, tokenHash),
-								gt(twoFactorTokens.expiresAt, new Date())
+								eq(_twoFactorTokens.userId, user.id),
+								eq(_twoFactorTokens.tokenHash, tokenHash),
+								gt(_twoFactorTokens.expiresAt, new Date())
 							)
 						)
 
@@ -139,8 +139,8 @@ router.post(
 		}
 
 		// if the user exists, password was invalid, let's check if they have used a recovery code
-		const codes = await db.query.recoveryCodes.findMany({
-			where: eq(recoveryCodes.userId, user?.id || 'no-id'),
+		const codes = await db.query._recoveryCodes.findMany({
+			where: eq(_recoveryCodes.userId, user?.id || 'no-id'),
 		})
 
 		for (let i = 0; i < codes.length; i++) {
@@ -155,8 +155,8 @@ router.post(
 
 			if (codeIsValid) {
 				await db
-					.delete(recoveryCodes)
-					.where(eq(recoveryCodes.codeHash, code.codeHash))
+					.delete(_recoveryCodes)
+					.where(eq(_recoveryCodes.codeHash, code.codeHash))
 
 				if (user) {
 					return doLogin(c, user)

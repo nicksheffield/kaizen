@@ -6,7 +6,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	const authModelName = authModel?.drizzleName || 'users'
 
 	return `import { db } from '../../lib/db.js'
-import { recoveryCodes, ${authModelName} } from '../../schema.js'
+import { _recoveryCodes, ${authModelName} } from '../../schema.js'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { encodeHex, decodeHex } from 'oslo/encoding'
@@ -94,7 +94,7 @@ router.post(
 		}
 
 		await db
-			.insert(recoveryCodes)
+			.insert(_recoveryCodes)
 			.values(codeHashes.map((x) => ({ codeHash: x, userId: user.id })))
 
 		await db
@@ -104,7 +104,7 @@ router.post(
 			})
 			.where(eq(${authModelName}.id, user.id))
 
-		return c.json({ recoveryCodes: codes })
+		return c.json({ _recoveryCodes: codes })
 	}
 )
 
@@ -116,7 +116,7 @@ router.post('/disable-twofactor', authenticate, async (c) => {
 		.set({ twoFactorSecret: null, twoFactorEnabled: false })
 		.where(eq(${authModelName}.id, user.id))
 
-	await db.delete(recoveryCodes).where(eq(recoveryCodes.userId, user.id))
+	await db.delete(_recoveryCodes).where(eq(_recoveryCodes.userId, user.id))
 
 	return c.body(null, 204)
 })

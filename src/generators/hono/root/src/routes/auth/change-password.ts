@@ -8,7 +8,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 
 	return `import { db } from '../../lib/db.js'
 import { and, eq, not } from 'drizzle-orm'
-import { sessions, ${users} } from '../../schema.js'
+import { _sessions, ${users} } from '../../schema.js'
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
@@ -60,11 +60,11 @@ router.post(
 
 		// log the user out of everywhere else
 		await db
-			.delete(sessions)
+			.delete(_sessions)
 			.where(
 				and(
-					eq(sessions.userId, user.id),
-					not(eq(sessions.id, session.id))
+					eq(_sessions.userId, user.id),
+					not(eq(_sessions.id, session.id))
 				)
 			)
 

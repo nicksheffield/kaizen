@@ -10,7 +10,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	import { zValidator } from '@hono/zod-validator'
 	import { eq, and } from 'drizzle-orm'
 	import { db } from '../../lib/db.js'
-	import { emailVerificationCodes, ${authModelName} } from '../../schema.js'
+	import { _emailVerificationCodes, ${authModelName} } from '../../schema.js'
 	import { lucia } from '../../lib/lucia.js'
 	import { setSessionCookies } from '../../middleware/authenticate.js'
 	import { generateEmailVerificationCode } from '../../lib/manageUser.js'
@@ -31,10 +31,10 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 			const body: z.infer<typeof verificationCodeSchema> = await c.req.json()
 	
 			const emailVerification =
-				await db.query.emailVerificationCodes.findFirst({
+				await db.query._emailVerificationCodes.findFirst({
 					where: and(
-						eq(emailVerificationCodes.code, body.code),
-						eq(emailVerificationCodes.userId, body.userId)
+						eq(_emailVerificationCodes.code, body.code),
+						eq(_emailVerificationCodes.userId, body.userId)
 					),
 				})
 	
@@ -43,8 +43,8 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 			}
 	
 			await db
-				.delete(emailVerificationCodes)
-				.where(eq(emailVerificationCodes.userId, body.userId))
+				.delete(_emailVerificationCodes)
+				.where(eq(_emailVerificationCodes.userId, body.userId))
 	
 			await db
 				.update(${authModelName})
@@ -75,8 +75,8 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 				await c.req.json()
 	
 			await db
-				.delete(emailVerificationCodes)
-				.where(eq(emailVerificationCodes.userId, body.userId))
+				.delete(_emailVerificationCodes)
+				.where(eq(_emailVerificationCodes.userId, body.userId))
 	
 			const user = await db.query.${authModelName}.findFirst({
 				where: eq(${authModelName}.id, body.userId),

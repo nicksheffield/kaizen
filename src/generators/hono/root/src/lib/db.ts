@@ -20,7 +20,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	
 	export const adapter = new DrizzleMySQLAdapter(
 		db,
-		schema.sessions,
+		schema._sessions,
 		schema.${authModel?.drizzleName || 'users'}
 	)
 	`

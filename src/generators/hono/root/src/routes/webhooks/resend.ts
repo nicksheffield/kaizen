@@ -1,5 +1,5 @@
 const tmpl = () => `import { db } from '../../lib/db.js'
-import { emailLogs } from '../../schema.js'
+import { _emailLogs } from '../../schema.js'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
@@ -50,9 +50,9 @@ router.post('/resend', async (c) => {
 		})(parsedEvent.data)
 
 		await db
-			.update(emailLogs)
+			.update(_emailLogs)
 			.set({ ...set, provider: 'resend' })
-			.where(eq(emailLogs.emailId, parsedEvent.data.data.email_id))
+			.where(eq(_emailLogs.emailId, parsedEvent.data.data.email_id))
 	}
 
 	return c.body(null, 204)

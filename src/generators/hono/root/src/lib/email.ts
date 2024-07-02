@@ -9,7 +9,7 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 
 	return `import { db } from './db.js'
 	import { env } from './env.js'
-	import { emailLogs } from '../schema.js'
+	import { _emailLogs } from '../schema.js'
 	import { render } from '@react-email/render'
 	import { generateId } from 'lucia'
 	import nodemailer from 'nodemailer'
@@ -120,7 +120,7 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 		subject: string
 		body: string
 	}) => {
-		await db.insert(emailLogs).values({
+		await db.insert(_emailLogs).values({
 			id: generateId(15),
 			...data,
 			provider: data.provider || 'smtp',
@@ -128,8 +128,8 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 	}
 	
 	export const resendEmailLog = async (id: string) => {
-		const log = await db.query.emailLogs.findFirst({
-			where: eq(emailLogs.id, id),
+		const log = await db.query._emailLogs.findFirst({
+			where: eq(_emailLogs.id, id),
 		})
 	
 		if (!log || !log.to || !log.subject || !log.body) return

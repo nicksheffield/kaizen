@@ -10,7 +10,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	import { generateId } from 'lucia'
 	import { db } from '../../lib/db.js'
 	import { eq } from 'drizzle-orm'
-	import { passwordResetToken, sessions, ${authModel?.drizzleName} } from '../../schema.js'
+	import { _passwordResetToken, _sessions, ${authModel?.drizzleName} } from '../../schema.js'
 	import { Hono } from 'hono'
 	import { zValidator } from '@hono/zod-validator'
 	import { z } from 'zod'
@@ -29,13 +29,13 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	const createPasswordResetToken = async (userId: string): Promise<string> => {
 		await db
 			.select()
-			.from(passwordResetToken)
-			.where(eq(passwordResetToken.userId, userId))
+			.from(_passwordResetToken)
+			.where(eq(_passwordResetToken.userId, userId))
 	
 		const tokenId = generateId(40)
 		const tokenHash = encodeHex(await sha256(new TextEncoder().encode(tokenId)))
 	
-		await db.insert(passwordResetToken).values({
+		await db.insert(_passwordResetToken).values({
 			tokenHash: tokenHash,
 			userId: userId,
 			expiresAt: createDate(new TimeSpan(1, 'h')),
@@ -100,15 +100,15 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 			)
 			const tokens = await db
 				.select()
-				.from(passwordResetToken)
-				.where(eq(passwordResetToken.tokenHash, tokenHash))
+				.from(_passwordResetToken)
+				.where(eq(_passwordResetToken.tokenHash, tokenHash))
 	
 			const token = tokens[0]
 	
 			if (token) {
 				await db
-					.delete(passwordResetToken)
-					.where(eq(passwordResetToken.tokenHash, tokenHash))
+					.delete(_passwordResetToken)
+					.where(eq(_passwordResetToken.tokenHash, tokenHash))
 			}
 	
 			if (!token || !isWithinExpirationDate(token.expiresAt)) {
@@ -121,7 +121,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 			const hashedPassword = await hashPassword(body.password)
 	
 			// log the user out of everywhere
-			await db.delete(sessions).where(eq(sessions.userId, token.userId))
+			await db.delete(_sessions).where(eq(_sessions.userId, token.userId))
 	
 			await db
 				.update(${authModel?.drizzleName})

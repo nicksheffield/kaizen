@@ -1,12 +1,17 @@
 const tmpl = () => {
 	return `import { eq } from 'drizzle-orm'
 import { db } from 'lib/db.js'
-import { apiKeys } from 'schema.js'
+import { _apiKeys, _apps } from 'schema.js'
 import { addDays } from 'date-fns'
 
 export type App = {
 	id: string
 	name: string
+	email: string
+
+	twoFactorSecret: null
+	twoFactorEnabled: false
+	roles: string
 }
 
 type AppSession = {
@@ -29,10 +34,17 @@ type InvalidApiKeyState = {
 export const validateApiKeySession = async (
 	token: string
 ): Promise<ValidApiKeyState | InvalidApiKeyState> => {
-	const apps = await db.select().from(apiKeys).where(eq(apiKeys.key, token))
-	const app = apps[0]
+	const [key] = await db
+		.select()
+		.from(_apiKeys)
+		.where(eq(_apiKeys.key, token))
 
-	if (!app || app.revokedAt) {
+	const [app] = await db
+		.select()
+		.from(_apps)
+		.where(eq(_apps.id, key?.appId || ''))
+
+	if (!app || !key || key.revokedAt) {
 		return { app: null, session: null }
 	}
 
@@ -40,10 +52,14 @@ export const validateApiKeySession = async (
 		app: {
 			id: app.id,
 			name: app.name,
+			email: app.email,
+			roles: app.roles,
+			twoFactorSecret: null,
+			twoFactorEnabled: false,
 		},
 		session: {
-			id: app.id,
-			userId: app.id,
+			id: key.id,
+			userId: \`app:\${app.id}\`,
 			expiresAt: addDays(new Date(), 1),
 			fresh: false,
 		},

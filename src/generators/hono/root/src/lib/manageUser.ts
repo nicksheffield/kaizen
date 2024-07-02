@@ -9,7 +9,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	if (!user) return ''
 
 	return `import { db } from './db.js'
-	import { emailVerificationCodes, ${user.drizzleName} } from '../schema.js'
+	import { _emailVerificationCodes, ${user.drizzleName} } from '../schema.js'
 	import { generateId } from 'lucia'
 	import { TimeSpan, createDate } from 'oslo'
 	import { generateRandomString, alphabet } from 'oslo/crypto'
@@ -24,11 +24,11 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 		email: string
 	): Promise<string> => {
 		await db
-			.delete(emailVerificationCodes)
-			.where(eq(emailVerificationCodes.userId, userId))
+			.delete(_emailVerificationCodes)
+			.where(eq(_emailVerificationCodes.userId, userId))
 	
 		const code = generateRandomString(8, alphabet('0-9'))
-		await db.insert(emailVerificationCodes).values({
+		await db.insert(_emailVerificationCodes).values({
 			id: generateId(15),
 			userId,
 			email,

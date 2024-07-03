@@ -33,15 +33,15 @@ export const registerDTO = z.object({
 			const isOptional = x.optional || x.default !== null || x.name === 'id'
 			const isNullable = x.optional && x.name !== 'id'
 
-			return clean`${x.name}: z.${mapAttributeTypeToZod(x.type)}()${isOptional && '.optional()'}${isNullable && '.nullable()'}`
+			return clean`${x.name}: z.${mapAttributeTypeToZod(x.type)}()${isOptional && '.optional()'}${isNullable && '.nullable()'},`
 		})
 		.filter(isNotNone)
-		.join(', ')}
+		.join('')}
 	${authModel.foreignKeys
 		.map((x) => {
 			// use id or string? lets go with id for now
 			// return `${x.name}: g.id()${x.optional ? '.optional()' : ''},`
-			return clean`${x.name}${x.optional && '?'}: string | null | undefined`
+			return clean`${x.name}: z.string().optional().nullable()`
 		})
 		.filter(isNotNone)
 		.join('; ')}

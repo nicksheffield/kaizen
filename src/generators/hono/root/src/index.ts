@@ -53,6 +53,8 @@ app.use(
 	secureHeaders({
 		xFrameOptions: false,
 		xXssProtection: false,
+		crossOriginOpenerPolicy: 'cross-origin',
+		crossOriginResourcePolicy: 'cross-origin',
 	})
 )
 

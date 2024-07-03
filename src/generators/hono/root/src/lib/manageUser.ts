@@ -2,14 +2,15 @@ import { ModelCtx } from '@/generators/hono/contexts'
 import { mapAttributeTypeToJs } from '@/generators/hono/utils'
 import { ProjectCtx } from '@/generators/hono/types'
 import { isNotNone } from '@/lib/utils'
+import { clean } from '@/generators/utils'
 
 const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) => {
-	const user = models.find((x) => project.settings.userModelId === x.id)
+	const authModel = models.find((x) => project.settings.userModelId === x.id)
 
-	if (!user) return ''
+	if (!authModel) return ''
 
-	return `import { db } from './db.js'
-	import { _emailVerificationCodes, ${user.drizzleName} } from '../schema.js'
+	return clean`import { db } from './db.js'
+	import { _emailVerificationCodes, ${authModel.drizzleName} } from '../schema.js'
 	import { generateId } from 'lucia'
 	import { TimeSpan, createDate } from 'oslo'
 	import { generateRandomString, alphabet } from 'oslo/crypto'
@@ -40,7 +41,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	}
 
 	type CreateUserFields = {
-		${user.attributes
+		${authModel.attributes
 			.map((x) => {
 				if (!x.insertable) return null
 				if (x.name === 'password') return null
@@ -50,15 +51,15 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 				const isNullable = x.optional && x.name !== 'id'
 				const canBeSQL = x.name !== 'id'
 
-				return `${x.name}${isOptional ? '?' : ''}: ${mapAttributeTypeToJs(x.type)} ${isNullable ? '| null' : ''}${canBeSQL ? '| SQL' : ''}${isOptional ? ' | undefined' : ''}`
+				return clean`${x.name}${isOptional && '?'}: ${mapAttributeTypeToJs(x.type)} ${isNullable && '| null'}${canBeSQL && '| SQL'}${isOptional && ' | undefined'}`
 			})
 			.filter(isNotNone)
 			.join('; ')}
-		${user.foreignKeys
+		${authModel.foreignKeys
 			.map((x) => {
 				// use id or string? lets go with id for now
 				// return `${x.name}: g.id()${x.optional ? '.optional()' : ''},`
-				return `${x.name}${x.optional ? '?' : ''}: string | null | undefined`
+				return clean`${x.name}${x.optional && '?'}: string | null | undefined`
 			})
 			.filter(isNotNone)
 			.join('; ')}
@@ -70,6 +71,18 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 		fields: CreateUserFields,
 		_userId: string
 	) => {
+		// check for existing user
+		const existingUser = await db
+			.select()
+			.from(${authModel.drizzleName})
+			.where(eq(${authModel.drizzleName}.email, email))
+
+		if (existingUser.length) {
+			throw new HTTPException(400, {
+				message: 'Email already in use',
+			})
+		}
+
 		const userId = fields.id || generateId(15)
 
 		const hashedPassword = await validateUser(email, password)
@@ -81,34 +94,31 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 			password: hashedPassword,
 		}
 	
-		await db.insert(${user.drizzleName}).values(values)
+		await db.insert(${authModel.drizzleName}).values(values)
 
-		await history.create('${user.tableName}', userId, values, _userId)
+		await history.create('${authModel.tableName}', userId, values, _userId)
 	
-		await userVerification(userId, email)
+		${project.settings.auth.requireAccountConfirmation && `await userVerification(userId, email)`}
 	
-		return db.query.${user.drizzleName}.findFirst({
-			where: eq(${user.drizzleName}.id, userId),
+		return db.query.${authModel.drizzleName}.findFirst({
+			where: eq(${authModel.drizzleName}.id, userId),
 		})
 	}
 
 	export const userVerification = async (userId: string, email: string) => {
 		${
 			project.settings.auth.requireAccountConfirmation
-				? `
-			const verificationCode = await generateEmailVerificationCode(userId, email)
-		
-			sendVerificationEmail(email, userId, verificationCode)
-		`
-				: ''
+				&& `const verificationCode = await generateEmailVerificationCode(userId, email)
+					sendVerificationEmail(email, userId, verificationCode)
+				`
 		}
 	}
 
 	export const throwOnUserExists = async (email: string) => {
 		const existingUser = await db
 			.select()
-			.from(${user.drizzleName})
-			.where(eq(${user.drizzleName}.email, email))
+			.from(${authModel.drizzleName})
+			.where(eq(${authModel.drizzleName}.email, email))
 	
 		if (existingUser.length) {
 			throw new HTTPException(400, {

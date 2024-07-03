@@ -72,7 +72,7 @@ export const ProjectAuth = () => {
 								</FormRow>
 
 								<div className="-mb-4 font-medium">Tokens</div>
-								<Card className="divide-y overflow-hidden border-input">
+								<Card className="divide-y divide-input overflow-hidden border-input">
 									<Switcher
 										name="enableCookies"
 										label="Enable Cookies"
@@ -99,11 +99,12 @@ export const ProjectAuth = () => {
 								</Card>
 
 								<div className="-mb-4 font-medium">Authentication</div>
-								<Card className="divide-y overflow-hidden border-input">
+								<Card className="divide-y divide-input overflow-hidden border-input">
 									<Switcher
 										name="enableMagicLink"
 										label="Enable Magic Links"
 										description="Magic links allow users to login without a password."
+										disabled
 									/>
 
 									<Switcher
@@ -127,12 +128,11 @@ export const ProjectAuth = () => {
 								</Card>
 
 								<div className="-mb-4 font-medium">User Management</div>
-								<Card className="divide-y overflow-hidden border-input">
+								<Card className="divide-y divide-input overflow-hidden border-input">
 									<Switcher
 										name="enableRegistration"
 										label="Enable Registration"
 										description="Allow users to register new accounts themselves."
-										disabled
 									/>
 
 									<Switcher

@@ -218,3 +218,24 @@ export const mapAttrToGQLFilter = (type: AttributeType) => {
 			return 'StringFilter'
 	}
 }
+
+export const mapAttributeTypeToZod = (type: AttributeType) => {
+	switch (type) {
+		case 'text':
+		case 'varchar':
+		case 'base64':
+		case 'password':
+		case 'date':
+		case 'time':
+		case 'datetime':
+			return 'string'
+		case 'int':
+		case 'float':
+		case 'a_i':
+			return 'number'
+		case 'boolean':
+			return 'boolean'
+		default:
+			return 'string'
+	}
+}

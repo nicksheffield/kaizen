@@ -7,6 +7,7 @@ const tmpl = () => {
 		await seed.default()
 		await connection.end()
 		console.log('done')
+		process.exit()
 	}
 
 	run()

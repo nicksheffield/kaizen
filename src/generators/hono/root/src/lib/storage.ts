@@ -4,6 +4,7 @@ const tmpl = () => {
 	PutObjectCommand,
 	PutObjectRequest,
 	GetObjectCommand,
+	DeleteObjectCommand
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
@@ -97,6 +98,16 @@ export const getFileFromBucket = async (key: string, bucket?: string) => {
 
 	return content
 }
+
+export const deleteFile = async (key: string, bucket?: string) => {
+	const command = new DeleteObjectCommand({
+		Bucket: bucket || process.env.S3_BUCKET_NAME,
+		Key: key,
+	})
+
+	await client.send(command)
+}
+
 `
 }
 

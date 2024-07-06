@@ -26,27 +26,25 @@ Tasks
 [x] email based 2fa
 [x] switching relationships from one table to another doesnt update the foreign key constraints
 [x] fix ns-migrate always reapplying default ints when they're 0 or 1
-[x] massively improve new project experience
+[x] improve new project experience
 [x] make seeding a command, but it does run on "first run" of an app
+[x] make account confirmation an opt-out feature
 [x] add endpoint to clear all other login sessions for the current user, maybe `/api/auth/clear`
 [x] since we use mysql, we can use AFTER in sql to order table columns
 [x] api keys
 [x] add user impersonation
+[x] enable user registration
 
+[ ] magic link logins
 [ ] need to protect against privilege escalation
 [ ] add the ability to mark files as "// keep" or maybe add a .kzignore file where you list files/directories to not remove upon generation
 [ ] make it so you can turn off one side of a relationship
 [ ] make email templates entirely optional by providing a default design.
 	These defaults are included via the generator, unless a mod version is present.
-[ ] magic link logins
-[ ] enable user registration
 [ ] make the clientChange generators modify the files rather than rewriting them
 [ ] make the .env DB_URI re-generate based on useOrbstack and name
 [ ] add api for history and email log
-[ ] make account confirmation an opt-out feature
-[ ] impersonation
 [ ] code hook functionality
-	Add areas in the generator where we can add strings of code into the generated app
 [ ] add orderBys and filters to nested objects in gql
 	ie:
 	query ($where: TaskFilter, $orderBy: TaskOrderBy) {

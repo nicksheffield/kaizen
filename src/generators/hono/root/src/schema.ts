@@ -70,6 +70,14 @@ export const _twoFactorTokens = mysqlTable('_2fa_tokens', {
 	expiresAt: datetime('expiresAt').notNull(),
 })
 
+export const _loginTokens = mysqlTable('_login_tokens', {
+	code: varchar('code', { length: 255 }).unique().notNull(),
+	userId: varchar('userId', { length: 15 })
+		.notNull()
+		.references(() => users.id),
+	expiresAt: datetime('expiresAt').notNull(),
+})
+
 export const _recoveryCodes = mysqlTable('_recovery_codes', {
 	codeHash: varchar('codeHash', { length: 255 }).unique().notNull(),
 	userId: varchar('userId', { length: 15 })

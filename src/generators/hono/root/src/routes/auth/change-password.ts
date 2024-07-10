@@ -50,7 +50,7 @@ router.post(
 			where: eq(${users}.id, user.id),
 		})
 
-		const valid = await verifyPassword(body.password, dbUser?.password)
+		const valid = await verifyPassword(body.password, dbUser?.password ?? undefined)
 
 		if (!valid) {
 			throw new HTTPException(400, {

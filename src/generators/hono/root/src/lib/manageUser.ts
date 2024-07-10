@@ -85,7 +85,11 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 
 		const userId = fields.id || generateId(15)
 
-		const hashedPassword = await validateUser(email, password)
+		${
+			project.settings.auth.enableMagicLink
+				? `const hashedPassword = password ? await validateUser(email, password) : null`
+				: `const hashedPassword = await validateUser(email, password)`
+		}
 	
 		const values = {
 			...fields,
@@ -107,8 +111,8 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 
 	export const userVerification = async (userId: string, email: string) => {
 		${
-			project.settings.auth.requireAccountConfirmation
-				&& `const verificationCode = await generateEmailVerificationCode(userId, email)
+			project.settings.auth.requireAccountConfirmation &&
+			`const verificationCode = await generateEmailVerificationCode(userId, email)
 					sendVerificationEmail(email, userId, verificationCode)
 				`
 		}

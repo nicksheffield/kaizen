@@ -1,11 +1,14 @@
 import { ModelCtx } from '@/generators/hono/contexts'
 import { ProjectCtx } from '@/generators/hono/types'
+import { clean } from '@/generators/utils'
 
 const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) => {
 	const authModel = models.find((x) => project.settings.userModelId === x.id)
 	const authModelName = authModel?.drizzleName || 'users'
 
-	return `import { eq, and, isNull, gt } from 'drizzle-orm'
+	const magicLink = project.settings.auth.enableMagicLink
+
+	return clean`import { eq, and, isNull, gt } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { HTTPException } from 'hono/http-exception'
@@ -15,13 +18,35 @@ import { TOTPController } from 'oslo/otp'
 import { z } from 'zod'
 import { TimeSpan } from 'lucia'
 import { db } from '../../lib/db.js'
-import { _recoveryCodes, _twoFactorTokens, ${authModelName} } from '../../schema.js'
+import { _recoveryCodes, _twoFactorTokens, ${authModelName}, ${magicLink && '_loginTokens'} } from '../../schema.js'
 import { rateLimit } from '../../middleware/rateLimit.js'
 import { doLogin } from '../../middleware/authenticate.js'
 import { verifyPassword } from '../../lib/password.js'
 import { alphabet, generateRandomString, sha256 } from 'oslo/crypto'
 import { createDate } from 'oslo'
-import { send2faToken } from 'lib/email.js'
+import { send2faToken, sendLoginToken } from 'lib/email.js'
+
+${
+	magicLink &&
+	`const createLoginToken = async (userId: string): Promise<string> => {
+	await db.delete(_loginTokens).where(eq(_loginTokens.userId, userId))
+
+	await db
+		.select()
+		.from(_twoFactorTokens)
+		.where(eq(_twoFactorTokens.userId, userId))
+
+	const code = generateRandomString(6, alphabet('0-9'))
+
+	await db.insert(_loginTokens).values({
+		code,
+		userId,
+		expiresAt: createDate(new TimeSpan(5, 'm')),
+	})
+
+	return code
+}`
+}
 
 const create2faLoginToken = async (userId: string): Promise<string> => {
 	await db
@@ -44,8 +69,9 @@ const create2faLoginToken = async (userId: string): Promise<string> => {
 
 export const loginDTO = z.object({
 	email: z.string(),
-	password: z.string(),
+	password: z.string()${magicLink && `.optional()`},
 	otp: z.string().optional(),
+	${magicLink && `loginToken: z.string().optional(),`}
 })
 
 export const router = new Hono()
@@ -64,14 +90,42 @@ router.post(
 		if (user?.locked) {
 			throw new HTTPException(401, { message: 'Account is locked' })
 		}
+		
+		${
+			magicLink &&
+			`if (user?.password === null && !body.loginToken) {
+			// generate a login token
+			const code = await createLoginToken(user.id)
+
+			await sendLoginToken(user.email, code)
+
+			return c.json({ loginToken: true })
+		} else if (user && body.loginToken) {
+			const token = await db.query._loginTokens.findFirst({
+				where: and(
+					eq(_loginTokens.userId, user.id),
+					eq(_loginTokens.code, body.loginToken),
+					gt(_loginTokens.expiresAt, new Date())
+				),
+			})
+
+			if (token) {
+				await db
+					.delete(_loginTokens)
+					.where(eq(_loginTokens.userId, user.id))
+
+				return doLogin(c, user)
+			}
+		}`
+		}
 
 		const email2faEnabled = ${project.settings.auth.enableEmail2fa ? 'true' : 'false'}
 		const otpEnabled = user?.twoFactorSecret && user?.twoFactorEnabled
 
 		// check if the password is correct
 		const passwordIsCorrect = await verifyPassword(
-			body.password,
-			user?.password
+			body.password || 'never',
+			user?.password ?? undefined
 		)
 
 		// if it is...
@@ -150,7 +204,7 @@ router.post(
 
 			const codeIsValid = await new Argon2id().verify(
 				code.codeHash,
-				body.password
+				body.password || 'never'
 			)
 
 			if (codeIsValid) {

@@ -1,4 +1,5 @@
 import { HonoGeneratorExtras, ProjectCtx } from '@/generators/hono/types'
+import { clean } from '@/generators/utils'
 import { MODS_DIRNAME } from '@/lib/constants'
 
 const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorExtras }) => {
@@ -6,8 +7,9 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 	const hasConfirmAccount = extras.emails.find((x) => x === 'ConfirmAccount.tsx')
 	const hasResetPassword = extras.emails.find((x) => x === 'ResetPassword.tsx')
 	const hasTwoFactorCode = extras.emails.find((x) => x === 'TwoFactorCode.tsx')
+	const hasLoginCode = extras.emails.find((x) => x === 'LoginCode.tsx')
 
-	return `import { db } from './db.js'
+	return clean`import { db } from './db.js'
 	import { env } from './env.js'
 	import { _emailLogs } from '../schema.js'
 	import { render } from '@react-email/render'
@@ -18,6 +20,7 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 	${useConfirmation && hasConfirmAccount ? `import ConfirmAccount from '${MODS_DIRNAME}/emails/ConfirmAccount.js'` : ''}
 	${hasResetPassword ? `import ResetPassword from '${MODS_DIRNAME}/emails/ResetPassword.js'` : ''}
 	${hasTwoFactorCode ? `import TwoFactorCode from '${MODS_DIRNAME}/emails/TwoFactorCode.js'` : ''}
+	${hasLoginCode ? `import LoginCode from '${MODS_DIRNAME}/emails/LoginCode.js'` : ''}
 	
 	const resendEnabled = env.RESEND_API_KEY && env.EMAIL_FROM
 	
@@ -180,6 +183,17 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 			subject: 'Login two factor code',
 			${hasTwoFactorCode ? `react: TwoFactorCode.default({ code }),` : `html: \`Your two factor authentication code is: \${code}\``}
 		})
+	}
+
+	${
+		project.settings.auth.enableMagicLink &&
+		`export const sendLoginToken = async (email: string, code: string) => {
+		await send({
+			address: email,
+			subject: 'Login code',
+			react: LoginCode.default({ code }),
+		})
+	}`
 	}
 	`
 }

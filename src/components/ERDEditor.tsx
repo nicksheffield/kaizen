@@ -379,7 +379,9 @@ export const Editor = () => {
 
 	const updateUserModelId = (id: string) => {
 		setUserModelId(id)
-		const newAttrs = getUserModelFields(id)
+		const newAttrs = getUserModelFields(id, {
+			hasMagicLink: project?.settings.auth.enableMagicLink || false,
+		})
 
 		setNodes((nds) => {
 			return nds.map((x) => {

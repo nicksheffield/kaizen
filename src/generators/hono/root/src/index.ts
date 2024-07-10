@@ -28,7 +28,9 @@ migrate().then(async () => {
 			? `if (!('default' in seed)) return
 
 	if ('isInitial' in seed) {
-		if (await seed.isInitial()) seed.default()
+		if (await (seed.isInitial as () => Promise<boolean>)()) {
+			seed.default()
+		}
 	} else {
 		// @ts-ignore
 		return seed.default()

@@ -361,8 +361,11 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 						// .filter((x) => x.default !== null)
 						.filter((x) => x.insertable)
 						.map((x) => {
-							if (isAuthModel && x.type === 'password')
+							if (isAuthModel && x.type === 'password') {
+								if (project.settings.auth.enableMagicLink)
+									return `password: data.password ? await validateUser(data.email, data.password) : null,`
 								return `password: await validateUser(data.email, data.password),`
+							}
 							if (x.name === 'id') return null
 							return `${x.name}: data.${x.name} ?? undefined,`
 						})
@@ -539,7 +542,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 						: ''
 				}
 					await db.delete(tables.${model.drizzleName}).where(eq(tables.${model.drizzleName}.id, id))
-					history.hardDelete('${model.tableName}', id)
+					history.hardDelete('${model.tableName}', id, c.get('user').id)
 					${model.auditDates ? `}` : ''}
 			}
 	

@@ -97,7 +97,7 @@ export const userModelFields: Attribute[] = [
 		name: 'password',
 		type: 'password',
 		default: null,
-		nullable: false,
+		nullable: true,
 		selectable: false,
 		insertable: true,
 		order: 3,
@@ -166,8 +166,15 @@ export const userModelFields: Attribute[] = [
 	},
 ]
 
-export const getUserModelFields = (modelId: string): Attribute[] => {
-	return userModelFields.map((x) => ({ ...x, modelId }))
+export const getUserModelFields = (
+	modelId: string,
+	options: { hasMagicLink: boolean } = { hasMagicLink: false }
+): Attribute[] => {
+	return userModelFields.map((x) => {
+		if (x.name === 'password') return { ...x, nullable: options.hasMagicLink, modelId }
+
+		return { ...x, modelId }
+	})
 }
 
 export const getIsUserAttr = (id: string) => {

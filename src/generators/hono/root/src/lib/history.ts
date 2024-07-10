@@ -65,15 +65,23 @@ const tmpl = () => {
 		})
 	}
 	
-	export const hardDelete = async (table: string, rowId: string) => {
+	export const hardDelete = async (
+		table: string,
+		rowId: string,
+		userId: string
+	) => {
 		await db
 			.delete(_history)
-			.where(
-				and(
-					eq(_history.table, 'venues'),
-					eq(_history.rowId, rowId)
-				)
-			)
+			.where(and(eq(_history.table, 'venues'), eq(_history.rowId, rowId)))
+
+		await db.insert(_history).values({
+			table: table,
+			column: '',
+			value: '',
+			rowId,
+			operation: 'hard-delete',
+			userId,
+		})
 	}
 `
 }

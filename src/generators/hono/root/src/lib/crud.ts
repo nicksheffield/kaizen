@@ -10,13 +10,13 @@ import * as history from 'lib/history.js'
  */
 export const create = async <M extends MySqlTable>(
 	table: M,
-	data: Omit<InferInsertModel<M>, 'id'>,
+	data: { id?: string } & Omit<InferInsertModel<M>, 'id'>,
 	userId: string
 ) => {
 	const { name, columns, ...config } = getTableConfig(table)
 
-	const newId = generateId(15)
-	const values = { id: newId, ...data }
+	const newId = data.id || generateId(15)
+	const values = { ...data, id: newId }
 
 	await db.insert(table).values(values as InferInsertModel<M>)
 	await history.create(name, newId, values, userId)

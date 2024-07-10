@@ -16,6 +16,7 @@ import apps_mods_src_queries from './root/apps/mods/src/queries'
 import apps_mods_emails_ConfirmAccount from './root/apps/mods/emails/ConfirmAccount'
 import apps_mods_emails_ResetPassword from './root/apps/mods/emails/ResetPassword'
 import apps_mods_emails_TwoFactorCode from './root/apps/mods/emails/TwoFactorCode'
+import apps_mods_emails_LoginCode from './root/apps/mods/emails/LoginCode'
 import { MODS_PATH } from '@/lib/constants'
 import { Project } from '@/lib/projectSchemas'
 
@@ -42,6 +43,9 @@ export const workspaceFiles = (project?: Project) => {
 	if (project?.settings.auth.requireAccountConfirmation) {
 		files.push(`${MODS_PATH}/emails/ConfirmAccount.tsx`)
 	}
+	if (project?.settings.auth.enableMagicLink) {
+		files.push(`${MODS_PATH}/emails/LoginCode.tsx`)
+	}
 
 	return files
 }
@@ -65,6 +69,10 @@ export const generate: WorkspaceGeneratorFn = async ({ project, name }) => {
 	dir[`${MODS_PATH}/src/queries.ts`] = await format(apps_mods_src_queries())
 	dir[`${MODS_PATH}/emails/ResetPassword.tsx`] = await format(apps_mods_emails_ResetPassword({ project }))
 	dir[`${MODS_PATH}/emails/TwoFactorCode.tsx`] = await format(apps_mods_emails_TwoFactorCode({ project }))
+
+	if (project?.settings.auth.enableMagicLink) {
+		dir[`${MODS_PATH}/emails/LoginCode.tsx`] = await format(apps_mods_emails_LoginCode({ project }))
+	}
 
 	if (project?.settings.auth.requireAccountConfirmation) {
 		dir[`${MODS_PATH}/emails/ConfirmAccount.tsx`] = await format(apps_mods_emails_ConfirmAccount({ project }))

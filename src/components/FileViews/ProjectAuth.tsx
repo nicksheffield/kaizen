@@ -45,6 +45,14 @@ export const ProjectAuth = () => {
 			},
 		}
 
+		if (values.enableMagicLink !== project.settings.auth.enableMagicLink) {
+			const authIndex = newProject.models.findIndex((x) => x.id === newProject.settings.userModelId)
+
+			newProject.models[authIndex].attributes = newProject.models[authIndex].attributes.map((x) =>
+				x.name === 'password' ? { ...x, nullable: values.enableMagicLink } : x
+			)
+		}
+
 		await saveProject(newProject)
 
 		toast('Auth settings saved', { closeButton: true })
@@ -104,7 +112,6 @@ export const ProjectAuth = () => {
 										name="enableMagicLink"
 										label="Enable Magic Links"
 										description="Magic links allow users to login without a password."
-										disabled
 									/>
 
 									<Switcher

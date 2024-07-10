@@ -34,8 +34,8 @@ Tasks
 [x] api keys
 [x] add user impersonation
 [x] enable user registration
+[x] magic link logins
 
-[ ] magic link logins
 [ ] need to protect against privilege escalation
 [ ] add the ability to mark files as "// keep" or maybe add a .kzignore file where you list files/directories to not remove upon generation
 [ ] make it so you can turn off one side of a relationship

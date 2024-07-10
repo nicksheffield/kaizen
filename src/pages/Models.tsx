@@ -492,12 +492,12 @@ export const ERDEditor = () => {
 
 				<div className="absolute right-2 top-2 z-10 flex flex-row-reverse items-start gap-1">
 					<div className="flex flex-col gap-1 rounded-md border border-muted bg-background p-1 shadow-xl shadow-muted">
-						<Button variant="ghost" size="sm" className="flex items-center gap-2" onClick={save}>
+						<Button variant="ghost" size="icon-sm" className="flex items-center gap-2" onClick={save}>
 							<SaveIcon className="h-4 w-4" />
 						</Button>
 
 						{isDirty && (
-							<Button variant="ghost" size="sm" className="flex items-center gap-2" onClick={reset}>
+							<Button variant="ghost" size="icon-sm" className="flex items-center gap-2" onClick={reset}>
 								<Undo2Icon className="h-4 w-4" />
 							</Button>
 						)}

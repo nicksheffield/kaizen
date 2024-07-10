@@ -18,24 +18,31 @@ export const Header = () => {
 				<Tabs value={pathname} onValueChange={(val) => navigate(val)}>
 					<TabsList className="w-full justify-start rounded-none bg-transparent">
 						<TabsTrigger value="/" className={tabStyle}>
+							{/* <DatabaseIcon className="w-4 mr-2" /> */}
 							Models
 						</TabsTrigger>
 						<TabsTrigger value="/details" className={tabStyle}>
+							{/* <BoltIcon className="w-4 mr-2" /> */}
 							Details
 						</TabsTrigger>
 						<TabsTrigger value="/auth" className={tabStyle}>
+							{/* <FingerprintIcon className="w-4 mr-2" /> */}
 							Auth
 						</TabsTrigger>
 						<TabsTrigger value="/environment" className={tabStyle}>
+							{/* <TentTreeIcon className="w-4 mr-2" /> */}
 							Environment
 						</TabsTrigger>
 						<TabsTrigger value="/helpers" className={tabStyle}>
+							{/* <DraftingCompassIcon className="w-4 mr-2" /> */}
 							Helpers
 						</TabsTrigger>
 						<TabsTrigger value="/files" className={tabStyle}>
+							{/* <TelescopeIcon className="w-4 mr-2" /> */}
 							Files
 						</TabsTrigger>
 						<TabsTrigger value="/sandbox" className={tabStyle}>
+							{/* <FolderCodeIcon className="w-4 mr-2" /> */}
 							Sandbox
 						</TabsTrigger>
 					</TabsList>

@@ -13,7 +13,7 @@ export const Files = () => {
 	const setOpenPaths = useApp((v) => v.setOpenPaths)
 
 	return (
-		<div className="flex min-h-0 flex-1 flex-col p-8">
+		<div className="flex min-h-0 flex-1 flex-col p-6">
 			<div className="grid min-h-0 flex-1 grid-cols-[300px,1fr] gap-4">
 				<div className="flex flex-1 flex-col rounded-md bg-background">
 					{buildErrorPaths.length > 0 && (

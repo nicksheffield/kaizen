@@ -470,14 +470,14 @@ export const ERDEditor = () => {
 								onCheckedChange={setDetailed}
 								onSelect={(e) => e.preventDefault()}
 							>
-								Show Common Attributes
+								Show Common Fields
 							</DropdownMenuCheckboxItem>
 							<DropdownMenuCheckboxItem
 								checked={showAuthAttributes}
 								onCheckedChange={setShowAuthAttributes}
 								onSelect={(e) => e.preventDefault()}
 							>
-								Show Auth Attributes
+								Show Auth Fields
 							</DropdownMenuCheckboxItem>
 							<DropdownMenuCheckboxItem
 								checked={showConnections}
@@ -490,7 +490,7 @@ export const ERDEditor = () => {
 					</DropdownMenu>
 				</div>
 
-				<div className="absolute right-2 top-2 z-10 flex flex-row-reverse items-start gap-1">
+				<div className="absolute right-2 top-2 z-10 flex flex-row-reverse items-start gap-2">
 					<div className="flex flex-col gap-1 rounded-md border border-muted bg-background p-1 shadow-xl shadow-muted">
 						<Button variant="ghost" size="icon-sm" className="flex items-center gap-2" onClick={save}>
 							<SaveIcon className="h-4 w-4" />

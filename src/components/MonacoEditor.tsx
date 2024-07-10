@@ -21,9 +21,10 @@ type MonacoEditorProps = {
 	onValueChange: (val: string) => void
 	extension?: string
 	readonly?: boolean
+	className?: string
 }
 
-export const MonacoEditor = ({ value, onValueChange, extension, readonly = false }: MonacoEditorProps) => {
+export const MonacoEditor = ({ value, onValueChange, extension, readonly = false, className }: MonacoEditorProps) => {
 	const { resolvedTheme } = useTheme()
 	const editorRef = useRef<Parameters<OnMount>[0] | null>(null)
 	const monacoRef = useRef<Monaco | null>(null)
@@ -32,17 +33,27 @@ export const MonacoEditor = ({ value, onValueChange, extension, readonly = false
 		editorRef.current = editor
 		monacoRef.current = monaco
 
+		monaco.editor.defineTheme('light', {
+			base: 'vs',
+			inherit: true,
+			rules: [],
+			colors: {
+				'editor.background': '#ffffff',
+				'editor.lineHighlightBackground': '#e4e4e7',
+			},
+		})
+
 		monaco.editor.defineTheme('dark', {
 			base: 'vs-dark',
 			inherit: true,
 			rules: [],
 			colors: {
-				'editor.background': '#09090b',
+				'editor.background': '#0e0e11',
 				'editor.lineHighlightBackground': '#18181a',
 			},
 		})
 
-		monaco.editor.setTheme(resolvedTheme === 'dark' ? 'dark' : 'vs')
+		monaco.editor.setTheme(resolvedTheme === 'dark' ? 'dark' : 'light')
 
 		monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
 			experimentalDecorators: true,
@@ -77,6 +88,7 @@ export const MonacoEditor = ({ value, onValueChange, extension, readonly = false
 			onChange={(val) => {
 				onValueChange(val || '')
 			}}
+			className={className}
 			onMount={handleEditorDidMount}
 			options={{
 				readOnly: readonly,

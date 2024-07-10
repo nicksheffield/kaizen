@@ -1,33 +1,56 @@
+import { Logo } from '@/components/Logo'
 import { ProjectHeader } from '@/components/ProjectHeader'
-import { UserMenu } from '@/components/UserMenu'
-import { Button } from '@/components/ui/button'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useLocation, useNavigate } from 'react-router-dom'
+
+const tabStyle =
+	'hover:bg-light/5 text-light/80 rounded-md mx-1 text-sm data-[state=active]:bg-light/10 data-[state=active]:text-light'
 
 export const Header = () => {
-	return (
-		<div className="relative grid grid-cols-[1fr,1fr,1fr] gap-4 overflow-hidden bg-muted p-4">
-			<div className="flex items-center">
-				{/* <Logo /> */}
-				<div className="group origin-left cursor-default text-2xl font-black tracking-tight transition-transform hover:scale-125 hover:italic">
-					<span className="transition-colors group-hover:text-primary/90">K</span>
-					<span className="transition-colors group-hover:text-primary/80">a</span>
-					<span className="transition-colors group-hover:text-primary/70">i</span>
-					<span className="transition-colors group-hover:text-primary/60">z</span>
-					<span className="transition-colors group-hover:text-primary/50">e</span>
-					<span className="transition-colors group-hover:text-primary/40">n</span>
-				</div>
-			</div>
-			<div className="flex w-full items-center justify-center">
-				<ProjectHeader />
-			</div>
-			<div className="flex items-center justify-end gap-4">
-				<Button variant="link" asChild>
-					<a href="https://docs.kz-app.com" target="_blank" rel="noreferrer">
-						Docs
-					</a>
-				</Button>
+	const { pathname } = useLocation()
+	const navigate = useNavigate()
 
-				<UserMenu />
+	return (
+		<div className="flex items-center justify-between gap-4 overflow-hidden bg-dark/90 p-4 text-light dark:bg-background">
+			<div className="flex items-center gap-4">
+				<Logo />
+
+				<Tabs value={pathname} onValueChange={(val) => navigate(val)}>
+					<TabsList className="w-full justify-start rounded-none bg-transparent">
+						<TabsTrigger value="/" className={tabStyle}>
+							Models
+						</TabsTrigger>
+						<TabsTrigger value="/details" className={tabStyle}>
+							Details
+						</TabsTrigger>
+						<TabsTrigger value="/auth" className={tabStyle}>
+							Auth
+						</TabsTrigger>
+						<TabsTrigger value="/environment" className={tabStyle}>
+							Environment
+						</TabsTrigger>
+						<TabsTrigger value="/helpers" className={tabStyle}>
+							Helpers
+						</TabsTrigger>
+						<TabsTrigger value="/files" className={tabStyle}>
+							Files
+						</TabsTrigger>
+						<TabsTrigger value="/sandbox" className={tabStyle}>
+							Sandbox
+						</TabsTrigger>
+					</TabsList>
+				</Tabs>
 			</div>
+
+			<ProjectHeader />
+
+			{/* <div className="flex items-center justify-end gap-4">
+					<Button variant="link" asChild>
+						<a href="https://docs.kz-app.com" target="_blank" rel="noreferrer">
+							Docs
+						</a>
+					</Button>
+				</div> */}
 		</div>
 	)
 }

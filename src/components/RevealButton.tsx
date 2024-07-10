@@ -17,11 +17,7 @@ export const RevealButton = forwardRef<HTMLButtonElement, RevealButtonProps>(
 
 		return (
 			<Button
-				className={cn(
-					'rounded-full px-2 hover:highlight-white/10',
-					revealLabel && 'bg-primary text-primary-foreground highlight-white/10',
-					className
-				)}
+				className={cn('rounded-full px-2', revealLabel && 'bg-primary text-primary-foreground', className)}
 				onMouseOver={() => setHovered(true)}
 				onMouseOut={() => setHovered(false)}
 				onClick={onClick}

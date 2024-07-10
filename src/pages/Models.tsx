@@ -1,6 +1,5 @@
 import ReactFlow, { Node, NodeChange, ReactFlowProvider, applyNodeChanges, useReactFlow, useStore } from 'reactflow'
-import { flushSync } from 'react-dom'
-import { ERDProvider } from './ERDProvider'
+import { ERDProvider } from '../components/ERDProvider'
 import { getAttrTypeRecommends, getSourceName, getTargetName, isReservedKeyword } from '@/lib/ERDHelpers'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { AttributeType, Model, Relation } from '@/lib/projectSchemas'
@@ -9,12 +8,11 @@ import { useApp } from '@/lib/AppContext'
 import { ModelNode } from '@/components/ERD/ModelNode'
 import { SimpleFloatingEdge } from '@/components/ERD/SimpleFloatingEdge'
 import { useLocalStorage } from 'usehooks-ts'
-import { EyeIcon, MaximizeIcon, PlusIcon, SaveIcon, SearchIcon, ShrinkIcon, Undo2Icon } from 'lucide-react'
-import { RevealButton } from '@/components/RevealButton'
+import { AlertTriangleIcon, EyeIcon, PlusIcon, SaveIcon, SearchIcon, ShrinkIcon, Undo2Icon } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { cn, generateId, getUserModelFields, roundToNearest } from '@/lib/utils'
+import { generateId, getUserModelFields, roundToNearest } from '@/lib/utils'
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -26,27 +24,11 @@ import {
 
 const snapSize = 24
 
-export const Editor = () => {
+export const ERDEditor = () => {
 	const project = useApp((v) => v.project)
 	const draft = useApp((v) => v.draft)
 	const setDraft = useApp((v) => v.setDraft)
 	const saveProject = useApp((v) => v.saveProject)
-
-	const [max, setMax] = useState(false)
-	const toggleMax = () => {
-		if ('startViewTransition' in document) {
-			// @ts-ignore - view transitions are supported, just not typed
-			document.startViewTransition(() => {
-				flushSync(() => {
-					setMax((x) => !x)
-					setTimeout(() => center(), 1)
-				})
-			})
-		} else {
-			setMax((x) => !x)
-			setTimeout(() => center(), 1)
-		}
-	}
 
 	const [defaultModels, setDefaultModels] = useState(draft?.content.models || [])
 	const [defaultRelations, setDefaultRelations] = useState(draft?.content.relations || [])
@@ -425,13 +407,7 @@ export const Editor = () => {
 				setModalHasPopover,
 			}}
 		>
-			<div
-				ref={wrapperRef}
-				className={cn(
-					'relative flex flex-1 flex-col bg-background [view-transition-name:editor]',
-					max && 'fixed inset-0 z-50'
-				)}
-			>
+			<div ref={wrapperRef} className="relative flex flex-1 flex-col [view-transition-name:editor]">
 				{nodes.length === 0 && (
 					<div className="absolute inset-0 z-10">
 						<div className="flex h-full flex-col items-center justify-center">
@@ -448,174 +424,107 @@ export const Editor = () => {
 						</div>
 					</div>
 				)}
-				<div className="pointer-events-none absolute left-0 top-0 z-10 flex w-full flex-col items-center gap-2">
-					<div className="grid w-full grid-cols-[40px,1fr,40px]">
-						<div className="p-4">
-							<Popover>
-								<PopoverTrigger asChild>
-									<Button
-										size="icon"
-										variant="test"
-										className="pointer-events-auto h-10 min-w-10 rounded-full border px-[11px] py-0 backdrop-blur-sm dark:border-0"
-									>
-										<SearchIcon className="h-4 w-4 shrink-0" />
-									</Button>
-								</PopoverTrigger>
-								<PopoverContent side="bottom" align="start" className="bg-popover p-0">
-									<Command>
-										<CommandInput placeholder="Search for models..." />
-										<CommandList className="p-2">
-											<CommandEmpty>No results found.</CommandEmpty>
 
-											{nodes.map((x) => (
-												<CommandItem
-													key={x.id}
-													onSelect={() => focusOn(x)}
-													className="px-3 py-2"
-												>
-													{x.data.name}
-												</CommandItem>
-											))}
-										</CommandList>
-									</Command>
-								</PopoverContent>
-							</Popover>
-						</div>
+				<div className="absolute left-2 top-2 z-10 flex flex-col gap-1 rounded-md border border-muted bg-background p-1 shadow-xl shadow-muted">
+					<Button variant="ghost" size="icon-sm" onClick={() => addNode()}>
+						<PlusIcon className="h-4 w-4" />
+					</Button>
 
-						<div className="flex justify-center">
-							<div
-								className={cn(
-									buttonVariants({ variant: 'test' }),
-									'pointer-events-auto mt-4 flex h-10 items-center justify-center gap-1.5 rounded-full border px-1.5 backdrop-blur-sm dark:border-0'
-								)}
+					<Button variant="ghost" size="icon-sm" onClick={() => center()}>
+						<ShrinkIcon className="h-4 w-4" />
+					</Button>
+
+					<Popover>
+						<PopoverTrigger asChild>
+							<Button variant="ghost" size="icon-sm">
+								<SearchIcon className="h-4 w-4" />
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent side="right" align="start" className="bg-popover p-0">
+							<Command>
+								<CommandInput placeholder="Search for models..." />
+								<CommandList className="p-2">
+									<CommandEmpty>No results found.</CommandEmpty>
+
+									{nodes.map((x) => (
+										<CommandItem key={x.id} onSelect={() => focusOn(x)} className="px-3 py-2">
+											{x.data.name}
+										</CommandItem>
+									))}
+								</CommandList>
+							</Command>
+						</PopoverContent>
+					</Popover>
+
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button variant="ghost" size="icon-sm">
+								<EyeIcon className="h-4 w-4" />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent side="right" align="start">
+							<DropdownMenuLabel>View Options</DropdownMenuLabel>
+							<DropdownMenuSeparator />
+							<DropdownMenuCheckboxItem
+								checked={detailed}
+								onCheckedChange={setDetailed}
+								onSelect={(e) => e.preventDefault()}
 							>
-								<RevealButton
-									variant="ghost"
-									size="pip"
-									onClick={() => addNode()}
-									icon={<PlusIcon className="h-4 w-4" />}
-									label="Add Model"
-									className="hover:bg-background dark:hover:bg-light/20"
-								/>
-								<RevealButton
-									variant="ghost"
-									size="pip"
-									onClick={() => center()}
-									icon={<ShrinkIcon className="h-4 w-4" />}
-									label="Center"
-									className="hover:bg-background dark:hover:bg-light/20"
-								/>
-								<RevealButton
-									variant="ghost"
-									size="pip"
-									onClick={() => {
-										toggleMax()
-									}}
-									icon={<MaximizeIcon className="h-4 w-4" />}
-									label="Maximize"
-									className="hover:bg-background dark:hover:bg-light/20"
-								/>
-								<RevealButton
-									variant="ghost"
-									size="pip"
-									onClick={reset}
-									icon={<Undo2Icon className="h-4 w-4" />}
-									label="Reset"
-									className="hover:bg-background dark:hover:bg-light/20"
-								/>
-								<RevealButton
-									variant="ghost"
-									size="pip"
-									onClick={save}
-									icon={<SaveIcon className="h-4 w-4" />}
-									label="Save"
-									className="hover:bg-background dark:hover:bg-light/20"
-									revealLabel={isDirty ? 'Save Changes' : ''}
-								/>
-							</div>
-						</div>
+								Show Common Attributes
+							</DropdownMenuCheckboxItem>
+							<DropdownMenuCheckboxItem
+								checked={showAuthAttributes}
+								onCheckedChange={setShowAuthAttributes}
+								onSelect={(e) => e.preventDefault()}
+							>
+								Show Auth Attributes
+							</DropdownMenuCheckboxItem>
+							<DropdownMenuCheckboxItem
+								checked={showConnections}
+								onCheckedChange={setShowConnections}
+								onSelect={(e) => e.preventDefault()}
+							>
+								Show Relationship Lines
+							</DropdownMenuCheckboxItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
 
-						<div className="flex justify-end p-4">
-							<DropdownMenu>
-								<DropdownMenuTrigger asChild>
-									<Button
-										size="icon"
-										variant="test"
-										className="pointer-events-auto h-10 min-w-10 rounded-full border px-[11px] py-0 backdrop-blur-sm dark:border-0"
-									>
-										<EyeIcon className="h-4 w-4 shrink-0" />
-									</Button>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent side="bottom" align="end">
-									<DropdownMenuLabel>View Options</DropdownMenuLabel>
-									<DropdownMenuSeparator />
-									<DropdownMenuCheckboxItem
-										checked={detailed}
-										onCheckedChange={setDetailed}
-										onSelect={(e) => e.preventDefault()}
-									>
-										Show Common Attributes
-									</DropdownMenuCheckboxItem>
-									<DropdownMenuCheckboxItem
-										checked={showAuthAttributes}
-										onCheckedChange={setShowAuthAttributes}
-										onSelect={(e) => e.preventDefault()}
-									>
-										Show Auth Attributes
-									</DropdownMenuCheckboxItem>
-									<DropdownMenuCheckboxItem
-										checked={showConnections}
-										onCheckedChange={setShowConnections}
-										onSelect={(e) => e.preventDefault()}
-									>
-										Show Relationship Lines
-									</DropdownMenuCheckboxItem>
-								</DropdownMenuContent>
-							</DropdownMenu>
-						</div>
+				<div className="absolute right-2 top-2 z-10 flex flex-row-reverse items-start gap-1">
+					<div className="flex flex-col gap-1 rounded-md border border-muted bg-background p-1 shadow-xl shadow-muted">
+						<Button variant="ghost" size="sm" className="flex items-center gap-2" onClick={save}>
+							<SaveIcon className="h-4 w-4" />
+						</Button>
+
+						{isDirty && (
+							<Button variant="ghost" size="sm" className="flex items-center gap-2" onClick={reset}>
+								<Undo2Icon className="h-4 w-4" />
+							</Button>
+						)}
 					</div>
 
-					<div>
+					<div className="flex flex-col items-end gap-2">
+						{isDirty && (
+							<div className="rounded-md bg-background p-2 text-sm font-medium shadow-xl shadow-muted">
+								You have unsaved changes
+							</div>
+						)}
+
 						{conflicts.length > 0 && (
-							<div className="flex flex-col items-center gap-2">
+							<div className="flex flex-col gap-2 rounded-md border border-muted bg-destructive p-2 shadow-xl shadow-muted">
 								{conflicts.map((message) => (
 									<div
-										className="rounded-full border bg-destructive p-2 px-3 text-sm font-medium text-destructive-foreground"
+										className="flex items-center gap-2 text-sm font-medium text-destructive-foreground"
 										key={message}
 									>
-										{message}
+										<div className="flex-1 text-right">{message}</div>
+										<AlertTriangleIcon className="h-4 w-4" />
 									</div>
 								))}
 							</div>
 						)}
 					</div>
 				</div>
-
-				{/* <div className="pointer-events-none absolute bottom-0 left-0 p-4">
-					<div
-						className={cn(
-							buttonVariants({ variant: 'test' }),
-							'pointer-events-auto flex h-10 items-center justify-center gap-1.5 rounded-full px-1.5 shadow-md backdrop-blur-sm'
-						)}
-					>
-						<RevealButton
-							variant="ghost"
-							size="pip"
-							onClick={() => setDetailed((x) => !x)}
-							icon={<ListCollapseIcon className="h-4 w-4" />}
-							label="Show Details"
-							className="dark:hover:bg-foreground/10"
-						/>
-						<RevealButton
-							variant="ghost"
-							size="pip"
-							onClick={() => setShowConnections((x) => !x)}
-							icon={<CableIcon className="h-4 w-4" />}
-							label="Show Connections"
-							className="dark:hover:bg-foreground/10"
-						/>
-					</div>
-				</div> */}
 
 				<ERDMarkers />
 
@@ -645,10 +554,10 @@ export const Editor = () => {
 	)
 }
 
-export const ERDEditor = () => {
+export const Models = () => {
 	return (
 		<ReactFlowProvider>
-			<Editor />
+			<ERDEditor />
 		</ReactFlowProvider>
 	)
 }

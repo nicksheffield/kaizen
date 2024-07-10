@@ -1,5 +1,4 @@
 import { Hint } from '@/components/Hint'
-import { TreeFileIcon } from '@/components/TreeFileIcon'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -9,7 +8,7 @@ import { useApp } from '@/lib/AppContext'
 import { SERVER_PATH, envHints, envKeys } from '@/lib/constants'
 import { isFile } from '@/lib/handle'
 import { cn, isNotNone } from '@/lib/utils'
-import { XIcon } from 'lucide-react'
+import { TentTreeIcon, XIcon } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import { useDebounceCallback } from 'usehooks-ts'
 
@@ -19,7 +18,7 @@ export const generateDBURI = (settings: { useOrbStack?: boolean; name?: string }
 	return `mysql://user:password@${settings.useOrbStack ? `db.${settings.name?.toLowerCase().replace(/\s/g, '-')}.orb.local` : 'localhost'}:3306/db`
 }
 
-export const ProjectEnv = () => {
+export const Environment = () => {
 	const project = useApp((v) => v.project)
 
 	const files = useApp((v) => v.files)
@@ -70,7 +69,7 @@ export const ProjectEnv = () => {
 					<Card className="w-full max-w-3xl border-0 shadow-none">
 						<CardHeader className="mb-6">
 							<CardTitle className="flex items-center gap-2">
-								<TreeFileIcon path="project.json?environment" className="h-6 w-6" />
+								<TentTreeIcon className="h-6 w-6" />
 								Environment Variables
 							</CardTitle>
 							<CardDescription>

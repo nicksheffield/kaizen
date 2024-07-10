@@ -32,7 +32,7 @@ export const ERDMarkers = () => {
 							<g className={stroke}>
 								<line x1={w / 2} y1={h / 2} x2={w - 3} y2={10} strokeWidth="1" />
 								<line x1={w / 2} y1={h / 2} x2={w - 3} y2={h - 10} strokeWidth="1" />
-								<circle cx={w / 2 - 2} cy={w / 2} r={3} className="fill-background" />
+								<circle cx={w / 2 - 2} cy={w / 2} r={3} className="fill-muted" />
 							</g>
 						)
 					})()}

@@ -2,7 +2,6 @@ import {
 	BoxIcon,
 	FileIcon,
 	FileJson2Icon,
-	FingerprintIcon,
 	FolderCogIcon,
 	FolderGit2Icon,
 	FolderIcon,
@@ -10,12 +9,7 @@ import {
 	FolderRootIcon,
 	HelpCircleIcon,
 	MailIcon,
-	BoltIcon,
 	SproutIcon,
-	DatabaseIcon,
-	TentTreeIcon,
-	DraftingCompassIcon,
-	TelescopeIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useApp } from '@/lib/AppContext'
@@ -50,30 +44,6 @@ export const TreeFileIcon = ({ path, open = true, className }: TreeFileIconProps
 			return <FolderOpenIcon className={classNames} />
 		}
 		return <FolderIcon className={classNames} />
-	}
-
-	if (path === 'project.json?models') {
-		return <DatabaseIcon className={classNames} />
-	}
-
-	if (path === 'project.json?details') {
-		return <BoltIcon className={classNames} />
-	}
-
-	if (path === 'project.json?auth') {
-		return <FingerprintIcon className={classNames} />
-	}
-
-	if (path === 'project.json?sandbox') {
-		return <TelescopeIcon className={classNames} />
-	}
-
-	if (path === 'project.json?environment') {
-		return <TentTreeIcon className={classNames} />
-	}
-
-	if (path === 'project.json?helpers') {
-		return <DraftingCompassIcon className={classNames} />
 	}
 
 	if (file?.type === 'file') {

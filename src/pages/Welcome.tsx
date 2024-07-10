@@ -1,4 +1,4 @@
-import { generateDBURI } from '@/components/FileViews/ProjectEnv'
+import { generateDBURI } from '@/pages/Environment'
 import { openPrompt } from '@/components/modals/openPrompt'
 import { Button } from '@/components/ui/button'
 import { useApp } from '@/lib/AppContext'
@@ -12,7 +12,7 @@ const Browse = () => {
 	const getRootHandle = useApp((v) => v.getRootHandle)
 
 	return (
-		<div className="h-full p-8">
+		<div className="h-screen p-8">
 			<div className="flex h-full items-center justify-center rounded-3xl border-4 border-dashed">
 				<div className="select-none text-sm font-medium text-muted-foreground">
 					<div className="flex flex-col p-4">
@@ -35,7 +35,7 @@ const Init = () => {
 	const [initiating, setInitiating] = useState(false)
 
 	return (
-		<div className="h-full p-8">
+		<div className="h-screen p-8">
 			<div className="flex h-full items-center justify-center rounded-3xl border-4 border-dashed">
 				<div className="select-none text-sm font-medium text-muted-foreground">
 					<div className="flex items-center justify-center py-4">
@@ -75,7 +75,7 @@ const NoFile = () => {
 	const root = useApp((v) => v.root)
 
 	return (
-		<div className="h-full p-8">
+		<div className="h-screen p-8">
 			<div className="flex h-full items-center justify-center rounded-3xl border-4 border-dashed">
 				<div className="select-none text-sm font-medium text-muted-foreground">
 					{root && 'No file selected'}

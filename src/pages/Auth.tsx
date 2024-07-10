@@ -1,19 +1,18 @@
 import { FormInput, FormRow } from '@/components/FormFields'
 import { Switcher } from '@/components/Switcher'
-import { TreeFileIcon } from '@/components/TreeFileIcon'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useApp } from '@/lib/AppContext'
 import { Project } from '@/lib/projectSchemas'
-import { Loader2Icon } from 'lucide-react'
+import { FingerprintIcon, Loader2Icon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 type FormState = Project['settings']['auth']
 
-export const ProjectAuth = () => {
+export const Auth = () => {
 	const project = useApp((v) => v.project)
 	const saveProject = useApp((v) => v.saveProject)
 
@@ -65,7 +64,7 @@ export const ProjectAuth = () => {
 					<Card className="w-full max-w-3xl border-0 shadow-none">
 						<CardHeader className="mb-6">
 							<CardTitle className="flex items-center gap-2">
-								<TreeFileIcon path="project.json?auth" className="h-6 w-6" />
+								<FingerprintIcon className="h-6 w-6" />
 								Auth
 							</CardTitle>
 							<CardDescription>Control details about the authentication flow</CardDescription>

@@ -1,8 +1,6 @@
-import { AddFileMenu } from '@/components/AddFileMenu'
 import { CollapsableSection } from '@/components/CollapsableSection'
 import { Tree } from '@/components/Tree'
 import { TreeFileIcon } from '@/components/TreeFileIcon'
-import { Separator } from '@/components/ui/separator'
 import { useApp } from '@/lib/AppContext'
 import { MODS_PATH } from '@/lib/constants'
 import { isFile } from '@/lib/handle'
@@ -22,78 +20,8 @@ export const ProjectTree = () => {
 
 	return (
 		<div className="flex flex-col gap-2">
-			<div className="p-2 pt-6">
-				<CollapsableSection title="Project" localStorageKey="sidebar-project-open">
-					<div
-						className={cn(
-							'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
-							selectedPath === 'project.json?models'
-								? 'bg-primary text-primary-foreground hover:bg-primary/80'
-								: 'hover:bg-foreground/10'
-						)}
-						onClick={() => {
-							openFile('project.json?models')
-						}}
-					>
-						<TreeFileIcon path={'project.json?models'} className="opacity-50" />
-						Models
-					</div>
-
-					<div
-						className={cn(
-							'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
-							selectedPath === 'project.json?details'
-								? 'bg-primary text-primary-foreground hover:bg-primary/80'
-								: 'hover:bg-foreground/10'
-						)}
-						onClick={() => {
-							openFile('project.json?details')
-						}}
-					>
-						<TreeFileIcon path={'project.json?details'} className="opacity-50" />
-						Details
-					</div>
-
-					<div
-						className={cn(
-							'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
-							selectedPath === 'project.json?auth'
-								? 'bg-primary text-primary-foreground hover:bg-primary/80'
-								: 'hover:bg-foreground/10'
-						)}
-						onClick={() => {
-							openFile('project.json?auth')
-						}}
-					>
-						<TreeFileIcon path={'project.json?auth'} className="opacity-50" />
-						Auth
-					</div>
-
-					<div
-						className={cn(
-							'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
-							selectedPath === 'project.json?environment'
-								? 'bg-primary text-primary-foreground hover:bg-primary/80'
-								: 'hover:bg-foreground/10'
-						)}
-						onClick={() => {
-							openFile('project.json?environment')
-						}}
-					>
-						<TreeFileIcon path={'project.json?environment'} className="opacity-50" />
-						Environment
-					</div>
-				</CollapsableSection>
-			</div>
-
-			<Separator />
-
 			<div className="p-2">
-				<CollapsableSection
-					title="Modifications"
-					localStorageKey="sidebar-customisation-open"
-					button={<AddFileMenu />}
-				>
+				<CollapsableSection title="Modifications" localStorageKey="sidebar-customisation-open">
 					<div
 						className={cn(
 							'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
@@ -145,8 +73,6 @@ export const ProjectTree = () => {
 				</CollapsableSection>
 			</div>
 
-			<Separator />
-
 			<div className="p-2">
 				<CollapsableSection title="Files" localStorageKey="sidebar-files-open">
 					{firstLevelDescs.map((desc) => (
@@ -154,8 +80,6 @@ export const ProjectTree = () => {
 					))}
 				</CollapsableSection>
 			</div>
-
-			<Separator />
 		</div>
 	)
 }

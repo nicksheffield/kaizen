@@ -1,7 +1,7 @@
 // import { useApp } from '@/lib/AppContext'
 import { ApolloSandbox } from '@apollo/sandbox/react'
 
-export const ProjectSandbox = () => {
+export const Sandbox = () => {
 	// const project = useApp((v) => v.project)
 
 	return (

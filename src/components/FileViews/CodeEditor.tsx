@@ -21,11 +21,12 @@ export const CodeEditor = () => {
 	if (!selectedFile) return null
 
 	return (
-		<div className="relative flex min-h-0 flex-1 flex-col divide-y">
-			<div className="flex h-10 items-center gap-3 px-4">
+		<div className="relative flex min-h-0 flex-1 flex-col gap-4">
+			<div className="flex items-center gap-4 rounded-md bg-background p-1">
 				<Button
-					variant="pip"
-					size="pip"
+					variant="ghost"
+					size="sm"
+					className=""
 					onClick={() => {
 						saveFile(selectedFile.path, value, { showToast: true, format })
 					}}
@@ -37,7 +38,7 @@ export const CodeEditor = () => {
 			</div>
 
 			<div
-				className="flex min-h-0 flex-1 flex-col overflow-auto"
+				className="flex min-h-0 flex-1 flex-col overflow-auto rounded-md bg-background py-2"
 				onKeyDown={(e) => {
 					if (e.key === 's' && e.metaKey) {
 						e.stopPropagation()

@@ -1,4 +1,3 @@
-import { TreeFileIcon } from '@/components/TreeFileIcon'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
@@ -7,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { useApp } from '@/lib/AppContext'
 import { Model } from '@/lib/projectSchemas'
 import { camelize } from '@/lib/utils'
-import { ChevronDownIcon, FilterIcon } from 'lucide-react'
+import { ChevronDownIcon, DraftingCompassIcon, FilterIcon } from 'lucide-react'
 import pluralize from 'pluralize'
 import { plural, singular } from 'pluralize'
 import { useState } from 'react'
@@ -15,7 +14,7 @@ import { toast } from 'sonner'
 
 export const getSmallName = (model: Model) => singular(model.key || camelize(model.name))
 
-export const ProjectHelpers = () => {
+export const Helpers = () => {
 	const project = useApp((v) => v.project)
 
 	const [filter, setFilter] = useState('')
@@ -117,7 +116,7 @@ export const ${model.name}Mutations = {
 					<Card className="w-full max-w-3xl border-0 shadow-none">
 						<CardHeader className="mb-6">
 							<CardTitle className="flex items-center gap-2">
-								<TreeFileIcon path="project.json?helpers" className="h-6 w-6" />
+								<DraftingCompassIcon className="h-6 w-6" />
 								Code Helpers
 							</CardTitle>
 							<CardDescription>
@@ -125,7 +124,7 @@ export const ${model.name}Mutations = {
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
-							<div className="font-medium">URQL</div>
+							{/* <div className="font-medium">URQL</div> */}
 							<div className="flex flex-col gap-6">
 								<div className="relative">
 									<div className="pointer-events-none absolute left-3 flex h-full items-center">
@@ -139,7 +138,7 @@ export const ${model.name}Mutations = {
 									/>
 								</div>
 
-								<div className="divide-y overflow-hidden rounded-md border">
+								<div className="divide-y divide-input overflow-hidden rounded-md border border-input">
 									{project?.models
 										.filter((x) =>
 											x.name.toLowerCase().trim().includes(filter.toLowerCase().trim())

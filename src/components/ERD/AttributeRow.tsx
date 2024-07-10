@@ -135,7 +135,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 						variant="ghost"
 						size="xs"
 						className={cn(
-							'flex h-[24px] items-center justify-between gap-6 px-1 py-0 hover:bg-primary/20',
+							'flex h-[24px] items-center justify-between gap-6 rounded-sm px-1 py-0 hover:bg-primary/20',
 							isPopoverOpen &&
 								'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
 						)}
@@ -167,12 +167,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 								</div>
 							)}
 						</div>
-						<div
-							className={cn(
-								'translate-y-px font-mono text-xs opacity-50',
-								isPopoverOpen && 'opacity-100'
-							)}
-						>
+						<div className={cn('font-mono text-xs opacity-50', isPopoverOpen && 'opacity-100')}>
 							{attr.type}
 						</div>
 					</Button>
@@ -183,7 +178,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 					side="right"
 					sideOffset={18}
 					alignOffset={-56}
-					className="p-0 dark:border-0 dark:highlight-white/10"
+					className="bg-background p-0 dark:border-0"
 				>
 					<div className="flex flex-col divide-y divide-foreground/5">
 						<div className="flex h-10 items-center justify-between px-3 pr-2">

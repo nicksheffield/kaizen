@@ -2,15 +2,9 @@ import { useApp } from '../lib/AppContext'
 import { EditorTabs } from './EditorTabs'
 import { CodeEditor } from './FileViews/CodeEditor'
 import { ReadonlyCodeView } from './FileViews/ReadonlyView'
-import { Welcome } from './Welcome'
+import { Welcome } from '../pages/Welcome'
 import { SERVER_PATH } from '@/lib/constants'
-import { ERDEditor } from '@/components/ERDEditor'
-import { ProjectDetails } from '@/components/FileViews/ProjectDetails'
-import { ProjectAuth } from '@/components/FileViews/ProjectAuth'
-import { ProjectEnv } from '@/components/FileViews/ProjectEnv'
 import { useLocalStorage } from 'usehooks-ts'
-import { ProjectHelpers } from '@/components/FileViews/ProjectHelpers'
-import { ProjectSandbox } from '@/components/FileViews/ProjectSandbox'
 
 export const EditorFrame = () => {
 	const project = useApp((v) => v.project)
@@ -21,18 +15,6 @@ export const EditorFrame = () => {
 	const Editor =
 		!selectedPath || !project ? (
 			<Welcome />
-		) : selectedPath === 'project.json?models' ? (
-			<ERDEditor key={project?.settings.id} />
-		) : selectedPath === 'project.json?details' ? (
-			<ProjectDetails key={project?.settings.id} />
-		) : selectedPath === 'project.json?auth' ? (
-			<ProjectAuth key={project?.settings.id} />
-		) : selectedPath === 'project.json?sandbox' ? (
-			<ProjectSandbox key={project?.settings.id} />
-		) : selectedPath === 'project.json?environment' ? (
-			<ProjectEnv key={project?.settings.id} />
-		) : selectedPath === 'project.json?helpers' ? (
-			<ProjectHelpers key={project?.settings.id} />
 		) : project && selectedPath.startsWith(SERVER_PATH) ? (
 			<ReadonlyCodeView key={`${project?.settings.id}-${selectedPath}`} />
 		) : (

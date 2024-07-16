@@ -1,4 +1,4 @@
-import { type ElementType, useMemo, useState } from 'react'
+import { CSSProperties, type ElementType, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
 	CalendarIcon,
@@ -14,10 +14,8 @@ import {
 	Trash2Icon,
 	UserIcon,
 } from 'lucide-react'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Switch } from '@/components/ui/switch'
 import { Input } from '@/components/ui/input'
-import { Attribute, Model as BasicModel, AttributeType } from '@/lib/projectSchemas'
+import { Attribute, Model as BasicModel, AttributeType, AttributeTypeNames } from '@/lib/projectSchemas'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { cn, getIsUserAttr } from '@/lib/utils'
@@ -25,7 +23,13 @@ import { useERDContext } from '@/lib/ERDContext'
 import { getLogicalRecommend, getSourceName, getTargetName, isReservedKeyword } from '@/lib/ERDHelpers'
 import { useAttrField } from '@/lib/useAttrField'
 import { SelectList } from '@/components/SelectList'
-import { Row, RowLabel } from '@/components/ERD/Rows'
+import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { useReactFlow, getNodesBounds } from '@xyflow/react'
+import { FormRow } from '@/components/FormFields'
+import { Card } from '@/components/ui/card'
+import { Switcher } from '@/components/Switcher'
+
+const sheetWidth = 600
 
 type Model = BasicModel & {
 	attributes: Attribute[]
@@ -41,8 +45,18 @@ type AttributeRowProps = {
 // const zoomSelector = (s: ReactFlowState) => s.transform[2]
 
 export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowProps) => {
-	const { relations, nodes, attrTypeRecommends, modalHasPopover, setModalHasPopover, showAuthAttributes } =
-		useERDContext()
+	const {
+		relations,
+		nodes,
+		attrTypeRecommends,
+		modalHasPopover,
+		setModalHasPopover,
+		showAuthAttributes,
+		showTypes,
+		frameRef,
+	} = useERDContext()
+
+	const node = nodes.find((x) => x.data.id === model.id)
 
 	const isUserAttr = getIsUserAttr(attr.id)
 	const isLocked = isUserAttr || attr.name === 'id'
@@ -101,43 +115,59 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 		transition,
 	}
 
+	const flow = useReactFlow()
+	// const [prevViewport, setPrevViewport] = useState<Viewport | null>(null)
+
 	const [isPopoverOpen, setPopoverOpen] = useState(false)
 	const onPopoverOpen = (val: boolean) => {
 		setPopoverOpen(val)
+
 		if (val) {
 			setModalHasPopover(model.id)
+			// setPrevViewport(flow.getViewport())
+
+			if (node) {
+				const viewWidth = window.innerWidth - sheetWidth
+				const viewHeight = frameRef.current?.clientHeight || 0 // 872
+
+				const bounds = getNodesBounds([node], { nodeOrigin: [-0.5, -0.5] })
+
+				flow.setViewport(
+					{
+						x: bounds.x * -1 + viewWidth / 2,
+						y: bounds.y * -1 + viewHeight / 2,
+						zoom: 1,
+					},
+					{
+						duration: 600,
+					}
+				)
+			}
 		} else {
 			setModalHasPopover(null)
+
+			// if (prevViewport !== null) {
+			// 	flow.setViewport(prevViewport, { duration: 200 })
+			// }
 		}
 	}
 
 	const isActiveModel = modalHasPopover === model.id
 	const openPopover = isActiveModel && isPopoverOpen
 
-	// const zoom = useStore(zoomSelector)
-	// const showContent = zoom > 0.5
-	const showContent = true
-	if (!showContent) {
-		return (
-			<div className="h-[24px] p-1">
-				<div className="h-full rounded-md bg-gray-100" />
-			</div>
-		)
-	}
-
 	if (isUserAttr && !showAuthAttributes) return null
 
 	return (
 		<div key={attr.id} className="relative flex flex-col px-2" ref={setNodeRef} style={style}>
-			<Popover open={openPopover} onOpenChange={onPopoverOpen}>
-				<PopoverTrigger asChild>
+			<Sheet open={openPopover} onOpenChange={onPopoverOpen}>
+				<SheetTrigger asChild>
 					<Button
 						variant="ghost"
 						size="xs"
 						className={cn(
-							'flex h-[24px] items-center justify-between gap-6 rounded-sm px-1 py-0 hover:bg-primary/20',
+							'flex h-[24px] items-center justify-between gap-6 rounded-sm px-1 py-0 hover:bg-primary/5',
 							isPopoverOpen &&
-								'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
+								'bg-primary/80 text-primary-foreground hover:bg-primary hover:text-primary-foreground'
 						)}
 					>
 						<div className="flex items-center gap-2">
@@ -167,42 +197,37 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 								</div>
 							)}
 						</div>
-						<div className={cn('font-mono text-xs opacity-50', isPopoverOpen && 'opacity-100')}>
-							{attr.type}
-						</div>
-					</Button>
-				</PopoverTrigger>
-
-				<PopoverContent
-					align="start"
-					side="right"
-					sideOffset={18}
-					alignOffset={-56}
-					className="bg-background p-0 dark:border-0"
-				>
-					<div className="flex flex-col divide-y divide-foreground/5">
-						<div className="flex h-10 items-center justify-between px-3 pr-2">
-							<div className="text-sm font-medium">Field</div>
-							{!isLocked && (
-								<Button variant="ghost" size="xs" onClick={remove}>
-									<Trash2Icon className="h-4 w-4 opacity-50" />
-								</Button>
-							)}
-						</div>
-
-						{/* <RowGap /> */}
-
-						{isUserAttr && (
-							<div className="flex h-10 items-center justify-start px-3 text-sm text-muted-foreground">
-								<UserIcon className="mr-2 h-4 w-4" />
-								This is an Auth field.
+						{showTypes && (
+							<div className={cn('font-mono text-xs opacity-50', isPopoverOpen && 'opacity-100')}>
+								{attr.type}
 							</div>
 						)}
+					</Button>
+				</SheetTrigger>
 
-						{attr.name === 'id' ? (
-							<>
-								<Row>
-									<RowLabel>Type</RowLabel>
+				<SheetContent
+					side="right"
+					className="flex flex-col justify-between divide-y border-0 dark:border-l sm:max-w-[var(--sheet-width)]"
+					style={{ '--sheet-width': `${sheetWidth}px` } as CSSProperties}
+				>
+					<div className="flex flex-col divide-y">
+						<SheetHeader className="pb-6">
+							<SheetTitle>Edit Field</SheetTitle>
+						</SheetHeader>
+
+						<div className="flex flex-col gap-8 py-6">
+							{isUserAttr && (
+								<div className="flex h-10 items-center justify-start rounded-md bg-muted px-3 text-sm text-muted-foreground">
+									<UserIcon className="mr-2 h-4 w-4" />
+									This is an Auth field.
+								</div>
+							)}
+
+							{attr.name === 'id' ? (
+								<FormRow
+									label="Type"
+									description="The type of the attribute. This affects both the database and the GraphQL API."
+								>
 									<SelectList
 										value={attr.type}
 										onValueChange={(val) => updateField('type', val)}
@@ -213,130 +238,133 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 										clearable={false}
 										className="-my-2 flex-1 justify-end gap-2 border-0 bg-transparent pr-3 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
 									/>
-								</Row>
-							</>
-						) : (
-							<>
-								<Row>
-									<RowLabel>Name</RowLabel>
-									<Input
-										value={name || ''}
-										size="sm"
-										onChange={(e) => {
-											const val = e.currentTarget.value.replace(/\s/g, '')
-											setName(val)
-											const recommend = attrTypeRecommends.find((x) => x.name === val)
-
-											if (recommend) {
-												setType(recommend.recommendedType as AttributeType)
-											}
-
-											const logicalRecommend = getLogicalRecommend(val)
-
-											if (logicalRecommend) {
-												setType(logicalRecommend)
-											}
-										}}
-										autoFocus
-										disabled={isLocked}
-										className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
-									/>
-								</Row>
-
-								<Row>
-									<RowLabel>Type</RowLabel>
-
-									<SelectList
-										value={attr.type}
-										onValueChange={(val) => setType(val)}
-										disabled={isLocked}
-										options={Object.entries(AttributeType).map(([key, value]) => ({
-											label: key,
-											value,
-										}))}
-										clearable={false}
-										className="-my-2 flex-1 justify-end gap-2 border-0 bg-transparent pr-3 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-									/>
-								</Row>
-
-								<Row>
-									<RowLabel>Default</RowLabel>
-
-									{attr.type === 'id' || attr.type === 'datetime' || attr.type === 'boolean' ? (
-										<>
-											<SelectList
-												value={def || ''}
-												clearable={!!def && !isLocked}
-												onValueChange={(val) => setDef(val === '' ? null : val)}
-												disabled={isLocked}
-												options={
-													attr.nullable
-														? [{ label: 'NULL', value: 'null' }]
-														: attr.type === 'datetime'
-															? [
-																	{
-																		label: 'CURRENT_TIMESTAMP',
-																		value: 'CURRENT_TIMESTAMP',
-																	},
-																]
-															: attr.type === 'boolean'
-																? [
-																		{ label: 'TRUE', value: 'true' },
-																		{ label: 'FALSE', value: 'false' },
-																	]
-																: []
-												}
-												className="-my-2 flex-1 justify-end gap-2 border-0 bg-transparent pr-3 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-											/>
-										</>
-									) : (
+								</FormRow>
+							) : (
+								<>
+									<FormRow
+										label="Name"
+										description="The name of the attribute. Always use camelcase."
+									>
 										<Input
-											value={attr.default || ''}
-											onChange={(e) => updateField('default', e.currentTarget.value)}
-											disabled={isLocked}
-											size="sm"
-											className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
-										/>
-									)}
-								</Row>
+											value={name || ''}
+											onChange={(e) => {
+												const val = e.currentTarget.value.replace(/\s/g, '')
+												setName(val)
+												const recommend = attrTypeRecommends.find((x) => x.name === val)
 
-								<Row>
-									<RowLabel>Nullable</RowLabel>
-									<Switch
+												if (recommend) {
+													setType(recommend.recommendedType as AttributeType)
+												}
+
+												const logicalRecommend = getLogicalRecommend(val)
+
+												if (logicalRecommend) {
+													setType(logicalRecommend)
+												}
+											}}
+											autoFocus
+											disabled={isLocked}
+										/>
+									</FormRow>
+
+									<FormRow
+										label="Type"
+										description="The type of the attribute. This affects both the database and the GraphQL API."
+									>
+										<SelectList
+											value={attr.type}
+											onValueChange={(val) => setType(val)}
+											disabled={isLocked}
+											options={Object.entries(AttributeTypeNames).map(([key, type]) => ({
+												value: key,
+												label: type.label,
+												description: type.description,
+											}))}
+											clearable={false}
+										/>
+									</FormRow>
+
+									<FormRow label="Default" description="The default value of the attribute.">
+										{attr.type === 'id' || attr.type === 'datetime' || attr.type === 'boolean' ? (
+											<>
+												<SelectList
+													value={def || ''}
+													clearable={!!def && !isLocked}
+													onValueChange={(val) => setDef(val === '' ? null : val)}
+													disabled={isLocked}
+													options={
+														attr.nullable
+															? [{ label: 'NULL', value: 'null' }]
+															: attr.type === 'datetime'
+																? [
+																		{
+																			label: 'CURRENT_TIMESTAMP',
+																			value: 'CURRENT_TIMESTAMP',
+																		},
+																	]
+																: attr.type === 'boolean'
+																	? [
+																			{ label: 'TRUE', value: 'true' },
+																			{ label: 'FALSE', value: 'false' },
+																		]
+																	: []
+													}
+												/>
+											</>
+										) : (
+											<Input
+												value={attr.default || ''}
+												onChange={(e) => updateField('default', e.currentTarget.value)}
+												disabled={isLocked}
+											/>
+										)}
+									</FormRow>
+								</>
+							)}
+						</div>
+
+						{attr.name !== 'id' && (
+							<div className="flex flex-col gap-8 py-6">
+								<Card className="divide-y divide-input overflow-hidden border">
+									<Switcher
+										label="Nullable"
+										description="Makes the field nullable. Null values are allowed."
 										checked={attr.nullable}
 										onCheckedChange={(val) => updateField('nullable', val)}
 										disabled={isLocked}
-										className="mr-3 h-4 w-7"
-										thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
 									/>
-								</Row>
-
-								<Row>
-									<RowLabel>Selectable</RowLabel>
-									<Switch
+									<Switcher
+										label="Selectable"
+										description="Allows the field to be selected in the gql api."
 										checked={attr.selectable}
 										onCheckedChange={(val) => updateField('selectable', val)}
 										disabled={isLocked}
-										className="mr-3 h-4 w-7"
-										thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
 									/>
-								</Row>
-
-								<Row>
-									<RowLabel>Insertable</RowLabel>
-									<Switch
+									<Switcher
+										label="Insertable"
+										description="Allows the field to be inserted in the gql api."
 										checked={attr.insertable}
 										onCheckedChange={(val) => updateField('insertable', val)}
 										disabled={isLocked}
-										className="mr-3 h-4 w-7"
-										thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
 									/>
-								</Row>
-							</>
+								</Card>
+							</div>
 						)}
 					</div>
-				</PopoverContent>
-			</Popover>
+
+					{!isLocked && (
+						<SheetFooter className="flex-row justify-start">
+							<Button
+								variant="outline"
+								onClick={remove}
+								className="flex items-center justify-start gap-2"
+							>
+								<Trash2Icon className="h-4 w-4 opacity-50" /> Delete
+							</Button>
+						</SheetFooter>
+					)}
+				</SheetContent>
+			</Sheet>
 		</div>
 	)
 }

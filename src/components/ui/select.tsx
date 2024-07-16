@@ -17,7 +17,7 @@ const SelectTrigger = React.forwardRef<
 	<SelectPrimitive.Trigger
 		ref={ref}
 		className={cn(
-			'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
+			'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
 			className
 		)}
 		{...props}
@@ -101,7 +101,7 @@ SelectLabel.displayName = SelectPrimitive.Label.displayName
 const SelectItem = React.forwardRef<
 	React.ElementRef<typeof SelectPrimitive.Item>,
 	React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
->(({ className, children, ...props }, ref) => (
+>(({ className, textValue, children, ...props }, ref) => (
 	<SelectPrimitive.Item
 		ref={ref}
 		className={cn(
@@ -117,6 +117,32 @@ const SelectItem = React.forwardRef<
 		</span>
 
 		<SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+	</SelectPrimitive.Item>
+))
+SelectItem.displayName = SelectPrimitive.Item.displayName
+
+const SelectDescItem = React.forwardRef<
+	React.ElementRef<typeof SelectPrimitive.Item>,
+	React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item> & { textValue?: string; description?: string }
+>(({ className, textValue, description, children, ...props }, ref) => (
+	<SelectPrimitive.Item
+		ref={ref}
+		className={cn(
+			'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+			className
+		)}
+		{...props}
+	>
+		<span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+			<SelectPrimitive.ItemIndicator>
+				<Check className="h-4 w-4" />
+			</SelectPrimitive.ItemIndicator>
+		</span>
+
+		<div className="flex flex-col gap-1">
+			<SelectPrimitive.ItemText>{textValue || children}</SelectPrimitive.ItemText>
+			{description && <div className="text-xs text-muted-foreground">{description}</div>}
+		</div>
 	</SelectPrimitive.Item>
 ))
 SelectItem.displayName = SelectPrimitive.Item.displayName
@@ -137,6 +163,7 @@ export {
 	SelectContent,
 	SelectLabel,
 	SelectItem,
+	SelectDescItem,
 	SelectSeparator,
 	SelectScrollUpButton,
 	SelectScrollDownButton,

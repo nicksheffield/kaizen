@@ -15,25 +15,29 @@ import { Attribute } from '@/lib/projectSchemas'
 // for (let i = 0; i < 10; i++) {
 // 	console.log(id(9))
 // }
-
-export type Nullsish = null | undefined | void
-export type Falsish = false | Nullsish
 export type VoidPromise = void | Promise<void>
+
+export type Nullish = null | undefined | void
+export type Falsish = false | Nullish
 
 export const isNotFalsish = <T>(value: T | Falsish): value is T => {
 	return value !== false && value != null
 }
 
-export const generateId = (length: number = 5) => generateRandomString(length, alphabet('0-9', 'a-z'))
-
-export function cn(...inputs: ClassValue[]) {
-	return twMerge(clsx(inputs))
+export const isNotNullish = <T>(value: T | Nullish): value is T => {
+	return value !== undefined && value != null
 }
 
 export type None = undefined | '' | false | null
 
 export const isNotNone = <T>(x: T | None): x is T => {
 	return x !== undefined && x !== '' && x !== false && x !== null
+}
+
+export const generateId = (length: number = 5) => generateRandomString(length, alphabet('0-9', 'a-z'))
+
+export function cn(...inputs: ClassValue[]) {
+	return twMerge(clsx(inputs))
 }
 
 export const alphabetical = (a: string, b: string) => {

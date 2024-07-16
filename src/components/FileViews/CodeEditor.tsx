@@ -22,7 +22,7 @@ export const CodeEditor = () => {
 
 	return (
 		<div className="relative flex min-h-0 flex-1 flex-col gap-4">
-			<div className="flex items-center gap-4 rounded-md bg-background p-1">
+			<div className="flex items-center gap-4 rounded-md bg-background p-1 dark:border">
 				<Button
 					variant="ghost"
 					size="sm"
@@ -38,7 +38,7 @@ export const CodeEditor = () => {
 			</div>
 
 			<div
-				className="flex min-h-0 flex-1 flex-col overflow-auto rounded-md bg-background py-2"
+				className="flex min-h-0 flex-1 flex-col overflow-auto rounded-md bg-background py-2 dark:border"
 				onKeyDown={(e) => {
 					if (e.key === 's' && e.metaKey) {
 						e.stopPropagation()

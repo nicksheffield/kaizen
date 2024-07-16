@@ -1,9 +1,9 @@
-import { useCallback, useMemo, useState } from 'react'
-import { Handle, Position } from 'reactflow'
+import { CSSProperties, useCallback, useMemo, useState } from 'react'
+import { getNodesBounds, Handle, Position, useReactFlow } from '@xyflow/react'
 import { alphabetical, camelize, cn, generateId, uc } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { LinkIcon, RepeatIcon, Trash2Icon } from 'lucide-react'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { ArrowRightIcon, LinkIcon, RepeatIcon, Trash2Icon } from 'lucide-react'
+import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Input } from '@/components/ui/input'
 import { useERDContext } from '@/lib/ERDContext'
 import { plural, singular } from 'pluralize'
@@ -13,7 +13,12 @@ import { CSS } from '@dnd-kit/utilities'
 import { getSourceName, getTargetName } from '@/lib/ERDHelpers'
 import { SelectList } from '@/components/SelectList'
 import { Switch } from '@/components/ui/switch'
-import { Row, RowGap, RowLabel } from '@/components/ERD/Rows'
+import { FormRow } from '@/components/FormFields'
+import { Card } from '@/components/ui/card'
+import { Switcher } from '@/components/Switcher'
+import { Separator } from '@/components/ui/separator'
+
+const sheetWidth = 600
 
 type Mode = 'source' | 'target'
 
@@ -23,12 +28,21 @@ type RelationRowProps = {
 	mode: Mode
 }
 
-// const zoomSelector = (s: ReactFlowState) => s.transform[2]
-
 export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
-	const { nodes, relations, setRelations, addNode, focusOn, userModelId, modalHasPopover, setModalHasPopover } =
-		useERDContext()
+	const {
+		nodes,
+		relations,
+		setRelations,
+		addNode,
+		focusOn,
+		showTypes,
+		modalHasPopover,
+		setModalHasPopover,
+		frameRef,
+	} = useERDContext()
 	const attrs = nodes.flatMap((x) => x.data.attributes)
+
+	const node = nodes.find((x) => x.data.id === model.id)
 
 	const sourceCardinality = rel.type === 'oneToMany' || rel.type === 'oneToOne' ? 'one' : 'many'
 	const targetCardinality = rel.type === 'oneToMany' || rel.type === 'manyToMany' ? 'many' : 'one'
@@ -152,6 +166,8 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 		`
 	}, [sourceModel?.name, targetCardinality, rel.targetName, rel.optional, targetModel?.name])
 
+	const isSource = sourceModel?.id === model.id
+
 	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
 		id: rel.id,
 	})
@@ -178,11 +194,32 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 			if (y.modelId === rel.targetId) return y.name === name
 		})
 
+	const flow = useReactFlow()
+
 	const [isPopoverOpen, setPopoverOpen] = useState(false)
+
 	const onPopoverOpen = (val: boolean) => {
 		setPopoverOpen(val)
 		if (val) {
 			setModalHasPopover(model.id)
+
+			if (node) {
+				const viewWidth = window.innerWidth - sheetWidth
+				const viewHeight = frameRef.current?.clientHeight || 0 // 872
+
+				const bounds = getNodesBounds([node], { nodeOrigin: [-0.5, -0.5] })
+
+				flow.setViewport(
+					{
+						x: bounds.x * -1 + viewWidth / 2,
+						y: bounds.y * -1 + viewHeight / 2,
+						zoom: 1,
+					},
+					{
+						duration: 600,
+					}
+				)
+			}
 		} else {
 			setModalHasPopover(null)
 		}
@@ -191,10 +228,90 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 	const isActiveModel = modalHasPopover === model.id
 	const openPopover = isActiveModel && isPopoverOpen
 
+	const thisSide = isSource ? (
+		<RelationSide
+			idValue={rel.sourceId}
+			idField="sourceId"
+			description={sourceDescription}
+			isLocked={sourceLocked}
+			isSource
+			isThis
+			thisCardinality={sourceCardinality}
+			changeCardinality={() => {
+				if (sourceCardinality !== 'one') {
+					updateField('type', targetCardinality === 'one' ? 'oneToOne' : 'oneToMany')
+				} else {
+					updateField('type', targetCardinality === 'one' ? 'manyToOne' : 'manyToMany')
+				}
+			}}
+			relation={rel}
+			updateField={updateField}
+		/>
+	) : (
+		<RelationSide
+			idValue={rel.targetId}
+			idField="targetId"
+			description={targetDescription}
+			isLocked={targetLocked}
+			isSource={false}
+			isThis
+			thisCardinality={targetCardinality}
+			changeCardinality={() => {
+				if (targetCardinality !== 'one') {
+					updateField('type', sourceCardinality === 'one' ? 'oneToOne' : 'manyToOne')
+				} else {
+					updateField('type', sourceCardinality === 'one' ? 'oneToMany' : 'manyToMany')
+				}
+			}}
+			relation={rel}
+			updateField={updateField}
+		/>
+	)
+
+	const otherSide = isSource ? (
+		<RelationSide
+			idValue={rel.targetId}
+			idField="targetId"
+			description={targetDescription}
+			isLocked={targetLocked}
+			isSource={false}
+			isThis={false}
+			thisCardinality={targetCardinality}
+			changeCardinality={() => {
+				if (targetCardinality !== 'one') {
+					updateField('type', sourceCardinality === 'one' ? 'oneToOne' : 'manyToOne')
+				} else {
+					updateField('type', sourceCardinality === 'one' ? 'oneToMany' : 'manyToMany')
+				}
+			}}
+			relation={rel}
+			updateField={updateField}
+		/>
+	) : (
+		<RelationSide
+			idValue={rel.sourceId}
+			idField="sourceId"
+			description={sourceDescription}
+			isLocked={sourceLocked}
+			isSource
+			isThis={false}
+			thisCardinality={sourceCardinality}
+			changeCardinality={() => {
+				if (sourceCardinality !== 'one') {
+					updateField('type', targetCardinality === 'one' ? 'oneToOne' : 'oneToMany')
+				} else {
+					updateField('type', targetCardinality === 'one' ? 'manyToOne' : 'manyToMany')
+				}
+			}}
+			relation={rel}
+			updateField={updateField}
+		/>
+	)
+
 	return (
-		<div key={rel.id} className="relative flex flex-col px-2" ref={setNodeRef} style={style}>
-			<Popover open={openPopover} onOpenChange={onPopoverOpen}>
-				<PopoverTrigger asChild>
+		<div key={rel.id} className="group/row relative flex flex-col px-2" ref={setNodeRef} style={style}>
+			<Sheet open={openPopover} onOpenChange={onPopoverOpen}>
+				<SheetTrigger asChild>
 					<Button
 						variant="ghost"
 						size="xs"
@@ -239,8 +356,9 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 						</div>
 						<div
 							className={cn(
-								'font-mono text-xs opacity-50 hover:underline',
-								isPopoverOpen && 'opacity-100'
+								'font-mono text-xs opacity-50 transition-opacity hover:underline',
+								isPopoverOpen && 'opacity-100',
+								!showTypes && 'mr-1.5 opacity-0 group-hover/row:opacity-100'
 							)}
 							onClick={(e) => {
 								const n = nodes.find((x) => {
@@ -256,247 +374,193 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 								}
 							}}
 						>
-							{type}
+							{showTypes ? type : <ArrowRightIcon className="h-4 w-4" />}
 						</div>
 					</Button>
-				</PopoverTrigger>
+				</SheetTrigger>
 
-				<PopoverContent
-					align="start"
+				<SheetContent
 					side="right"
-					sideOffset={18}
-					alignOffset={-56}
-					className="w-[calc(143*0.25rem)] overflow-hidden bg-background p-0 dark:border-0"
+					className="flex flex-col justify-between border-0 dark:border-l sm:max-w-[var(--sheet-width)]"
+					style={{ '--sheet-width': `${sheetWidth}px` } as CSSProperties}
 				>
-					<div className="flex flex-col divide-y divide-foreground/5">
-						<div className="flex h-10 items-center justify-between px-3 pr-2">
-							<div className="text-sm font-medium">Relationship</div>
+					<div className="flex flex-col divide-y">
+						<SheetHeader className="pb-6">
+							<SheetTitle>Edit Relationship</SheetTitle>
+						</SheetHeader>
 
-							<Button variant="ghost" size="xs" onClick={removeSelf}>
-								<Trash2Icon className="h-4 w-4 opacity-50" />
-							</Button>
+						<div className="flex flex-col gap-8 py-6">
+							{otherSide}
+							{thisSide}
 						</div>
 
-						<div className="grid grid-cols-[1fr,0.75rem,1fr] divide-x divide-foreground/5">
-							<div className="flex flex-col divide-y divide-foreground/5">
-								<div className="bg-accent px-3 py-2">
-									<div className="text-xs font-medium italic text-accent-foreground">
-										{sourceDescription}
-									</div>
-								</div>
+						<div className="py-6">
+							<Card className="divide-y divide-input overflow-hidden border">
+								<Switcher
+									label="Optional"
+									description="Makes the relationship optional."
+									checked={rel.optional}
+									onCheckedChange={(val) => updateField('optional', val)}
+								/>
+							</Card>
 
-								<Row>
-									<RowLabel>Model</RowLabel>
-
-									<SelectList
-										value={sourceModel?.id}
-										onValueChange={(id) => {
-											const source = nodes.find((x) => x.data.id === id)?.data
-											if (!source) return
-
-											updateField('sourceId', source.id)
-										}}
-										disabled={sourceLocked}
-										clearable={false}
-										options={nodes
-											.map((x) => x.data)
-											.slice()
-											.sort((a, b) => alphabetical(a.name, b.name))
-											.map((x) => ({ value: x.id, label: x.name }))}
-										className="-my-2 flex-1 justify-end gap-2 border-0 bg-transparent pr-3 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-									/>
-								</Row>
-
-								<Row>
-									<RowLabel>Alias</RowLabel>
-									<Input
-										value={rel.sourceName || ''}
-										onChange={(e) => updateField('sourceName', e.currentTarget.value)}
-										size="sm"
-										className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
-									/>
-								</Row>
-
-								<Row>
-									<RowLabel>Cardinality</RowLabel>
-									<div className="-my-2 mr-1 flex flex-1 justify-end">
-										<Button
-											variant="ghost"
-											size="xs"
-											onClick={() => {
-												if (sourceCardinality !== 'one') {
-													updateField(
-														'type',
-														targetCardinality === 'one' ? 'oneToOne' : 'oneToMany'
-													)
-												} else {
-													updateField(
-														'type',
-														targetCardinality === 'one' ? 'manyToOne' : 'manyToMany'
-													)
-												}
-											}}
-										>
-											{uc(sourceCardinality)}
-										</Button>
-									</div>
-								</Row>
-
-								{rel.sourceId === userModelId && (
-									<label className="flex h-10 flex-row items-center justify-between px-3">
-										<div className="text-sm font-medium text-muted-foreground">Default to Auth</div>
-										<Switch
-											checked={rel.sourceDefaultToAuth}
-											onCheckedChange={(val) => updateField('sourceDefaultToAuth', val)}
-											className="h-4 w-7"
-											thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
-										/>
-									</label>
-								)}
-							</div>
-							<div className="stripes" />
-							<div className="flex flex-col divide-y divide-foreground/5">
-								<div className="bg-accent px-3 py-2">
-									<div className="text-xs font-medium italic text-accent-foreground">
-										{targetDescription}
-									</div>
-								</div>
-
-								<Row>
-									<RowLabel>Model</RowLabel>
-
-									<SelectList
-										value={targetModel?.id}
-										onValueChange={(id) => {
-											const target = nodes.find((x) => x.data.id === id)?.data
-											if (!target) return
-
-											updateField('targetId', target.id)
-										}}
-										disabled={targetLocked}
-										clearable={false}
-										options={nodes
-											.map((x) => x.data)
-											.slice()
-											.sort((a, b) => alphabetical(a.name, b.name))
-											.map((x) => ({ value: x.id, label: x.name }))}
-										className="-my-2 flex-1 justify-end gap-2 border-0 bg-transparent pr-3 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-									/>
-								</Row>
-
-								<Row>
-									<RowLabel>Alias</RowLabel>
-									<Input
-										value={rel.targetName || ''}
-										onChange={(e) => updateField('targetName', e.currentTarget.value)}
-										size="sm"
-										className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
-									/>
-								</Row>
-
-								<Row>
-									<RowLabel>Cardinality</RowLabel>
-									<div className="-my-2 mr-1 flex flex-1 justify-end">
-										<Button
-											variant="ghost"
-											size="xs"
-											onClick={() => {
-												if (targetCardinality !== 'one') {
-													updateField(
-														'type',
-														sourceCardinality === 'one' ? 'oneToOne' : 'manyToOne'
-													)
-												} else {
-													updateField(
-														'type',
-														sourceCardinality === 'one' ? 'oneToMany' : 'manyToMany'
-													)
-												}
-											}}
-										>
-											{uc(targetCardinality)}
-										</Button>
-									</div>
-								</Row>
-
-								{rel.targetId === userModelId && (
-									<Row>
-										<RowLabel>Default to Auth</RowLabel>
-										<Switch
-											checked={rel.targetDefaultToAuth}
-											onCheckedChange={(val) => updateField('targetDefaultToAuth', val)}
-											className="mr-3 h-4 w-7"
-											thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
-										/>
-									</Row>
-								)}
-							</div>
-						</div>
-						<Row>
-							<RowLabel>Optional</RowLabel>
-							<Switch
-								checked={rel.optional}
-								onCheckedChange={(val) => updateField('optional', val)}
-								className="mr-3 h-4 w-7"
-								thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
-							/>
-						</Row>
-
-						{rel.type === 'manyToMany' && (
-							<div className="flex h-10 items-center px-1">
-								<Button
-									variant="outline"
-									size="xs"
-									className="w-full"
-									onClick={() => split()}
-									disabled={!targetModel || !sourceModel}
-								>
-									Expose joining table
-								</Button>
-							</div>
-						)}
-
-						{rel.type === 'oneToOne' && (
-							<>
-								<RowGap />
-
-								<div className="flex items-center justify-between bg-accent px-3 py-2 pr-1">
-									<div className="text-xs font-medium italic text-accent-foreground">
-										{sourceModel?.name || 'source'} has a{' '}
-										{singular(targetModel?.name.toLowerCase() || 'target')}Id field
-									</div>
+							{rel.type === 'manyToMany' && (
+								<div className="flex h-10 items-center px-1">
 									<Button
 										variant="outline"
-										size="icon-tiny"
-										className="-my-2 text-xs"
-										onClick={() => swap()}
+										size="xs"
+										className="w-full"
+										onClick={() => split()}
 										disabled={!targetModel || !sourceModel}
 									>
-										<RepeatIcon className="h-3 w-3" />
+										Expose joining table
 									</Button>
 								</div>
-							</>
-						)}
+							)}
+
+							{rel.type === 'oneToOne' && (
+								<>
+									<div className="flex items-center justify-between bg-accent px-3 py-2 pr-1">
+										<div className="text-xs font-medium italic text-accent-foreground">
+											{sourceModel?.name || 'source'} has a{' '}
+											{singular(targetModel?.name.toLowerCase() || 'target')}Id field
+										</div>
+										<Button
+											variant="outline"
+											size="icon-tiny"
+											className="-my-2 text-xs"
+											onClick={() => swap()}
+											disabled={!targetModel || !sourceModel}
+										>
+											<RepeatIcon className="h-3 w-3" />
+										</Button>
+									</div>
+								</>
+							)}
+						</div>
 					</div>
-				</PopoverContent>
-			</Popover>
+
+					<SheetFooter className="flex-row justify-start">
+						<Button
+							variant="outline"
+							onClick={removeSelf}
+							className="flex items-center justify-start gap-2"
+						>
+							<Trash2Icon className="h-4 w-4 opacity-50" /> Delete
+						</Button>
+					</SheetFooter>
+				</SheetContent>
+			</Sheet>
 
 			<Handle type="source" position={Position.Right} id={`${rel.id}-r`} className="opacity-0" />
 			<Handle type="source" position={Position.Left} id={`${rel.id}-l`} className="opacity-0" />
 			<Handle type="target" position={Position.Right} id={`${rel.id}-target-r`} className="opacity-0" />
 			<Handle type="target" position={Position.Left} id={`${rel.id}-target-l`} className="opacity-0" />
+		</div>
+	)
+}
 
-			{/* {mode === 'source' ? (
-				<>
-					<Handle type="source" position={Position.Right} id={`${rel.id}-r`} className="opacity-0" />
-					<Handle type="source" position={Position.Left} id={`${rel.id}-l`} className="opacity-0" />
-				</>
-			) : (
-				<>
-					<Handle type="target" position={Position.Right} id={`${rel.id}-target-r`} className="opacity-0" />
-					<Handle type="target" position={Position.Left} id={`${rel.id}-target-l`} className="opacity-0" />
-				</>
-			)} */}
+type RelationSideProps = {
+	idValue?: string
+	idField: keyof Relation
+	description: string
+	isLocked: boolean
+	isSource: boolean
+	isThis: boolean
+	thisCardinality: 'one' | 'many'
+	changeCardinality: () => void
+	relation: Relation
+	updateField: (field: keyof Relation, value: Relation[typeof field]) => void
+}
+
+const RelationSide = ({
+	idValue,
+	idField,
+	description,
+	isLocked,
+	isSource,
+	isThis,
+	thisCardinality,
+	changeCardinality,
+	relation,
+	updateField,
+}: RelationSideProps) => {
+	const { nodes, userModelId } = useERDContext()
+
+	return (
+		<div
+			className={cn(
+				'flex flex-col gap-4 rounded-xl p-4 pb-6 pt-5',
+				!isThis ? 'bg-primary/80 text-light dark:bg-muted' : 'bg-muted dark:border dark:bg-background'
+			)}
+		>
+			<div className={cn('text-sm', !isThis && 'border-0 bg-transparent')}>"{description.trim()}"</div>
+
+			<Separator className={cn(!isThis && 'bg-light/10')} />
+
+			<div className="grid grid-cols-[120px,1fr] gap-4">
+				<FormRow label="Type" description="Has one or many">
+					<Button
+						variant="outline"
+						onClick={changeCardinality}
+						className={cn(
+							!isThis &&
+								'border-transparent bg-background/20 text-light focus-visible:border-light focus-visible:ring-light'
+						)}
+					>
+						{uc(thisCardinality)}
+					</Button>
+				</FormRow>
+
+				<FormRow
+					label={`${isThis ? 'This' : 'Target'} Model`}
+					description="The model this relationship is pointing to"
+				>
+					<SelectList
+						value={idValue}
+						onValueChange={(id) => {
+							const model = nodes.find((x) => x.data.id === id)?.data
+							if (!model) return
+
+							updateField(idField, model.id)
+						}}
+						disabled={isLocked}
+						clearable={false}
+						options={nodes
+							.map((x) => x.data)
+							.slice()
+							.sort((a, b) => alphabetical(a.name, b.name))
+							.map((x) => ({ value: x.id, label: x.name }))}
+						className={cn(
+							!isThis &&
+								'border-transparent bg-background/20 text-light focus:border-light focus:ring-light'
+						)}
+					/>
+				</FormRow>
+			</div>
+
+			<div className="grid grid-cols-[1fr,1fr] gap-4">
+				<FormRow label="Alias" description="Rename this side of the relationship">
+					<Input
+						value={(isSource ? relation.sourceName : relation.targetName) || ''}
+						onChange={(e) => updateField(isSource ? 'sourceName' : 'targetName', e.currentTarget.value)}
+						className={cn(
+							!isThis &&
+								'border-transparent bg-background/20 text-light focus-visible:border-light focus-visible:ring-light'
+						)}
+					/>
+				</FormRow>
+			</div>
+
+			{relation.sourceId === userModelId && (
+				<label className="flex h-10 flex-row items-center justify-between px-3">
+					<div className="text-sm font-medium text-muted-foreground">Default to Auth</div>
+					<Switch
+						checked={relation.sourceDefaultToAuth}
+						onCheckedChange={(val) => updateField('sourceDefaultToAuth', val)}
+					/>
+				</label>
+			)}
 		</div>
 	)
 }

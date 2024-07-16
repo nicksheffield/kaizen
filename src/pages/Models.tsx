@@ -1,4 +1,4 @@
-import ReactFlow, { Node, NodeChange, ReactFlowProvider, applyNodeChanges, useReactFlow, useStore } from 'reactflow'
+import { ReactFlow, Node, NodeChange, ReactFlowProvider, applyNodeChanges, useReactFlow, useStore } from '@xyflow/react'
 import { ERDProvider } from '../components/ERDProvider'
 import { getAttrTypeRecommends, getSourceName, getTargetName, isReservedKeyword } from '@/lib/ERDHelpers'
 import { useCallback, useMemo, useRef, useState } from 'react'
@@ -8,19 +8,15 @@ import { useApp } from '@/lib/AppContext'
 import { ModelNode } from '@/components/ERD/ModelNode'
 import { SimpleFloatingEdge } from '@/components/ERD/SimpleFloatingEdge'
 import { useLocalStorage } from 'usehooks-ts'
-import { AlertTriangleIcon, EyeIcon, PlusIcon, SaveIcon, SearchIcon, ShrinkIcon, Undo2Icon } from 'lucide-react'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { generateId, getUserModelFields, roundToNearest } from '@/lib/utils'
-import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Button } from '@/components/ui/button'
-import {
-	DropdownMenu,
-	DropdownMenuCheckboxItem,
-	DropdownMenuContent,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { Controls } from '@/components/ERD/Controls'
+
+// https://github.com/xyflow/xyflow/issues/3030#issuecomment-1694349380
+function applyNodeChangesWithTypes(changes: NodeChange[], nodes: Node<Model>[]) {
+	// @ts-ignore
+	return applyNodeChanges(changes, nodes) as unknown as CustomNode[]
+}
 
 const snapSize = 24
 
@@ -47,14 +43,12 @@ export const ERDEditor = () => {
 	const nodeTypes = useMemo(() => ({ model: ModelNode }), [])
 	const edgeTypes = useMemo(() => ({ floating: SimpleFloatingEdge }), [])
 
-	const onNodesChange = useCallback((changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)), [])
+	const onNodesChange = useCallback(
+		(changes: NodeChange[]) => setNodes((nds) => applyNodeChangesWithTypes(changes, nds)),
+		[]
+	)
 
 	const flow = useReactFlow()
-
-	const center = (zoom?: number) => {
-		flow.fitView({ padding: 0.2, duration: 200 })
-		if (zoom) flow.zoomTo(zoom)
-	}
 
 	const wrapperRef = useRef<HTMLDivElement>(null)
 
@@ -187,6 +181,7 @@ export const ERDEditor = () => {
 		`project-${project?.settings.id}-erd-showConnections`,
 		true
 	)
+	const [showTypes, setShowTypes] = useLocalStorage(`project-${project?.settings.id}-erd-showTypes`, false)
 
 	const [modalHasPopover, setModalHasPopover] = useState<string | null>(null)
 
@@ -255,6 +250,8 @@ export const ERDEditor = () => {
 			const attr = attributes.find((x) => x.id === originalAttr.id)
 			if (!attr) return true
 		}
+
+		return false
 	}, [defaultModels, defaultRelations, nodes, relations])
 
 	const conflicts = useMemo(() => {
@@ -382,11 +379,14 @@ export const ERDEditor = () => {
 		})
 	}
 
+	const ref = useRef<HTMLDivElement>(null)
+
 	if (!project) return null
 
 	return (
 		<ERDProvider
 			value={{
+				frameRef: ref,
 				project,
 				nodes,
 				setNodes,
@@ -395,6 +395,8 @@ export const ERDEditor = () => {
 				setRelations,
 				showConnections,
 				setShowConnections,
+				showTypes,
+				setShowTypes,
 				detailed,
 				setDetailed,
 				showAuthAttributes,
@@ -405,9 +407,13 @@ export const ERDEditor = () => {
 				setUserModelId: updateUserModelId,
 				modalHasPopover,
 				setModalHasPopover,
+				reset,
+				save,
+				isDirty,
+				conflicts,
 			}}
 		>
-			<div ref={wrapperRef} className="relative flex flex-1 flex-col [view-transition-name:editor]">
+			<div ref={wrapperRef} className="relative flex flex-1 flex-col">
 				{nodes.length === 0 && (
 					<div className="absolute inset-0 z-10">
 						<div className="flex h-full flex-col items-center justify-center">
@@ -425,120 +431,26 @@ export const ERDEditor = () => {
 					</div>
 				)}
 
-				<div className="absolute left-2 top-2 z-10 flex flex-col gap-1 rounded-md border border-muted bg-background p-1 shadow-xl shadow-muted">
-					<Button variant="ghost" size="icon-sm" onClick={() => addNode()}>
-						<PlusIcon className="h-4 w-4" />
-					</Button>
-
-					<Button variant="ghost" size="icon-sm" onClick={() => center()}>
-						<ShrinkIcon className="h-4 w-4" />
-					</Button>
-
-					<Popover>
-						<PopoverTrigger asChild>
-							<Button variant="ghost" size="icon-sm">
-								<SearchIcon className="h-4 w-4" />
-							</Button>
-						</PopoverTrigger>
-						<PopoverContent side="right" align="start" className="bg-popover p-0">
-							<Command>
-								<CommandInput placeholder="Search for models..." />
-								<CommandList className="p-2">
-									<CommandEmpty>No results found.</CommandEmpty>
-
-									{nodes.map((x) => (
-										<CommandItem key={x.id} onSelect={() => focusOn(x)} className="px-3 py-2">
-											{x.data.name}
-										</CommandItem>
-									))}
-								</CommandList>
-							</Command>
-						</PopoverContent>
-					</Popover>
-
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant="ghost" size="icon-sm">
-								<EyeIcon className="h-4 w-4" />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent side="right" align="start">
-							<DropdownMenuLabel>View Options</DropdownMenuLabel>
-							<DropdownMenuSeparator />
-							<DropdownMenuCheckboxItem
-								checked={detailed}
-								onCheckedChange={setDetailed}
-								onSelect={(e) => e.preventDefault()}
-							>
-								Show Common Fields
-							</DropdownMenuCheckboxItem>
-							<DropdownMenuCheckboxItem
-								checked={showAuthAttributes}
-								onCheckedChange={setShowAuthAttributes}
-								onSelect={(e) => e.preventDefault()}
-							>
-								Show Auth Fields
-							</DropdownMenuCheckboxItem>
-							<DropdownMenuCheckboxItem
-								checked={showConnections}
-								onCheckedChange={setShowConnections}
-								onSelect={(e) => e.preventDefault()}
-							>
-								Show Relationship Lines
-							</DropdownMenuCheckboxItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</div>
-
-				<div className="absolute right-2 top-2 z-10 flex flex-row-reverse items-start gap-2">
-					<div className="flex flex-col gap-1 rounded-md border border-muted bg-background p-1 shadow-xl shadow-muted">
-						<Button variant="ghost" size="icon-sm" className="flex items-center gap-2" onClick={save}>
-							<SaveIcon className="h-4 w-4" />
-						</Button>
-
-						{isDirty && (
-							<Button variant="ghost" size="icon-sm" className="flex items-center gap-2" onClick={reset}>
-								<Undo2Icon className="h-4 w-4" />
-							</Button>
-						)}
-					</div>
-
-					<div className="flex flex-col items-end gap-2">
-						{isDirty && (
-							<div className="rounded-md bg-background p-2 text-sm font-medium shadow-xl shadow-muted">
-								You have unsaved changes
-							</div>
-						)}
-
-						{conflicts.length > 0 && (
-							<div className="flex flex-col gap-2 rounded-md border border-muted bg-destructive p-2 shadow-xl shadow-muted">
-								{conflicts.map((message) => (
-									<div
-										className="flex items-center gap-2 text-sm font-medium text-destructive-foreground"
-										key={message}
-									>
-										<div className="flex-1 text-right">{message}</div>
-										<AlertTriangleIcon className="h-4 w-4" />
-									</div>
-								))}
-							</div>
-						)}
-					</div>
-				</div>
+				<Controls />
 
 				<ERDMarkers />
 
 				<ReactFlow
-					{...{ nodes, edges, nodeTypes, onNodesChange }}
+					ref={ref}
+					nodes={nodes}
+					edges={edges}
+					onNodesChange={onNodesChange}
+					nodeTypes={nodeTypes}
 					edgeTypes={edgeTypes}
 					snapToGrid
 					snapGrid={[snapSize, snapSize]}
 					zoomOnDoubleClick={false}
-					edgesUpdatable={false}
+					edgesReconnectable={false}
 					fitView={true}
 					maxZoom={1}
 					minZoom={0.1}
 					deleteKeyCode={null}
+					elevateNodesOnSelect
 					className="h-full w-full"
 				>
 					{/* <Background

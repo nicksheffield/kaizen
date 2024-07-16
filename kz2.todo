@@ -36,6 +36,8 @@ Tasks
 [x] enable user registration
 [x] magic link logins
 
+[ ] optional haveibeenpwned api integration https://haveibeenpwned.com/API/v3
+	This would be based on if the api key is present in the env
 [ ] need to protect against privilege escalation
 [ ] add the ability to mark files as "// keep" or maybe add a .kzignore file where you list files/directories to not remove upon generation
 [ ] make it so you can turn off one side of a relationship

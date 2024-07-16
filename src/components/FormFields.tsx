@@ -26,7 +26,7 @@ export const FormRow = ({ label, description, hint, className, children }: Props
 					{hint && <Hint content={hint} className="-my-1" />}
 				</Label>
 			)}
-			{description && <div className="text-sm text-muted-foreground">{description}</div>}
+			{description && <div className="-mt-1 text-xs opacity-60">{description}</div>}
 			{children}
 		</div>
 	)

@@ -1,5 +1,5 @@
 import { FormInput, FormRow } from '@/components/FormFields'
-import { Switcher } from '@/components/Switcher'
+import { FormSwitcher } from '@/components/Switcher'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
@@ -78,8 +78,8 @@ export const Details = () => {
 								/> */}
 
 								<div className="-mb-4 font-medium">Monorepo</div>
-								<Card className="divide-y divide-input overflow-hidden border-input">
-									<Switcher
+								<Card className="divide-y divide-input overflow-hidden border">
+									<FormSwitcher
 										name="hasClient"
 										label="Have Client"
 										description="Set this to true if you have a vite based app in the 'apps/client' directory"
@@ -87,8 +87,8 @@ export const Details = () => {
 								</Card>
 
 								<div className="-mb-4 font-medium">Dev</div>
-								<Card className="divide-y divide-input overflow-hidden border-input">
-									<Switcher
+								<Card className="divide-y divide-input overflow-hidden border">
+									<FormSwitcher
 										name="useOrbStack"
 										label="Use Orb Stack"
 										description="Use orb stack instead of docker desktop to enable unique local domains in dev."

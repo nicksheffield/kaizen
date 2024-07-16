@@ -18,6 +18,21 @@ export const AttributeType = {
 } as const
 export const AttributeTypeSchema = z.nativeEnum(AttributeType)
 
+export const AttributeTypeNames: Record<AttributeType, { label: string; description: string }> = {
+	id: { label: 'ID', description: 'The primary key of the model' },
+	a_i: { label: 'Auto-Increment', description: 'Auto-increments the primary key of the model' },
+	varchar: { label: 'Varchar(255)', description: 'A string with a maximum length of 255 characters' },
+	text: { label: 'Text', description: 'A string with a maximum length of 65535 characters' },
+	base64: { label: 'Base64 File', description: 'A text field useful for storing small files in base64 format' },
+	password: { label: 'Password', description: 'A string that is automatically hashed using Argon2id' },
+	int: { label: 'Integer', description: 'An whole number' },
+	float: { label: 'Float', description: 'A floating point number' },
+	boolean: { label: 'Boolean', description: 'An integer of either 0 or 1, translated into true or false' },
+	datetime: { label: 'Datetime', description: 'A date and time encoded in ISO 8601' },
+	date: { label: 'Date', description: 'A date encoded in ISO 8601' },
+	time: { label: 'Time', description: 'A time encoded in ISO 8601' },
+}
+
 export type Attribute = z.infer<typeof AttributeSchema>
 export const AttributeSchema = z.object({
 	id: z.string(),

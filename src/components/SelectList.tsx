@@ -1,12 +1,20 @@
-import { ReactNode, useState } from 'react'
+import { useState } from 'react'
 import { Falsish, isNotFalsish } from '@/lib/utils'
-import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+	Select,
+	SelectContent,
+	SelectDescItem,
+	SelectSeparator,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select'
 import { SelectProps } from '@radix-ui/react-select'
 import { Button } from '@/components/ui/button'
 
 type Option = {
-	label: ReactNode
+	label: string
 	value: string
+	description?: string
 	disabled?: boolean
 }
 
@@ -35,9 +43,13 @@ export const SelectList = ({
 			</SelectTrigger>
 			<SelectContent position="item-aligned">
 				{options.filter(isNotFalsish).map((option) => (
-					<SelectItem key={option.value} value={option.value} disabled={option.disabled}>
-						{option.label}
-					</SelectItem>
+					<SelectDescItem
+						key={option.value}
+						value={option.value}
+						disabled={option.disabled}
+						textValue={option.label}
+						description={option.description}
+					/>
 				))}
 				{clearable && (
 					<>

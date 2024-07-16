@@ -1,5 +1,6 @@
 import { type DetailedHTMLProps, type HTMLAttributes, type ElementType, forwardRef } from 'react'
 import { Button } from '@/components/ui/button'
+import { useERDContext } from '@/lib/ERDContext'
 
 type FieldRowProps = DetailedHTMLProps<HTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
 	title: string
@@ -11,6 +12,8 @@ type FieldRowProps = DetailedHTMLProps<HTMLAttributes<HTMLButtonElement>, HTMLBu
 export const FieldRow = forwardRef<HTMLButtonElement, FieldRowProps>(
 	({ title, type, icon, placeholder, ...props }, ref) => {
 		const Icon = icon
+
+		const { showTypes } = useERDContext()
 
 		return (
 			<Button
@@ -28,7 +31,7 @@ export const FieldRow = forwardRef<HTMLButtonElement, FieldRowProps>(
 						<div className="text-xs font-medium italic opacity-50">{placeholder}</div>
 					)}
 				</div>
-				<div className="font-mono text-xs opacity-50">{type}</div>
+				{showTypes && <div className="font-mono text-xs opacity-50">{type}</div>}
 			</Button>
 		)
 	}

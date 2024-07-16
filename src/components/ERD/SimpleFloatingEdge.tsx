@@ -1,9 +1,7 @@
 // https://reactflow.dev/docs/examples/edges/simple-floating-edges/
 import { useERDContext } from '@/lib/ERDContext'
 import { useCallback } from 'react'
-import { useStore, getSmoothStepPath, type Node, type EdgeProps } from 'reactflow'
-
-import { Position, internalsSymbol } from 'reactflow'
+import { useStore, getSmoothStepPath, type Node, type EdgeProps, Position } from '@xyflow/react'
 
 type Dir = 'from' | 'to'
 
@@ -31,8 +29,10 @@ const getParams = (
 
 const getHandleCoordsByPosition = (node: Node, handlePosition: Position, relId: string, dir: Dir) => {
 	const handle = [
-		...(node[internalsSymbol]?.handleBounds?.source || []),
-		...(node[internalsSymbol]?.handleBounds?.target || []),
+		// dunno if this is right
+		...(node.handles?.filter((x) => x.position === handlePosition) || []),
+		// ...(node[internalsSymbol]?.handleBounds?.source || []),
+		// ...(node[internalsSymbol]?.handleBounds?.target || []),
 	].find((h) => {
 		if (handlePosition === Position.Left) {
 			if (dir === 'from') return h.id === `${relId}-l`
@@ -61,16 +61,16 @@ const getHandleCoordsByPosition = (node: Node, handlePosition: Position, relId: 
 			break
 	}
 
-	const x = (node.positionAbsolute?.x || 0) + (handle?.x || 0) + offsetX
-	const y = (node.positionAbsolute?.y || 0) + (handle?.y || 0) + offsetY
+	const x = (node.position?.x || 0) + (handle?.x || 0) + offsetX
+	const y = (node.position?.y || 0) + (handle?.y || 0) + offsetY
 
 	return [x, y]
 }
 
 const getNodeCenter = (node: Node) => {
 	return {
-		x: (node.positionAbsolute?.x || 0) + (node?.width || 0) / 2,
-		y: (node.positionAbsolute?.y || 0) + (node?.height || 0) / 2,
+		x: (node.position?.x || 0) + (node?.width || 0) / 2,
+		y: (node.position?.y || 0) + (node?.height || 0) / 2,
 	}
 }
 
@@ -91,8 +91,8 @@ export const getEdgeParams = (source: Node, target: Node, relId: string) => {
 export const SimpleFloatingEdge = ({ id, source, target, markerEnd, markerStart, style, data }: EdgeProps) => {
 	const { showConnections } = useERDContext()
 
-	const sourceNode = useStore(useCallback((store) => store.nodeInternals.get(source), [source]))
-	const targetNode = useStore(useCallback((store) => store.nodeInternals.get(target), [target]))
+	const sourceNode = useStore(useCallback((store) => store.nodeLookup.get(source), [source]))
+	const targetNode = useStore(useCallback((store) => store.nodeLookup.get(target), [target]))
 	const rel = useStore(useCallback((store) => store.edges.find((x) => x.id === id), [id]))
 
 	if (!sourceNode || !targetNode) {
@@ -120,7 +120,7 @@ export const SimpleFloatingEdge = ({ id, source, target, markerEnd, markerStart,
 		targetX: tx,
 		targetY: ty,
 		borderRadius: 20,
-		centerX: (tx + sx) / 2 + (rel?.data.sourceOrder + 1) * -10 + 15,
+		centerX: (tx + sx) / 2 + ((rel?.data?.sourceOrder as number) + 1) * -10 + 15,
 		offset: 40,
 	})
 

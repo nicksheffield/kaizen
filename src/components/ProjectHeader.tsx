@@ -2,7 +2,7 @@ import { openConfirm } from '@/components/Alert'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { useApp } from '@/lib/AppContext'
-import { ChevronDownIcon, PackageOpenIcon, RefreshCcwDotIcon, XIcon } from 'lucide-react'
+import { BookOpenIcon, ChevronDownIcon, PackageOpenIcon, RefreshCcwDotIcon, XIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 export const ProjectHeader = () => {
@@ -52,6 +52,12 @@ export const ProjectHeader = () => {
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent side="bottom" align="end">
+					<DropdownMenuItem asChild>
+						<a href="https://docs.kz-app.com" target="_blank" rel="noreferrer">
+							<BookOpenIcon className="mr-2 h-4 w-4" />
+							Kaizen Docs
+						</a>
+					</DropdownMenuItem>
 					<DropdownMenuItem
 						onClick={() => {
 							openConfirm({

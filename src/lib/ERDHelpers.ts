@@ -1,4 +1,4 @@
-import { type Node } from 'reactflow'
+import { type Node } from '@xyflow/react'
 import { AttributeType, Project, type Model, type Relation } from './projectSchemas'
 import { plural, singular } from 'pluralize'
 import { camelize } from '@/lib/utils'

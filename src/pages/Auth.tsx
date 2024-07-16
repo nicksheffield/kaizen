@@ -1,5 +1,5 @@
 import { FormInput, FormRow } from '@/components/FormFields'
-import { Switcher } from '@/components/Switcher'
+import { FormSwitcher } from '@/components/Switcher'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
@@ -79,26 +79,26 @@ export const Auth = () => {
 								</FormRow>
 
 								<div className="-mb-4 font-medium">Tokens</div>
-								<Card className="divide-y divide-input overflow-hidden border-input">
-									<Switcher
+								<Card className="divide-y divide-input overflow-hidden border">
+									<FormSwitcher
 										name="enableCookies"
 										label="Enable Cookies"
 										description="Use HttpOnly cookies for auth."
 									/>
 
-									<Switcher
+									<FormSwitcher
 										name="enableBearer"
 										label="Enable Bearer Tokens"
 										description="Use Bearer tokens for auth."
 									/>
 
-									<Switcher
+									<FormSwitcher
 										name="enableApiKeys"
 										label="Enable Api Keys"
 										description="Use API Keys for auth."
 									/>
 
-									<Switcher
+									<FormSwitcher
 										name="enableImpersonation"
 										label="Enable Impersonation"
 										description="Users with the 'impersonator' role can use the `/auth/impersonate` endpoint to impersonate users."
@@ -106,26 +106,26 @@ export const Auth = () => {
 								</Card>
 
 								<div className="-mb-4 font-medium">Authentication</div>
-								<Card className="divide-y divide-input overflow-hidden border-input">
-									<Switcher
+								<Card className="divide-y divide-input overflow-hidden border">
+									<FormSwitcher
 										name="enableMagicLink"
 										label="Enable Magic Links"
 										description="Magic links allow users to login without a password."
 									/>
 
-									<Switcher
+									<FormSwitcher
 										name="enableAuthenticator2fa"
 										label="Enable Authenticator 2fa"
 										description="Enable 2fa using an authenticator app."
 									/>
 
-									<Switcher
+									<FormSwitcher
 										name="enableEmail2fa"
 										label="Enable Email 2fa"
 										description="Enable 2fa using a code sent via email."
 									/>
 
-									<Switcher
+									<FormSwitcher
 										name="require2fa"
 										label="Require 2fa"
 										description="Force users to set up 2fa."
@@ -134,14 +134,14 @@ export const Auth = () => {
 								</Card>
 
 								<div className="-mb-4 font-medium">User Management</div>
-								<Card className="divide-y divide-input overflow-hidden border-input">
-									<Switcher
+								<Card className="divide-y divide-input overflow-hidden border">
+									<FormSwitcher
 										name="enableRegistration"
 										label="Enable Registration"
 										description="Allow users to register new accounts themselves."
 									/>
 
-									<Switcher
+									<FormSwitcher
 										name="requireAccountConfirmation"
 										label="Require Account Confirmation"
 										description="Force users to confirm their email address before they can login."

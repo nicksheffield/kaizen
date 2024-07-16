@@ -8,7 +8,7 @@ import { ThemeProvider } from '@/components/ThemeProvider'
 import { CommandMenu } from '@/components/CommandMenu'
 import { Toaster } from '@/components/ui/sonner'
 
-import 'reactflow/dist/style.css'
+import '@xyflow/react/dist/style.css'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

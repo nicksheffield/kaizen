@@ -1,6 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { Environment } from '@/pages/Environment'
-import { Layout } from '@/components/Layout'
+import { Header } from '@/components/Header'
 import { useApp } from '@/lib/AppContext'
 import { Welcome } from '@/pages/Welcome'
 import { Details } from '@/pages/Details'
@@ -15,11 +15,13 @@ export const App = () => {
 
 	return (
 		<BrowserRouter>
-			<Routes>
-				{!project ? (
-					<Route path="*" element={<Welcome />} />
-				) : (
-					<Route path="/" element={<Layout />}>
+			{!project ? (
+				<Welcome />
+			) : (
+				<div className="flex h-screen min-h-0 flex-col divide-y divide-muted overflow-hidden bg-muted dark:bg-muted/40">
+					<Header />
+
+					<Routes>
 						<Route path="/" element={<Models />} />
 						<Route path="/details" element={<Details />} />
 						<Route path="/auth" element={<Auth />} />
@@ -29,9 +31,9 @@ export const App = () => {
 						<Route path="/files" element={<Files />} />
 
 						<Route path="*" element={<Navigate to="/" />} />
-					</Route>
-				)}
-			</Routes>
+					</Routes>
+				</div>
+			)}
 		</BrowserRouter>
 	)
 }

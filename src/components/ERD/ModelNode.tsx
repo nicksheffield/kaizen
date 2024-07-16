@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from 'react'
-import { useStore, useUpdateNodeInternals, type NodeProps } from 'reactflow'
+import { useStore, useUpdateNodeInternals, type NodeProps, type Node } from '@xyflow/react'
 import { camelize, cn, generateId } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { CalendarIcon, LockIcon, PlusIcon, Settings2Icon, Trash2Icon, UserIcon } from 'lucide-react'
@@ -46,7 +46,7 @@ const isModelLocked = (model: Model) => {
 	return false
 }
 
-export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
+export const ModelNode = ({ data, selected }: NodeProps<Node<Model>>) => {
 	const {
 		project,
 		userModelId,
@@ -196,15 +196,16 @@ export const ModelNode = ({ data, selected }: NodeProps<Model>) => {
 	return (
 		<div
 			className={cn(
-				'flex min-w-[216px] cursor-default flex-col gap-4 rounded-md bg-background pb-3 dark:border-0',
-				selected && 'ring-2 ring-primary dark:ring-offset-background',
+				'flex min-w-[216px] cursor-default flex-col gap-4 rounded-md bg-background pb-3 transition-opacity duration-200 dark:border',
+				selected && 'opacity-100 ring-2 ring-primary dark:ring-offset-background',
 				!data.enabled && 'opacity-50',
-				modalHasPopover && !isActiveModel && 'opacity-50'
+				modalHasPopover && !isActiveModel && 'pointer-events-none opacity-0'
+				// selected && 'relative z-[9999]'
 			)}
-			style={{ viewTransitionName: `model-${data.id}` }}
 			onMouseDown={() => {
 				addSelectedNodes([data.id])
 			}}
+			onClick={(e) => e.stopPropagation()}
 		>
 			<div
 				className={cn(
@@ -463,7 +464,7 @@ const Attributes = ({ model, detailed, remove, updateAttributeField, updateAttri
 				/>
 			)}
 
-			<div className="flex flex-col gap-y-px">
+			<div className="flex flex-col">
 				<DndContext
 					sensors={sensors}
 					collisionDetection={closestCenter}

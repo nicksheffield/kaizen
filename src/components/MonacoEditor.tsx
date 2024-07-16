@@ -48,8 +48,8 @@ export const MonacoEditor = ({ value, onValueChange, extension, readonly = false
 			inherit: true,
 			rules: [],
 			colors: {
-				'editor.background': '#0e0e11',
-				'editor.lineHighlightBackground': '#18181a',
+				'editor.background': '#020817',
+				'editor.lineHighlightBackground': '#1c202e',
 			},
 		})
 

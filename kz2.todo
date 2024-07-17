@@ -45,7 +45,6 @@ Tasks
 	These defaults are included via the generator, unless a mod version is present.
 [ ] make the clientChange generators modify the files rather than rewriting them
 [ ] make the .env DB_URI re-generate based on useOrbstack and name
-[ ] add api for history and email log
 [ ] code hook functionality
 [ ] add orderBys and filters to nested objects in gql
 	ie:

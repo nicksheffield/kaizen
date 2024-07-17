@@ -239,7 +239,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Node<Model>>) => {
 			onMouseDown={() => {
 				addSelectedNodes([data.id])
 			}}
-			onClick={(e) => e.stopPropagation()}
+			// onClick={(e) => e.stopPropagation()}
 		>
 			<div
 				className={cn(

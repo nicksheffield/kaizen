@@ -317,7 +317,7 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 						variant="ghost"
 						size="xs"
 						className={cn(
-							'flex h-[24px] items-center justify-between gap-6 rounded-sm px-1 py-0 hover:bg-primary/20',
+							'flex h-[24px] items-center justify-between gap-6 rounded-sm px-1 py-0 hover:bg-primary/5',
 							isPopoverOpen &&
 								'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
 						)}

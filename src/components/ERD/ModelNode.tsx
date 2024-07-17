@@ -285,7 +285,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Node<Model>>) => {
 
 							<div className="flex flex-col gap-8 py-6">
 								{isUserModel && (
-									<div className="flex h-10 items-center justify-start bg-muted px-3 text-sm text-muted-foreground">
+									<div className="flex h-10 items-center justify-start rounded-md bg-muted px-3 text-sm text-muted-foreground">
 										<UserIcon className="mr-2 h-4 w-4" />
 										This is the Auth model.
 									</div>

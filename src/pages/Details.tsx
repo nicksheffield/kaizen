@@ -1,7 +1,7 @@
 import { FormInput, FormRow } from '@/components/FormFields'
 import { FormSwitcher } from '@/components/Switcher'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useApp } from '@/lib/AppContext'
@@ -55,57 +55,54 @@ export const Details = () => {
 	return (
 		<Form context={form} onSubmit={onSubmit} disableWhileSubmitting className="flex min-h-0 flex-1 flex-row">
 			<ScrollArea className="flex-1">
-				<div className="flex flex-col items-center p-6">
-					<Card className="w-full max-w-3xl border-0 shadow-none">
-						<CardHeader className="mb-6">
+				<div className="flex flex-col items-center gap-6 p-6">
+					<div className="flex w-full max-w-5xl items-center justify-between border-0 border-b shadow-none">
+						<div className="flex flex-col gap-2 py-6">
 							<CardTitle className="flex items-center gap-2">
 								<BoltIcon className="h-6 w-6" />
 								Details
 							</CardTitle>
-							<CardDescription>The general settings for the project</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<div className="flex w-full flex-col gap-6">
+							<CardDescription>The general settings for the project.</CardDescription>
+						</div>
+
+						<Button type="submit">
+							Save
+							{form.formState.isSubmitting && <Loader2Icon className="ml-2 h-4 w-4 animate-spin" />}
+						</Button>
+					</div>
+
+					<div className="grid w-full max-w-5xl grid-cols-[1fr,2fr] gap-6">
+						<div className="flex flex-col gap-2">
+							<div className="font-medium">Settings</div>
+							<div className="text-sm text-muted-foreground">The general settings for the project.</div>
+						</div>
+
+						<Card className="flex flex-col gap-6 overflow-hidden border">
+							<CardContent className="flex flex-col gap-6 p-6">
 								<FormRow label="Name" description="The name of the project. Not used for much">
 									<FormInput name="name" />
 								</FormRow>
+							</CardContent>
+						</Card>
 
-								{/* <FormSelectRow
-									name="generator"
-									label="Generator"
-									description="The generator to use."
-									options={generatorNames.map((x) => ({ label: x, value: x }))}
-								/> */}
+						<div className="flex flex-col gap-2">
+							<div className="font-medium">Monorepo</div>
+							<div className="text-sm text-muted-foreground">The monorepo settings for the project.</div>
+						</div>
 
-								<div className="-mb-4 font-medium">Monorepo</div>
-								<Card className="divide-y divide-input overflow-hidden border">
-									<FormSwitcher
-										name="hasClient"
-										label="Have Client"
-										description="Set this to true if you have a vite based app in the 'apps/client' directory"
-									/>
-								</Card>
-
-								<div className="-mb-4 font-medium">Dev</div>
-								<Card className="divide-y divide-input overflow-hidden border">
-									<FormSwitcher
-										name="useOrbStack"
-										label="Use Orb Stack"
-										description="Use orb stack instead of docker desktop to enable unique local domains in dev."
-									/>
-								</Card>
-
-								<div>
-									<Button type="submit">
-										Save
-										{form.formState.isSubmitting && (
-											<Loader2Icon className="ml-2 h-4 w-4 animate-spin" />
-										)}
-									</Button>
-								</div>
-							</div>
-						</CardContent>
-					</Card>
+						<Card className="divide-y divide-input overflow-hidden border">
+							<FormSwitcher
+								name="hasClient"
+								label="Have Client"
+								description="Set this to true if you have a vite based app in the 'apps/client' directory"
+							/>
+							<FormSwitcher
+								name="useOrbStack"
+								label="Use Orb Stack"
+								description="Use orb stack instead of docker desktop to enable unique local domains in dev."
+							/>
+						</Card>
+					</div>
 				</div>
 			</ScrollArea>
 		</Form>

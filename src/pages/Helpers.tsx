@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardDescription, CardTitle } from '@/components/ui/card'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -112,9 +112,9 @@ export const ${model.name}Mutations = {
 	return (
 		<div className="flex min-h-0 flex-1 flex-row">
 			<ScrollArea className="flex-1">
-				<div className="flex flex-col items-center p-6">
-					<Card className="w-full max-w-3xl border-0 shadow-none">
-						<CardHeader className="mb-6">
+				<div className="flex flex-col items-center gap-6 p-6">
+					<div className="flex w-full max-w-5xl items-center justify-between border-0 border-b shadow-none">
+						<div className="flex flex-col gap-2 py-6">
 							<CardTitle className="flex items-center gap-2">
 								<DraftingCompassIcon className="h-6 w-6" />
 								Code Helpers
@@ -122,96 +122,101 @@ export const ${model.name}Mutations = {
 							<CardDescription>
 								Generate code snippets based on your projects configuration
 							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							{/* <div className="font-medium">URQL</div> */}
-							<div className="flex flex-col gap-6">
-								<div className="relative">
-									<div className="pointer-events-none absolute left-3 flex h-full items-center">
-										<FilterIcon className="w-4 opacity-50" />
-									</div>
-									<Input
-										value={filter}
-										onChange={(e) => setFilter(e.target.value)}
-										placeholder="Filter models..."
-										className="pl-9"
-									/>
+						</div>
+					</div>
+
+					<div className="grid w-full max-w-5xl grid-cols-[1fr,2fr] gap-6">
+						<div className="flex flex-col gap-2">
+							<div className="font-medium">URQL</div>
+							<div className="text-sm text-muted-foreground">
+								Generate urql queries and mutations based on your models
+							</div>
+						</div>
+
+						<div className="flex flex-col gap-6">
+							<div className="relative">
+								<div className="pointer-events-none absolute left-3 flex h-full items-center">
+									<FilterIcon className="w-4 opacity-50" />
 								</div>
+								<Input
+									value={filter}
+									onChange={(e) => setFilter(e.target.value)}
+									placeholder="Filter models..."
+									className="pl-9"
+								/>
+							</div>
 
-								<div className="divide-y divide-input overflow-hidden rounded-md border border-input">
-									{project?.models
-										.filter((x) =>
-											x.name.toLowerCase().trim().includes(filter.toLowerCase().trim())
-										)
-										.map((model) => (
-											<div
-												key={model.id}
-												className="flex items-center justify-between gap-4 px-4 py-3"
-											>
-												<div className="text-sm font-medium">{model.name}</div>
+							<Card className="divide-y divide-input overflow-hidden rounded-md border border-input">
+								{project?.models
+									.filter((x) => x.name.toLowerCase().trim().includes(filter.toLowerCase().trim()))
+									.map((model) => (
+										<div
+											key={model.id}
+											className="flex items-center justify-between gap-4 px-4 py-3"
+										>
+											<div className="text-sm font-medium">{model.name}</div>
 
-												<div className="flex items-center gap-4">
+											<div className="flex items-center gap-4">
+												<Button
+													variant="outline"
+													size="sm"
+													onClick={() => copy(queryById(model))}
+												>
+													Query by id
+												</Button>
+
+												<Button
+													variant="outline"
+													size="sm"
+													onClick={() => copy(queryMany(model))}
+												>
+													Query many
+												</Button>
+
+												<div className="flex items-center">
 													<Button
 														variant="outline"
 														size="sm"
-														onClick={() => copy(queryById(model))}
+														className="rounded-r-none"
+														onClick={() => copy(allMutations(model))}
 													>
-														Query by id
+														Mutations
 													</Button>
-
-													<Button
-														variant="outline"
-														size="sm"
-														onClick={() => copy(queryMany(model))}
-													>
-														Query many
-													</Button>
-
-													<div className="flex items-center">
-														<Button
-															variant="outline"
-															size="sm"
-															className="rounded-r-none"
-															onClick={() => copy(allMutations(model))}
-														>
-															Mutations
-														</Button>
-														<DropdownMenu>
-															<DropdownMenuTrigger asChild>
-																<Button
-																	variant="outline"
-																	size="icon-sm"
-																	className="-ml-px rounded-l-none"
-																>
-																	<ChevronDownIcon className="w-4" />
-																</Button>
-															</DropdownMenuTrigger>
-															<DropdownMenuContent>
-																<DropdownMenuItem
-																	onClick={() => copy(createMutation(model))}
-																>
-																	Create only
-																</DropdownMenuItem>
-																<DropdownMenuItem
-																	onClick={() => copy(updateMutation(model))}
-																>
-																	Update only
-																</DropdownMenuItem>
-																<DropdownMenuItem
-																	onClick={() => copy(deleteMutation(model))}
-																>
-																	Delete only
-																</DropdownMenuItem>
-															</DropdownMenuContent>
-														</DropdownMenu>
-													</div>
+													<DropdownMenu>
+														<DropdownMenuTrigger asChild>
+															<Button
+																variant="outline"
+																size="icon-sm"
+																className="-ml-px rounded-l-none"
+															>
+																<ChevronDownIcon className="w-4" />
+															</Button>
+														</DropdownMenuTrigger>
+														<DropdownMenuContent>
+															<DropdownMenuItem
+																onClick={() => copy(createMutation(model))}
+															>
+																Create only
+															</DropdownMenuItem>
+															<DropdownMenuItem
+																onClick={() => copy(updateMutation(model))}
+															>
+																Update only
+															</DropdownMenuItem>
+															<DropdownMenuItem
+																onClick={() => copy(deleteMutation(model))}
+															>
+																Delete only
+															</DropdownMenuItem>
+														</DropdownMenuContent>
+													</DropdownMenu>
 												</div>
 											</div>
-										))}
-								</div>
-							</div>
-						</CardContent>
-					</Card>
+										</div>
+									))}
+							</Card>
+						</div>
+					</div>
 				</div>
 			</ScrollArea>
 		</div>

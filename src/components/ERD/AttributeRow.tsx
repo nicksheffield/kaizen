@@ -207,7 +207,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 
 				<SheetContent
 					side="right"
-					className="flex flex-col justify-between divide-y border-0 dark:border-l sm:max-w-[var(--sheet-width)]"
+					className="flex h-screen flex-col justify-between overflow-y-scroll border-0 dark:border-l sm:max-w-[var(--sheet-width)]"
 					style={{ '--sheet-width': `${sheetWidth}px` } as CSSProperties}
 				>
 					<div className="flex flex-col divide-y">
@@ -321,10 +321,8 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 									</FormRow>
 								</>
 							)}
-						</div>
 
-						{attr.name !== 'id' && (
-							<div className="flex flex-col gap-8 py-6">
+							{attr.name !== 'id' && (
 								<Card className="divide-y divide-input overflow-hidden border">
 									<Switcher
 										label="Nullable"
@@ -348,8 +346,8 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 										disabled={isLocked}
 									/>
 								</Card>
-							</div>
-						)}
+							)}
+						</div>
 					</div>
 
 					{!isLocked && (

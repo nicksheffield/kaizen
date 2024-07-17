@@ -1,7 +1,7 @@
 import { CSSProperties, useCallback, useMemo, useState } from 'react'
 import { getNodesBounds, Handle, Position, useReactFlow } from '@xyflow/react'
 import { alphabetical, camelize, cn, generateId, uc } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { ArrowRightIcon, LinkIcon, RepeatIcon, Trash2Icon } from 'lucide-react'
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Input } from '@/components/ui/input'
@@ -17,6 +17,7 @@ import { FormRow } from '@/components/FormFields'
 import { Card } from '@/components/ui/card'
 import { Switcher } from '@/components/Switcher'
 import { Separator } from '@/components/ui/separator'
+import { labelVariants } from '@/components/ui/label'
 
 const sheetWidth = 600
 
@@ -381,7 +382,7 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 
 				<SheetContent
 					side="right"
-					className="flex flex-col justify-between border-0 dark:border-l sm:max-w-[var(--sheet-width)]"
+					className="flex h-screen min-h-0 flex-col justify-between overflow-y-scroll border-0 dark:border-l sm:max-w-[var(--sheet-width)]"
 					style={{ '--sheet-width': `${sheetWidth}px` } as CSSProperties}
 				>
 					<div className="flex flex-col divide-y">
@@ -389,12 +390,11 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 							<SheetTitle>Edit Relationship</SheetTitle>
 						</SheetHeader>
 
-						<div className="flex flex-col gap-8 py-6">
+						<div className="flex flex-col gap-6 py-6">
 							{otherSide}
-							{thisSide}
-						</div>
 
-						<div className="py-6">
+							{thisSide}
+
 							<Card className="divide-y divide-input overflow-hidden border">
 								<Switcher
 									label="Optional"
@@ -402,41 +402,50 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 									checked={rel.optional}
 									onCheckedChange={(val) => updateField('optional', val)}
 								/>
-							</Card>
 
-							{rel.type === 'manyToMany' && (
-								<div className="flex h-10 items-center px-1">
-									<Button
-										variant="outline"
-										size="xs"
-										className="w-full"
+								{rel.type === 'manyToMany' && (
+									<button
+										className="flex w-full cursor-pointer flex-row items-center justify-start gap-2 p-4 text-left hover:bg-muted"
 										onClick={() => split()}
-										disabled={!targetModel || !sourceModel}
 									>
-										Expose joining table
-									</Button>
-								</div>
-							)}
-
-							{rel.type === 'oneToOne' && (
-								<>
-									<div className="flex items-center justify-between bg-accent px-3 py-2 pr-1">
-										<div className="text-xs font-medium italic text-accent-foreground">
-											{sourceModel?.name || 'source'} has a{' '}
-											{singular(targetModel?.name.toLowerCase() || 'target')}Id field
+										<div className="flex flex-1 flex-col gap-0">
+											<div className={cn(labelVariants(), 'leading-normal')}>
+												Swap foreign key
+											</div>
+											<div className="text-xs text-muted-foreground">
+												Many to many relationships are not supported
+											</div>
 										</div>
-										<Button
-											variant="outline"
-											size="icon-tiny"
-											className="-my-2 text-xs"
-											onClick={() => swap()}
-											disabled={!targetModel || !sourceModel}
-										>
-											<RepeatIcon className="h-3 w-3" />
-										</Button>
-									</div>
-								</>
-							)}
+										<div className="flex items-center gap-2">
+											<div className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}>
+												Expose joining table
+											</div>
+										</div>
+									</button>
+								)}
+
+								{rel.type === 'oneToOne' && (
+									<button
+										className="flex w-full cursor-pointer flex-row items-center justify-start gap-2 p-4 text-left hover:bg-muted"
+										onClick={() => swap()}
+									>
+										<div className="flex flex-1 flex-col gap-0">
+											<div className={cn(labelVariants(), 'leading-normal')}>
+												Swap foreign key
+											</div>
+											<div className="text-xs text-muted-foreground">
+												{sourceModel?.name || 'source'} has a{' '}
+												{singular(targetModel?.name.toLowerCase() || 'target')}Id field
+											</div>
+										</div>
+										<div className="flex items-center gap-2">
+											<div className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}>
+												<RepeatIcon className="w-4" />
+											</div>
+										</div>
+									</button>
+								)}
+							</Card>
 						</div>
 					</div>
 
@@ -490,7 +499,7 @@ const RelationSide = ({
 	return (
 		<div
 			className={cn(
-				'flex flex-col gap-4 rounded-xl p-4 pb-6 pt-5',
+				'flex flex-col gap-3 rounded-xl p-4',
 				!isThis ? 'bg-primary/80 text-light dark:bg-muted' : 'bg-muted dark:border dark:bg-background'
 			)}
 		>
@@ -550,17 +559,18 @@ const RelationSide = ({
 						)}
 					/>
 				</FormRow>
-			</div>
 
-			{relation.sourceId === userModelId && (
-				<label className="flex h-10 flex-row items-center justify-between px-3">
-					<div className="text-sm font-medium text-muted-foreground">Default to Auth</div>
-					<Switch
-						checked={relation.sourceDefaultToAuth}
-						onCheckedChange={(val) => updateField('sourceDefaultToAuth', val)}
-					/>
-				</label>
-			)}
+				{((isSource && relation.sourceId === userModelId) ||
+					(!isSource && relation.targetId === userModelId)) && (
+					<FormRow label="Default to creator" description="Automatically set this as the creator user.">
+						<Switch
+							checked={!!relation.sourceDefaultToAuth}
+							onCheckedChange={(val) => updateField('sourceDefaultToAuth', val)}
+							className="mt-2 data-[state=unchecked]:bg-light/20"
+						/>
+					</FormRow>
+				)}
+			</div>
 		</div>
 	)
 }

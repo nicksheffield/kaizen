@@ -1,10 +1,15 @@
-import { Dispatch, SetStateAction, useState } from 'react'
-import { useStore, useUpdateNodeInternals, type NodeProps, type Node } from '@xyflow/react'
+import { CSSProperties, Dispatch, SetStateAction, useState } from 'react'
+import {
+	useStore,
+	useUpdateNodeInternals,
+	type NodeProps,
+	type Node,
+	getNodesBounds,
+	useReactFlow,
+} from '@xyflow/react'
 import { camelize, cn, generateId } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { CalendarIcon, LockIcon, PlusIcon, Settings2Icon, Trash2Icon, UserIcon } from 'lucide-react'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Switch } from '@/components/ui/switch'
+import { CalendarIcon, PlusIcon, Settings2Icon, Trash2Icon, UserIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { useERDContext } from '@/lib/ERDContext'
 import { z } from 'zod'
@@ -26,7 +31,12 @@ import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifi
 import { useModelField } from '@/lib/useModelField'
 import { isReservedKeyword } from '@/lib/ERDHelpers'
 import { plural } from 'pluralize'
-import { Row, RowLabel } from '@/components/ERD/Rows'
+import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { FormRow } from '@/components/FormFields'
+import { Card } from '@/components/ui/card'
+import { Switcher } from '@/components/Switcher'
+
+const sheetWidth = 600
 
 type Model = BasicModel & {
 	attributes: Attribute[]
@@ -59,7 +69,10 @@ export const ModelNode = ({ data, selected }: NodeProps<Node<Model>>) => {
 		modalHasPopover,
 		setModalHasPopover,
 		focusOn,
+		frameRef,
 	} = useERDContext()
+
+	const node = nodes.find((x) => x.data.id === data.id)
 
 	const hasUserModel = nodes.some((x) => x.data.id === userModelId)
 	const isUserModel = data.id === userModelId
@@ -180,11 +193,31 @@ export const ModelNode = ({ data, selected }: NodeProps<Node<Model>>) => {
 
 	const addSelectedNodes = useStore((store) => store.addSelectedNodes)
 
+	const flow = useReactFlow()
+
 	const [isPopoverOpen, setPopoverOpen] = useState(false)
 	const onPopoverOpen = (val: boolean) => {
 		setPopoverOpen(val)
 		if (val) {
 			setModalHasPopover(data.id)
+
+			if (node) {
+				const viewWidth = window.innerWidth - sheetWidth
+				const viewHeight = frameRef.current?.clientHeight || 0 // 872
+
+				const bounds = getNodesBounds([node], { nodeOrigin: [-0.5, -0.5] })
+
+				flow.setViewport(
+					{
+						x: bounds.x * -1 + viewWidth / 2,
+						y: bounds.y * -1 + viewHeight / 2,
+						zoom: 1,
+					},
+					{
+						duration: 600,
+					}
+				)
+			}
 		} else {
 			setModalHasPopover(null)
 		}
@@ -196,10 +229,11 @@ export const ModelNode = ({ data, selected }: NodeProps<Node<Model>>) => {
 	return (
 		<div
 			className={cn(
-				'flex min-w-[216px] cursor-default flex-col gap-4 rounded-md bg-background pb-3 transition-opacity duration-200 dark:border',
-				selected && 'opacity-100 ring-2 ring-primary dark:ring-offset-background',
+				'flex min-w-[216px] cursor-default flex-col gap-4 rounded-md bg-background pb-3 dark:border',
+				selected &&
+					'opacity-100 ring-2 ring-primary transition-opacity duration-200 dark:ring-offset-background',
 				!data.enabled && 'opacity-50',
-				modalHasPopover && !isActiveModel && 'pointer-events-none opacity-0'
+				modalHasPopover && !isActiveModel && 'opacity-20'
 				// selected && 'relative z-[9999]'
 			)}
 			onMouseDown={() => {
@@ -232,130 +266,101 @@ export const ModelNode = ({ data, selected }: NodeProps<Node<Model>>) => {
 					<div className="italic text-destructive">New Model</div>
 				)}
 
-				<Popover open={openPopover} onOpenChange={onPopoverOpen}>
-					<PopoverTrigger asChild>
+				<Sheet open={openPopover} onOpenChange={onPopoverOpen}>
+					<SheetTrigger asChild>
 						<Button variant="ghost" size="xs" className="h-5 w-5 px-0">
 							<Settings2Icon className="h-3 w-3" />
 						</Button>
-					</PopoverTrigger>
+					</SheetTrigger>
 
-					<PopoverContent
-						align="start"
+					<SheetContent
 						side="right"
-						sideOffset={20}
-						alignOffset={-56}
-						className="bg-background p-0 dark:border-0"
+						className="flex h-screen flex-col justify-between overflow-y-scroll border-0 dark:border-l sm:max-w-[var(--sheet-width)]"
+						style={{ '--sheet-width': `${sheetWidth}px` } as CSSProperties}
 					>
-						<div className="flex flex-col divide-y divide-foreground/5">
-							<div className="flex h-10 items-center justify-between px-3 pr-2">
-								<div className="text-sm font-medium">Model</div>
+						<div className="flex flex-col divide-y">
+							<SheetHeader className="pb-6">
+								<SheetTitle>Model</SheetTitle>
+							</SheetHeader>
 
-								<div className="flex items-center gap-2">
-									{isModelLocked(data) ? (
-										<Button variant="ghost" size="xs" className="pointer-events-none">
-											<LockIcon className="h-4 w-4" />
-										</Button>
-									) : (
+							<div className="flex flex-col gap-8 py-6">
+								{isUserModel && (
+									<div className="flex h-10 items-center justify-start bg-muted px-3 text-sm text-muted-foreground">
+										<UserIcon className="mr-2 h-4 w-4" />
+										This is the Auth model.
+									</div>
+								)}
+
+								{!hasUserModel && (
+									<div className="flex flex-col gap-2 p-2">
 										<Button
-											variant="ghost"
-											size="xs"
+											size="sm"
 											onClick={() => {
-												removeSelf()
-												setModalHasPopover(null)
+												setUserModelId(data.id)
 											}}
 										>
-											<Trash2Icon className="h-4 w-4 opacity-50" />
+											Set as Auth Model
 										</Button>
-									)}
-								</div>
-							</div>
-
-							{isUserModel && (
-								<div className="flex h-10 items-center justify-start px-3 text-sm text-muted-foreground">
-									<UserIcon className="mr-2 h-4 w-4" />
-									This is the Auth model.
-								</div>
-							)}
-
-							{/* <RowGap /> */}
-
-							{!hasUserModel && (
-								<div className="flex flex-col gap-2 p-2">
-									<Button
-										size="sm"
-										onClick={() => {
-											setUserModelId(data.id)
-										}}
-									>
-										Set as Auth Model
-									</Button>
-									<div className="rounded-md bg-accent p-2 text-sm text-muted-foreground">
-										The auth model comes with a set of required attributes.
+										<div className="rounded-md bg-accent p-2 text-sm text-muted-foreground">
+											The auth model comes with a set of required attributes.
+										</div>
 									</div>
-								</div>
-							)}
+								)}
 
-							<Row>
-								<RowLabel>Name</RowLabel>
-								<Input
-									value={name}
-									onChange={(e) => {
-										setName(e.currentTarget.value.replace(/\s/g, ''))
-									}}
-									size="sm"
-									className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
-									autoFocus
-								/>
-							</Row>
+								<FormRow label="Name" description="The name of the model.">
+									<Input
+										value={name}
+										onChange={(e) => {
+											setName(e.currentTarget.value.replace(/\s/g, ''))
+										}}
+										autoFocus
+									/>
+								</FormRow>
 
-							<Row>
-								<RowLabel>Key</RowLabel>
-								<Input
-									value={key}
-									onChange={(e) => {
-										setKey(e.currentTarget.value)
-									}}
-									size="sm"
-									disabled={isModelLocked(data)}
-									placeholder={keyPlaceholder}
-									className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
-								/>
-							</Row>
+								<FormRow
+									label="Key"
+									description="This is the name used in generated code. Edit it if you run into problems."
+								>
+									<Input
+										value={key}
+										onChange={(e) => {
+											setKey(e.currentTarget.value)
+										}}
+										disabled={isModelLocked(data)}
+										placeholder={keyPlaceholder}
+									/>
+								</FormRow>
 
-							<Row>
-								<RowLabel>Table</RowLabel>
-								<Input
-									value={tableName}
-									onChange={(e) => setTableName(e.currentTarget.value)}
-									placeholder={tablePlaceholder}
-									size="sm"
-									className="-my-1 flex-1 border-0 bg-transparent pr-3 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
-								/>
-							</Row>
+								<FormRow label="Table" description="The name of the table in the database.">
+									<Input
+										value={tableName}
+										onChange={(e) => setTableName(e.currentTarget.value)}
+										placeholder={tablePlaceholder}
+									/>
+								</FormRow>
 
-							<Row>
-								<RowLabel>Audit Dates</RowLabel>
-								<Switch
-									checked={data.auditDates}
-									onCheckedChange={(val) => updateModelField('auditDates', val)}
-									className="mr-3 h-4 w-7"
-									thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
-								/>
-							</Row>
-
-							{/* <Row>
-								<RowLabel>Enabled</RowLabel>
-								<Switch
-									checked={data.enabled}
-									onCheckedChange={(val) => updateModelField('enabled', val)}
-									disabled={isUserModel}
-									className="mr-3 h-4 w-7"
-									thumbClassName="bg-popover w-3 h-3 data-[state=checked]:translate-x-3"
-								/>
-							</Row> */}
+								<Card className="divide-y divide-input overflow-hidden border">
+									<Switcher
+										label="Audit Dates"
+										description="If enabled, the createdAt, updatedAt and deletedAt fields will be added to the model."
+										checked={data.auditDates}
+										onCheckedChange={(val) => updateModelField('auditDates', val)}
+									/>
+								</Card>
+							</div>
 						</div>
-					</PopoverContent>
-				</Popover>
+
+						<SheetFooter className="flex-row justify-start">
+							<Button
+								variant="outline"
+								onClick={removeSelf}
+								className="flex items-center justify-start gap-2"
+							>
+								<Trash2Icon className="h-4 w-4 opacity-50" /> Delete
+							</Button>
+						</SheetFooter>
+					</SheetContent>
+				</Sheet>
 			</div>
 
 			<div className="flex flex-col gap-1">

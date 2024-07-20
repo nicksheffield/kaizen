@@ -1,5 +1,5 @@
 import { CSSProperties, useCallback, useMemo, useState } from 'react'
-import { getNodesBounds, Handle, Position, useReactFlow } from '@xyflow/react'
+import { getNodesBounds, Handle, Position, useReactFlow, Viewport } from '@xyflow/react'
 import { alphabetical, camelize, cn, generateId, uc } from '@/lib/utils'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { ArrowRightIcon, LinkIcon, RepeatIcon, Trash2Icon } from 'lucide-react'
@@ -196,6 +196,7 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 		})
 
 	const flow = useReactFlow()
+	const [prevViewport, setPrevViewport] = useState<Viewport | null>(null)
 
 	const [isPopoverOpen, setPopoverOpen] = useState(false)
 
@@ -203,6 +204,7 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 		setPopoverOpen(val)
 		if (val) {
 			setModalHasPopover(model.id)
+			setPrevViewport(flow.getViewport())
 
 			if (node) {
 				const viewWidth = window.innerWidth - sheetWidth
@@ -223,6 +225,10 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 			}
 		} else {
 			setModalHasPopover(null)
+
+			if (prevViewport !== null) {
+				flow.setViewport(prevViewport, { duration: 200 })
+			}
 		}
 	}
 

@@ -60,7 +60,7 @@ POST {{api}}/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
-mutation Create${uc(model.drizzleNameSingular)}($data: [Create${model.name}!]!) {
+mutation Create${uc(model.drizzleNameSingular)}($data: [Create${model.name}Input!]!) {
 	create${model.name}(data: $data) {
 ${model.attributes
 	.filter((x) => x.selectable)
@@ -95,7 +95,7 @@ POST {{api}}/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
-mutation Update${uc(model.drizzleNameSingular)}($data: [Update${model.name}!]!) {
+mutation Update${uc(model.drizzleNameSingular)}($data: [Update${model.name}Input!]!) {
 	update${model.name}(data: $data) {
 ${model.attributes
 	.filter((x) => x.selectable)
@@ -129,8 +129,8 @@ POST {{api}}/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
-mutation Delete${uc(model.drizzleNameSingular)}($id: [ID]!) {
-	delete${model.name} {
+mutation Delete${uc(model.drizzleNameSingular)}($id: [ID!]!) {
+	delete${model.name}(id: $id) {
 		id
 	}
 }

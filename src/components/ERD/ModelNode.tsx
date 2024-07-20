@@ -6,6 +6,7 @@ import {
 	type Node,
 	getNodesBounds,
 	useReactFlow,
+	Viewport,
 } from '@xyflow/react'
 import { camelize, cn, generateId } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -194,12 +195,14 @@ export const ModelNode = ({ data, selected }: NodeProps<Node<Model>>) => {
 	const addSelectedNodes = useStore((store) => store.addSelectedNodes)
 
 	const flow = useReactFlow()
+	const [prevViewport, setPrevViewport] = useState<Viewport | null>(null)
 
 	const [isPopoverOpen, setPopoverOpen] = useState(false)
 	const onPopoverOpen = (val: boolean) => {
 		setPopoverOpen(val)
 		if (val) {
 			setModalHasPopover(data.id)
+			setPrevViewport(flow.getViewport())
 
 			if (node) {
 				const viewWidth = window.innerWidth - sheetWidth
@@ -220,6 +223,10 @@ export const ModelNode = ({ data, selected }: NodeProps<Node<Model>>) => {
 			}
 		} else {
 			setModalHasPopover(null)
+
+			if (prevViewport !== null) {
+				flow.setViewport(prevViewport, { duration: 200 })
+			}
 		}
 	}
 

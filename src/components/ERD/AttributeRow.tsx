@@ -24,7 +24,7 @@ import { getLogicalRecommend, getSourceName, getTargetName, isReservedKeyword } 
 import { useAttrField } from '@/lib/useAttrField'
 import { SelectList } from '@/components/SelectList'
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
-import { useReactFlow, getNodesBounds } from '@xyflow/react'
+import { useReactFlow, getNodesBounds, Viewport } from '@xyflow/react'
 import { FormRow } from '@/components/FormFields'
 import { Card } from '@/components/ui/card'
 import { Switcher } from '@/components/Switcher'
@@ -116,7 +116,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 	}
 
 	const flow = useReactFlow()
-	// const [prevViewport, setPrevViewport] = useState<Viewport | null>(null)
+	const [prevViewport, setPrevViewport] = useState<Viewport | null>(null)
 
 	const [isPopoverOpen, setPopoverOpen] = useState(false)
 	const onPopoverOpen = (val: boolean) => {
@@ -124,7 +124,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 
 		if (val) {
 			setModalHasPopover(model.id)
-			// setPrevViewport(flow.getViewport())
+			setPrevViewport(flow.getViewport())
 
 			if (node) {
 				const viewWidth = window.innerWidth - sheetWidth
@@ -146,9 +146,9 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 		} else {
 			setModalHasPopover(null)
 
-			// if (prevViewport !== null) {
-			// 	flow.setViewport(prevViewport, { duration: 200 })
-			// }
+			if (prevViewport !== null) {
+				flow.setViewport(prevViewport, { duration: 200 })
+			}
 		}
 	}
 

@@ -36,6 +36,14 @@ Tasks
 [x] enable user registration
 [x] magic link logins
 
+[ ] Add "logOverrides" to email templates:
+	These make it so when an email is stored in the email log, certain fields can be overriden for privacy reasons.
+	eg.
+	export const logOverrides = {
+		resetCode: '******'
+	}
+[ ] separate password optionalness and magic link emails
+[ ] add foreign keys to the test.http files
 [ ] optional haveibeenpwned api integration https://haveibeenpwned.com/API/v3
 	This would be based on if the api key is present in the env
 [ ] need to protect against privilege escalation

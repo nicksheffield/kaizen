@@ -2,6 +2,7 @@ import { ModelCtx } from '@/generators/hono/contexts'
 import { mapAttrToGQLFilter, mapAttrToGarph } from '@/generators/hono/utils'
 import { ProjectCtx } from '@/generators/hono/types'
 import { isNotNone, removeDuplicates } from '@/lib/utils'
+import { clean } from '@/generators/utils'
 
 const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	const nonSelectAttrs = model.attributes.filter((x) => !x.selectable)
@@ -41,7 +42,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	import * as history from '../../../lib/history.js'
 	${isAuthModel ? `import { hashPassword, validatePassword } from 'lib/password.js'` : ''}
 	
-	const OrderBys = g.enumType('${model.name}OrderBy', [
+	export const OrderBys = g.enumType('${model.name}OrderBy', [
 		${model.attributes
 			.map((x) => {
 				if (!x.selectable) return null
@@ -75,7 +76,20 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				model.relatedModels
 					.map((x) => {
 						// use id or string? lets go with id for now
-						return `${x.fieldName}: g.ref(() => ${x.otherModel.name}.types.type)${x.isArray ? '.list()' : ''}${x.optional ? '.optional()' : ''}.omitResolver(),`
+						return clean`${x.fieldName}: 
+							g.ref(() => ${x.otherModel.name}.types.type)
+							${x.isArray && '.list()'}
+							${x.optional && '.optional()'}
+							.omitResolver()
+							${
+								x.targetType === 'many' &&
+								`.args({
+								orderBy: g.ref(() => ${x.otherModel.name}.OrderBys).default('createdAt'),
+								orderDir: g.ref(OrderDir).default('ASC'),
+								where: g.ref(() => ${x.otherModel.name}.types.filter).optional(),
+							})`
+							}
+							,`
 					})
 					.filter(isNotNone)
 			).join('\n')}
@@ -170,16 +184,27 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 					)`
 				}
 
-				return `${rel.fieldName}: {
+				return clean`${rel.fieldName}: {
 				async loadBatch(queries) {
+					${
+						rel.targetType === 'many' &&
+						`
+						const args = queries[0]?.args
+						const dir = args?.orderDir === 'ASC' ? asc : desc
+						const field = args?.orderBy as keyof typeof tables.${rel.drizzleName}
+						const orderBy = dir(tables.${rel.drizzleName}[field] as Column)
+					`
+					}
 					const ${rel.drizzleName} = await db.query.${rel.drizzleName}.findMany({
 						where: and(
 							inArray(
 								tables.${rel.drizzleName}.${rel.oppositeKey},
 								removeDuplicates(queries.map((q) => q.parent.${rel.thisKey} ?? ''))
 							),
-							${model.auditDates ? `isNull(tables.${rel.drizzleName}.deletedAt)` : ''}
+							${model.auditDates && `isNull(tables.${rel.drizzleName}.deletedAt),`} 
+							${rel.targetType === 'many' && `...filters.toWhere(tables.${rel.drizzleName}, args?.where)`} 
 						),
+						${rel.targetType === 'many' && `orderBy`}
 					})
 		
 					${returnStmt}

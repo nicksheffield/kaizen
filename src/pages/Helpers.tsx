@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { useApp } from '@/lib/AppContext'
 import { Model } from '@/lib/projectSchemas'
 import { camelize } from '@/lib/utils'
-import { ChevronDownIcon, DraftingCompassIcon, FilterIcon } from 'lucide-react'
+import { ChevronDownIcon, FilterIcon, LifeBuoyIcon } from 'lucide-react'
 import pluralize from 'pluralize'
 import { plural, singular } from 'pluralize'
 import { useState } from 'react'
@@ -116,7 +116,7 @@ export const ${model.name}Mutations = {
 					<div className="flex w-full max-w-5xl items-center justify-between border-0 border-b shadow-none">
 						<div className="flex flex-col gap-2 py-6">
 							<CardTitle className="flex items-center gap-2">
-								<DraftingCompassIcon className="h-6 w-6" />
+								<LifeBuoyIcon className="h-6 w-6" />
 								Code Helpers
 							</CardTitle>
 							<CardDescription>

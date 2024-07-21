@@ -54,12 +54,14 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 		if (!body && !react) throw new Error('No body or react component provided')
 	
 		const html = react ? render(react) : body!
+
+		const to = env.DEV_EMAIL_TO || address
 	
 		try {
 			if (resendEnabled && resend && env.EMAIL_FROM) {
 				const res = await resend.emails.send({
 					from: env.EMAIL_FROM,
-					to: env.DEV_EMAIL_TO || address,
+					to,
 					subject,
 					html,
 				})
@@ -68,51 +70,30 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 					console.log('resend email error', res.error)
 					return false
 				}
-	
-				if (res.data?.id && log) await logEmailResend(res.data.id)
-	
-				return true
 			} else if (emailEnabled && env.EMAIL_FROM) {
 				await transport.sendMail({
 					from: env.EMAIL_FROM,
-					to: env.DEV_EMAIL_TO || address,
+					to,
 					subject,
 					html,
 				})
-	
-				if (log) {
-					await logEmail({
-						provider: 'smtp',
-						from: env.EMAIL_FROM,
-						to: env.DEV_EMAIL_TO || address,
-						subject,
-						body: html,
-					})
-				}
-	
-				return true
 			}
+
+			if (log) {
+				await logEmail({
+					provider: 'smtp',
+					from: env.EMAIL_FROM,
+					to,
+					subject,
+					body: html,
+				})
+			}
+
+			return true
 		} catch (error) {
 			console.log(error)
 		}
 		return false
-	}
-	
-	export const logEmailResend = async (id: string) => {
-		const res = await resend?.emails.get(id)
-	
-		if (!res || !res.data) {
-			return
-		}
-	
-		await logEmail({
-			emailId: id,
-			provider: 'resend',
-			to: res.data.to.join(', '),
-			from: res.data.from,
-			subject: res.data.subject,
-			body: res.data?.html || res.data?.text || '',
-		})
 	}
 	
 	export const logEmail = async (data: {

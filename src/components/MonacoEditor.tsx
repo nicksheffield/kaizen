@@ -22,9 +22,17 @@ type MonacoEditorProps = {
 	extension?: string
 	readonly?: boolean
 	className?: string
+	height?: string
 }
 
-export const MonacoEditor = ({ value, onValueChange, extension, readonly = false, className }: MonacoEditorProps) => {
+export const MonacoEditor = ({
+	value,
+	onValueChange,
+	extension,
+	readonly = false,
+	className,
+	height = '90vh',
+}: MonacoEditorProps) => {
 	const { resolvedTheme } = useTheme()
 	const editorRef = useRef<Parameters<OnMount>[0] | null>(null)
 	const monacoRef = useRef<Monaco | null>(null)
@@ -82,7 +90,7 @@ export const MonacoEditor = ({ value, onValueChange, extension, readonly = false
 
 	return (
 		<Editor
-			height="90vh"
+			height={height}
 			defaultLanguage={defaultLanguage}
 			value={value}
 			onChange={(val) => {

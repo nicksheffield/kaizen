@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { useApp } from '@/lib/AppContext'
 import { Project } from '@/lib/projectSchemas'
 import { generateId } from '@/lib/utils'
-import { BoltIcon, Loader2Icon } from 'lucide-react'
+import { LibraryIcon, Loader2Icon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -59,7 +59,7 @@ export const Details = () => {
 					<div className="flex w-full max-w-5xl items-center justify-between border-0 border-b shadow-none">
 						<div className="flex flex-col gap-2 py-6">
 							<CardTitle className="flex items-center gap-2">
-								<BoltIcon className="h-6 w-6" />
+								<LibraryIcon className="h-6 w-6" />
 								Details
 							</CardTitle>
 							<CardDescription>The general settings for the project.</CardDescription>

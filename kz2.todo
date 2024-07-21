@@ -35,6 +35,7 @@ Tasks
 [x] add user impersonation
 [x] enable user registration
 [x] magic link logins
+[x] add orderBys and filters to nested objects in gql
 
 [ ] Add "logOverrides" to email templates:
 	These make it so when an email is stored in the email log, certain fields can be overriden for privacy reasons.
@@ -42,10 +43,9 @@ Tasks
 	export const logOverrides = {
 		resetCode: '******'
 	}
+[ ] add sentry integration
 [ ] separate password optionalness and magic link emails
 [ ] add foreign keys to the test.http files
-[ ] optional haveibeenpwned api integration https://haveibeenpwned.com/API/v3
-	This would be based on if the api key is present in the env
 [ ] need to protect against privilege escalation
 [ ] add the ability to mark files as "// keep" or maybe add a .kzignore file where you list files/directories to not remove upon generation
 [ ] make it so you can turn off one side of a relationship
@@ -54,15 +54,3 @@ Tasks
 [ ] make the clientChange generators modify the files rather than rewriting them
 [ ] make the .env DB_URI re-generate based on useOrbstack and name
 [ ] code hook functionality
-[ ] add orderBys and filters to nested objects in gql
-	ie:
-	query ($where: TaskFilter, $orderBy: TaskOrderBy) {
-		projects {
-			id
-			name
-			tasks(where: $where, orderBy: $orderBy) {
-				id
-				name
-			}
-		}
-	}

@@ -138,7 +138,7 @@ export const Environment = () => {
 				const [key, value] = x.split('=')
 				return { key, value }
 			})
-			.filter((x) => x !== null)
+			.filter(isNotNone)
 	}
 
 	const updateEnvRow = (key: string, value: string) => {

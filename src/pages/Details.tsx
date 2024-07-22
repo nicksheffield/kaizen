@@ -62,7 +62,7 @@ export const Details = () => {
 								<LibraryIcon className="h-6 w-6" />
 								Details
 							</CardTitle>
-							<CardDescription>The general settings for the project.</CardDescription>
+							<CardDescription>The general settings for the project</CardDescription>
 						</div>
 
 						<Button type="submit">
@@ -74,7 +74,7 @@ export const Details = () => {
 					<div className="grid w-full max-w-5xl grid-cols-[1fr,2fr] gap-6">
 						<div className="flex flex-col gap-2">
 							<div className="font-medium">Settings</div>
-							<div className="text-sm text-muted-foreground">The general settings for the project.</div>
+							<div className="text-sm text-muted-foreground">The basic settings for the project</div>
 						</div>
 
 						<Card className="flex flex-col gap-6 overflow-hidden border">
@@ -87,7 +87,7 @@ export const Details = () => {
 
 						<div className="flex flex-col gap-2">
 							<div className="font-medium">Monorepo</div>
-							<div className="text-sm text-muted-foreground">The monorepo settings for the project.</div>
+							<div className="text-sm text-muted-foreground">The monorepo settings for the project</div>
 						</div>
 
 						<Card className="divide-y divide-input overflow-hidden border">
@@ -99,7 +99,7 @@ export const Details = () => {
 							<FormSwitcher
 								name="useOrbStack"
 								label="Use Orb Stack"
-								description="Use orb stack instead of docker desktop to enable unique local domains in dev."
+								description="Use orb stack instead of docker desktop to enable unique local domains in dev"
 							/>
 						</Card>
 					</div>

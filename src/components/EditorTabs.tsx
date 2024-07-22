@@ -85,7 +85,7 @@ export const EditorTabs = () => {
 
 	return (
 		<ScrollArea className="w-full shrink-0" orientation="horizontal" ref={holderRef}>
-			<div className="flex h-10 w-full max-w-full">
+			<div className="flex h-10 w-full max-w-full items-center rounded-md bg-white px-1.5">
 				<DndContext
 					sensors={sensors}
 					collisionDetection={closestCenter}
@@ -192,7 +192,7 @@ const FileTab = ({ filePath, index, onSelect }: FileTabProps) => {
 				>
 					<div
 						className={cn(
-							'group flex h-full cursor-pointer select-none items-center justify-center gap-2 pl-4 pr-2 text-sm font-medium hover:bg-muted',
+							'group mr-1 flex h-7 cursor-pointer select-none items-center justify-center gap-2 rounded-md px-2 text-sm font-medium hover:bg-muted',
 							filePath === selectedPath && 'bg-primary text-primary-foreground hover:bg-primary/80'
 						)}
 					>

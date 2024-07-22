@@ -11,6 +11,7 @@ import { isFile } from '@/lib/handle'
 import { isNotNone } from '@/lib/utils'
 import { EarthIcon } from 'lucide-react'
 import { useState } from 'react'
+import { useLocalStorage } from 'usehooks-ts'
 
 type EnvData = { key: string; value: string }[]
 
@@ -19,6 +20,8 @@ export const generateDBURI = (settings: { useOrbStack?: boolean; name?: string }
 }
 
 export const Environment = () => {
+	const project = useApp((v) => v.project)
+
 	const files = useApp((v) => v.files)
 	const saveFile = useApp((v) => v.saveFile)
 	const envFile = files.filter(isFile).find((x) => x.path === `${SERVER_PATH}/.env`)
@@ -146,7 +149,7 @@ export const Environment = () => {
 
 	const [code, setCode] = useState(envFile?.content || '')
 
-	const [viewMode, setViewMode] = useState('form') // form | code
+	const [viewMode, setViewMode] = useLocalStorage(`project-${project?.settings.id}-env-view-mode`, 'form') // form | code
 
 	const [emailTab, setEmailTab] = useState(envData.find((x) => x.key === 'RESEND_API_KEY')?.value ? 'resend' : 'stmp')
 
@@ -180,7 +183,7 @@ export const Environment = () => {
 
 					<div className="-mt-6 flex w-full max-w-5xl flex-col gap-6">
 						<Tabs value={viewMode} onValueChange={setViewMode}>
-							<TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0 pb-px">
+							<TabsList className="h-auto w-full justify-start rounded-none border-b bg-transparent p-0 pb-px">
 								<TabsTrigger
 									value="form"
 									className="rounded-none px-4 transition-none hover:text-foreground data-[state=active]:-mb-[2px] data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
@@ -197,7 +200,7 @@ export const Environment = () => {
 						</Tabs>
 
 						{viewMode === 'form' ? (
-							<div className="grid w-full grid-cols-[1fr,3fr] gap-6">
+							<div className="grid w-full grid-cols-[1fr,2fr] gap-6">
 								<div className="flex flex-col gap-2">
 									<div className="font-medium">Misc</div>
 									<div className="text-sm text-muted-foreground">Miscellaneous settings</div>
@@ -429,7 +432,7 @@ export const Environment = () => {
 										setCode(val)
 										setEnvData(codeToEnvData(val))
 									}}
-									height="300px"
+									height="600px"
 								/>
 							</Card>
 						)}

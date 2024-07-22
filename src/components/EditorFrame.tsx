@@ -4,13 +4,12 @@ import { CodeEditor } from './FileViews/CodeEditor'
 import { ReadonlyCodeView } from './FileViews/ReadonlyView'
 import { Welcome } from '../pages/Welcome'
 import { SERVER_PATH } from '@/lib/constants'
-import { useLocalStorage } from 'usehooks-ts'
 
 export const EditorFrame = () => {
 	const project = useApp((v) => v.project)
 	const selectedPath = useApp((v) => v.selectedPath)
 
-	const [compact] = useLocalStorage('compact-mode', false)
+	const compact = false
 
 	const Editor =
 		!selectedPath || !project ? (
@@ -22,7 +21,7 @@ export const EditorFrame = () => {
 		)
 
 	return (
-		<div className="relative flex min-h-0 min-w-0 flex-1 shrink flex-col divide-y">
+		<div className="relative flex min-h-0 min-w-0 flex-1 shrink flex-col gap-4">
 			{!compact && <EditorTabs />}
 
 			{Editor}

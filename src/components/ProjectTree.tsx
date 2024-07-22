@@ -7,6 +7,8 @@ import { isFile } from '@/lib/handle'
 import { cn } from '@/lib/utils'
 
 export const ProjectTree = () => {
+	const project = useApp((v) => v.project)
+
 	const root = useApp((v) => v.root)
 	const files = useApp((v) => v.files)
 	const openFile = useApp((v) => v.openFile)
@@ -21,7 +23,10 @@ export const ProjectTree = () => {
 	return (
 		<div className="flex flex-col gap-2">
 			<div className="p-2">
-				<CollapsableSection title="Modifications" localStorageKey="sidebar-customisation-open">
+				<CollapsableSection
+					title="Modifications"
+					localStorageKey={`project-${project?.settings.id}-sidebar-customisation-open`}
+				>
 					<div
 						className={cn(
 							'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm',
@@ -74,7 +79,10 @@ export const ProjectTree = () => {
 			</div>
 
 			<div className="p-2">
-				<CollapsableSection title="Files" localStorageKey="sidebar-files-open">
+				<CollapsableSection
+					title="Files"
+					localStorageKey={`project-${project?.settings.id}-sidebar-files-open`}
+				>
 					{firstLevelDescs.map((desc) => (
 						<Tree key={desc.path} path={desc.path} />
 					))}

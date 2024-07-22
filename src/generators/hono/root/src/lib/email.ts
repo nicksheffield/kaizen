@@ -56,9 +56,11 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 		const html = react ? render(react) : body!
 
 		const to = env.DEV_EMAIL_TO || address
+
+		if (!env.EMAIL_FROM) throw new Error('No email from address provided')
 	
 		try {
-			if (resendEnabled && resend && env.EMAIL_FROM) {
+			if (resendEnabled && resend) {
 				const res = await resend.emails.send({
 					from: env.EMAIL_FROM,
 					to,
@@ -70,7 +72,7 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 					console.log('resend email error', res.error)
 					return false
 				}
-			} else if (emailEnabled && env.EMAIL_FROM) {
+			} else if (emailEnabled) {
 				await transport.sendMail({
 					from: env.EMAIL_FROM,
 					to,

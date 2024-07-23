@@ -777,7 +777,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 						return String(attr.default)
 					})()
 
-					const att = {
+					return {
 						id: attr.id,
 						name: attr.name,
 						type: attr.type,
@@ -791,10 +791,6 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 						generatedSql: attr.generatedSql ?? null,
 						foreignKey: false,
 					}
-
-					console.log('att', att)
-
-					return att
 				}),
 				...model.foreignKeys.map((fk) => ({
 					id: fk.id,
@@ -811,8 +807,6 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 			],
 		})
 	})
-
-	console.log('appModels', appModels)
 
 	const appRelations = project.relations
 		.map((rel) => {

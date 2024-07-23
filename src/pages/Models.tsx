@@ -244,6 +244,8 @@ export const ERDEditor = () => {
 			if (attr.insertable !== original.insertable) return true
 			if (attr.default !== original.default) return true
 			if (attr.enabled !== original.enabled) return true
+			if (attr.generated !== original.generated) return true
+			if (attr.generatedSql !== original.generatedSql) return true
 		}
 
 		for (const originalAttr of defaultAttributes) {

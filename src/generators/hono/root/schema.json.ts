@@ -16,6 +16,8 @@ const AttributeSchema = z.object({
 	order: z.number(),
 	enabled: z.boolean(),
 	modelId: z.string(),
+	generated: z.boolean().optional(),
+	generatedSql: z.string().nullable().optional(),
 	foreignKey: z.boolean(),
 })
 
@@ -775,7 +777,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 						return String(attr.default)
 					})()
 
-					return {
+					const att = {
 						id: attr.id,
 						name: attr.name,
 						type: attr.type,
@@ -785,8 +787,14 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 						order: attr.order,
 						enabled: true,
 						modelId: model.id,
+						generated: attr.generated,
+						generatedSql: attr.generatedSql ?? null,
 						foreignKey: false,
 					}
+
+					console.log('att', att)
+
+					return att
 				}),
 				...model.foreignKeys.map((fk) => ({
 					id: fk.id,
@@ -803,6 +811,8 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 			],
 		})
 	})
+
+	console.log('appModels', appModels)
 
 	const appRelations = project.relations
 		.map((rel) => {

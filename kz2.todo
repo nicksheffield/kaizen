@@ -43,11 +43,11 @@ Tasks
 	export const logOverrides = {
 		resetCode: '******'
 	}
+[ ] add virtual fields powered by a custom sql string
 [ ] add sentry integration
 [ ] separate password optionalness and magic link emails
 [ ] add foreign keys to the test.http files
 [ ] need to protect against privilege escalation
-[ ] add the ability to mark files as "// keep" or maybe add a .kzignore file where you list files/directories to not remove upon generation
 [ ] make it so you can turn off one side of a relationship
 [ ] make email templates entirely optional by providing a default design.
 	These defaults are included via the generator, unless a mod version is present.

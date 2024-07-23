@@ -56,6 +56,8 @@ export const createModelCtx = (model: ProjectCtx['models'][number], ctx: Project
 				optionalOp: x.nullable ? '?' : '!',
 				default: x.name === 'id' ? idDefault : defaultValue,
 				order: x.order,
+				generated: x.generated,
+				generatedSql: x.generatedSql,
 			}
 		}),
 		foreignKeys: [

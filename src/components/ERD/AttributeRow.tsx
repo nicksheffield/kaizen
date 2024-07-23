@@ -94,6 +94,7 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 	const [name, setName] = useAttrField(attr.modelId, attr.id, 'name')
 	const [, setType] = useAttrField(attr.modelId, attr.id, 'type')
 	const [def, setDef] = useAttrField(attr.modelId, attr.id, 'default')
+	const [generatedSql, setGeneratedSql] = useAttrField(attr.modelId, attr.id, 'generatedSql')
 
 	const nameConflicted =
 		model.attributes.some((a) => a.name === attr.name && a.id !== attr.id) ||
@@ -155,6 +156,8 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 	const isActiveModel = modalHasPopover === model.id
 	const openPopover = isActiveModel && isPopoverOpen
 
+	const displayName = attr.generated ? `${attr.name}()` : `${attr.name}${attr.nullable ? '?' : ''}`
+
 	if (isUserAttr && !showAuthAttributes) return null
 
 	return (
@@ -185,7 +188,9 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 										nameConflicted && 'text-destructive',
 										!attr.enabled && 'text-muted-foreground'
 									)}
-								>{`${attr.name}${attr.nullable ? '?' : ''}`}</div>
+								>
+									{displayName}
+								</div>
 							) : (
 								<div
 									className={cn(
@@ -284,65 +289,95 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 										/>
 									</FormRow>
 
-									<FormRow label="Default" description="The default value of the attribute.">
-										{attr.type === 'id' || attr.type === 'datetime' || attr.type === 'boolean' ? (
-											<>
-												<SelectList
-													value={def || ''}
-													clearable={!!def && !isLocked}
-													onValueChange={(val) => setDef(val === '' ? null : val)}
-													disabled={isLocked}
-													options={
-														attr.nullable
-															? [{ label: 'NULL', value: 'null' }]
-															: attr.type === 'datetime'
-																? [
-																		{
-																			label: 'CURRENT_TIMESTAMP',
-																			value: 'CURRENT_TIMESTAMP',
-																		},
-																	]
-																: attr.type === 'boolean'
+									{!attr.generated && (
+										<FormRow label="Default" description="The default value of the attribute.">
+											{attr.type === 'id' ||
+											attr.type === 'datetime' ||
+											attr.type === 'boolean' ? (
+												<>
+													<SelectList
+														value={def || ''}
+														clearable={!!def && !isLocked}
+														onValueChange={(val) => setDef(val === '' ? null : val)}
+														disabled={isLocked}
+														options={
+															attr.nullable
+																? [{ label: 'NULL', value: 'null' }]
+																: attr.type === 'datetime'
 																	? [
-																			{ label: 'TRUE', value: 'true' },
-																			{ label: 'FALSE', value: 'false' },
+																			{
+																				label: 'CURRENT_TIMESTAMP',
+																				value: 'CURRENT_TIMESTAMP',
+																			},
 																		]
-																	: []
-													}
+																	: attr.type === 'boolean'
+																		? [
+																				{ label: 'TRUE', value: 'true' },
+																				{ label: 'FALSE', value: 'false' },
+																			]
+																		: []
+														}
+													/>
+												</>
+											) : (
+												<Input
+													value={attr.default || ''}
+													onChange={(e) => updateField('default', e.currentTarget.value)}
+													disabled={isLocked}
 												/>
-											</>
-										) : (
-											<Input
-												value={attr.default || ''}
-												onChange={(e) => updateField('default', e.currentTarget.value)}
-												disabled={isLocked}
-											/>
-										)}
-									</FormRow>
+											)}
+										</FormRow>
+									)}
+
+									{attr.generated && (
+										<div className="flex flex-col gap-6">
+											<FormRow
+												label="SQL Expression"
+												description="The SQL expression to generate the column."
+											>
+												<Input
+													value={generatedSql || ''}
+													onChange={(e) => setGeneratedSql(e.target.value)}
+													disabled={isLocked}
+												/>
+											</FormRow>
+										</div>
+									)}
 								</>
 							)}
 
 							{attr.name !== 'id' && (
 								<Card className="divide-y divide-input overflow-hidden border">
+									{!attr.generated && (
+										<>
+											<Switcher
+												label="Nullable"
+												description="Makes the field nullable. Null values are allowed."
+												checked={attr.nullable}
+												onCheckedChange={(val) => updateField('nullable', val)}
+												disabled={isLocked}
+											/>
+											<Switcher
+												label="Selectable"
+												description="Allows the field to be selected in the gql api."
+												checked={attr.selectable}
+												onCheckedChange={(val) => updateField('selectable', val)}
+												disabled={isLocked}
+											/>
+											<Switcher
+												label="Insertable"
+												description="Allows the field to be inserted in the gql api."
+												checked={attr.insertable}
+												onCheckedChange={(val) => updateField('insertable', val)}
+												disabled={isLocked}
+											/>
+										</>
+									)}
 									<Switcher
-										label="Nullable"
-										description="Makes the field nullable. Null values are allowed."
-										checked={attr.nullable}
-										onCheckedChange={(val) => updateField('nullable', val)}
-										disabled={isLocked}
-									/>
-									<Switcher
-										label="Selectable"
-										description="Allows the field to be selected in the gql api."
-										checked={attr.selectable}
-										onCheckedChange={(val) => updateField('selectable', val)}
-										disabled={isLocked}
-									/>
-									<Switcher
-										label="Insertable"
-										description="Allows the field to be inserted in the gql api."
-										checked={attr.insertable}
-										onCheckedChange={(val) => updateField('insertable', val)}
+										label="Generated"
+										description="The field is a generated column."
+										checked={attr.generated ?? false}
+										onCheckedChange={(val) => updateField('generated', val)}
 										disabled={isLocked}
 									/>
 								</Card>

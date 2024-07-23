@@ -44,6 +44,8 @@ export const AttributeSchema = z.object({
 	insertable: z.boolean().default(true),
 	order: z.number(),
 	enabled: z.boolean().optional(),
+	generated: z.boolean().optional(),
+	generatedSql: z.string().optional(),
 	modelId: z.string(),
 })
 

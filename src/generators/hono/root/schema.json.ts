@@ -788,7 +788,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 						enabled: true,
 						modelId: model.id,
 						generated: attr.generated,
-						generatedSql: attr.generatedSql ?? null,
+						generatedSql: attr.generatedSql || null,
 						foreignKey: false,
 					}
 				}),

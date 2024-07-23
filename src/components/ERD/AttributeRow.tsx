@@ -340,6 +340,22 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 													onChange={(e) => setGeneratedSql(e.target.value)}
 													disabled={isLocked}
 												/>
+												<div className="flex flex-col gap-2 rounded-md bg-muted p-2">
+													<div className="text-sm font-medium">Rules:</div>
+													<ul className="list-inside list-disc">
+														<li className="text-sm">
+															You must use lowercase names for the SQL functions. ie:
+															concat, count, sum
+														</li>
+														<li className="text-sm">
+															If you need to define a string, use single quotes.
+														</li>
+														<li className="text-sm">
+															Wrap references to other columns in backticks.
+														</li>
+														<li className="text-sm">Do not add unnecessary spaces.</li>
+													</ul>
+												</div>
 											</FormRow>
 										</div>
 									)}

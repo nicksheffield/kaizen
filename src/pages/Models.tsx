@@ -201,6 +201,7 @@ export const ERDEditor = () => {
 			if (model.posX !== original.posX) return true
 			if (model.posY !== original.posY) return true
 			if (model.enabled !== original.enabled) return true
+			if (model.displaySql !== original.displaySql) return true
 		}
 
 		for (const originalModel of defaultModels) {

@@ -40,6 +40,7 @@ export const createModelCtx = (model: ProjectCtx['models'][number], ctx: Project
 		auditDates: model.auditDates,
 		posX: model.posX,
 		posY: model.posY,
+		displaySql: model.displaySql,
 		attributes: model.attributes.sort(sortAttrs).map((x) => {
 			const defaultValue = vetDefault(x.default)
 			return {

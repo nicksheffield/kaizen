@@ -59,6 +59,7 @@ export const ModelSchema = z.object({
 	posX: z.number(),
 	posY: z.number(),
 	enabled: z.boolean().optional(),
+	displaySql: z.string().optional(),
 	attributes: z.array(AttributeSchema),
 })
 

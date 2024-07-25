@@ -84,6 +84,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Node<Model>>) => {
 	const [name, setName] = useModelField(data.id, 'name')
 	const [key, setKey] = useModelField(data.id, 'key')
 	const [tableName, setTableName] = useModelField(data.id, 'tableName')
+	const [displaySql, setDisplaySql] = useModelField(data.id, 'displaySql')
 
 	const keyPlaceholder = camelize(name)
 	const tablePlaceholder = plural(camelize(name))
@@ -304,6 +305,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Node<Model>>) => {
 											size="sm"
 											onClick={() => {
 												setUserModelId(data.id)
+												setDisplaySql('`email`')
 											}}
 										>
 											Set as Auth Model
@@ -343,6 +345,17 @@ export const ModelNode = ({ data, selected }: NodeProps<Node<Model>>) => {
 										value={tableName}
 										onChange={(e) => setTableName(e.currentTarget.value)}
 										placeholder={tablePlaceholder}
+									/>
+								</FormRow>
+
+								<FormRow
+									label="Generate row display name"
+									description="The name of the table in the database."
+								>
+									<Input
+										value={displaySql}
+										onChange={(e) => setDisplaySql(e.currentTarget.value)}
+										placeholder="`id`"
 									/>
 								</FormRow>
 

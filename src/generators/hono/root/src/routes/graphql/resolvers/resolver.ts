@@ -106,6 +106,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				.filter((x) => x.type !== 'a_i')
 				.map((x) => {
 					if (!x.insertable) return null
+					if (x.generated) return null
 
 					const isOptional = x.optional || x.default !== null || x.name === 'id'
 
@@ -130,6 +131,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				.map((x) => {
 					if (x.name === 'id') return `id: g.id(),`
 					if (!x.insertable) return null
+					if (x.generated) return null
 
 					return `${x.name}: g.${mapAttrToGarph(x.type)}.optional(),`
 				})
@@ -384,7 +386,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 					id: newId,
 					${model.attributes
 						// .filter((x) => x.default !== null)
-						.filter((x) => x.insertable)
+						.filter((x) => x.insertable && !x.generated)
 						.map((x) => {
 							if (isAuthModel && x.type === 'password') {
 								if (project.settings.auth.enableMagicLink)
@@ -479,7 +481,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 
 				const values = {
 					${model.attributes
-						.filter((x) => x.insertable)
+						.filter((x) => x.insertable && !x.generated)
 						.map((x) => {
 							if (x.type === 'a_i') return null
 							if (x.name === 'id') return null

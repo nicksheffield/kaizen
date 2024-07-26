@@ -44,6 +44,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 		${authModel.attributes
 			.map((x) => {
 				if (!x.insertable) return null
+				if (x.generated) return null
 				if (x.name === 'password') return null
 				if (x.name === 'email') return null
 

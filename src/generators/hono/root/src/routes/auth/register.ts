@@ -24,6 +24,7 @@ export const registerDTO = z.object({
 	${authModel.attributes
 		.map((x) => {
 			if (!x.insertable) return null
+			if (x.generated) return null
 			if (x.name === 'id') return null
 			if (x.name === 'password') return null
 			if (x.name === 'email') return null

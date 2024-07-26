@@ -183,11 +183,17 @@ ${models
 		.map((attr) => {
 			if (attr.name === 'id') return
 
+			if (attr.generated) {
+				return clean`${attr.name}: ${mapAttrToDrizzleTypeFn(attr)}.generatedAlwaysAs('${attr.generatedSql?.replaceAll(`'`, `\\'`)}'),`
+			}
+
 			// const isDateType = ['date', 'datetime', 'time'].includes(attr.type)
 			// const def = isDateType && attr.default === "'CURRENT_TIMESTAMP'" ? 'sql`CURRENT_TIMESTAMP`' : attr.default
 			const def = attr.default
 
-			return clean`${attr.name}: ${mapAttrToDrizzleTypeFn(attr)}${def !== null && `.default(sql\`${def}\`)`}${!attr.optional && '.notNull()'},`
+			const optional = attr.optional
+
+			return clean`${attr.name}: ${mapAttrToDrizzleTypeFn(attr)}${def !== null && `.default(sql\`${def}\`)`}${!optional && '.notNull()'},`
 		})
 		.filter((x) => x !== undefined)
 		.join('\n\t')}

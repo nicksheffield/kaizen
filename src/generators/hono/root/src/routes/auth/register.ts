@@ -42,10 +42,10 @@ export const registerDTO = z.object({
 		.map((x) => {
 			// use id or string? lets go with id for now
 			// return `${x.name}: g.id()${x.optional ? '.optional()' : ''},`
-			return clean`${x.name}: z.string().optional().nullable()`
+			return clean`${x.name}: z.string().optional().nullable(),`
 		})
 		.filter(isNotNone)
-		.join('; ')}
+		.join('')}
 })
 
 export const router = new Hono()

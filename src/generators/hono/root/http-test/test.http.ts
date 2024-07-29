@@ -66,26 +66,29 @@ ${model.attributes
 	.filter((x) => x.selectable)
 	.map((x) => `\t\t${x.name}`)
 	.join('\n')}
+${model.foreignKeys.map((x) => `\t\t${x.name}`).join('\n')}
 	}
 }
 
 {
 	"data": [{
-${model.attributes
-	.filter((x) => x.insertable)
-	.map((x) => {
-		if (x.name === 'id') {
-			return `\t\t// "${x.name}": ""`
-		}
-		if (x.optional) {
-			return `\t\t// "${x.name}": ""`
-		}
-		if (x.default) {
-			return `\t\t// "${x.name}": ${x.default}`
-		}
-		return `\t\t"${x.name}": ""`
-	})
-	.join(',\n')}
+${[
+	...model.attributes
+		.filter((x) => x.insertable)
+		.map((x) => {
+			if (x.name === 'id') {
+				return `\t\t// "${x.name}": ""`
+			}
+			if (x.optional) {
+				return `\t\t// "${x.name}": ""`
+			}
+			if (x.default) {
+				return `\t\t// "${x.name}": ${x.default}`
+			}
+			return `\t\t"${x.name}": ""`
+		}),
+	...model.foreignKeys.map((x) => `\t\t"${x.name}": ""`),
+].join(',\n')}
 	}]
 }
 
@@ -101,26 +104,29 @@ ${model.attributes
 	.filter((x) => x.selectable)
 	.map((x) => `\t\t${x.name}`)
 	.join('\n')}
+${model.foreignKeys.map((x) => `\t\t${x.name}`).join('\n')}
 	}
 }
 
 {
 	"data": [{
-${model.attributes
-	.filter((x) => x.insertable)
-	.map((x) => {
-		if (x.name === 'id') {
-			return `\t\t"${x.name}": ""`
-		}
-		if (x.optional) {
+${[
+	...model.attributes
+		.filter((x) => x.insertable)
+		.map((x) => {
+			if (x.name === 'id') {
+				return `\t\t"${x.name}": ""`
+			}
+			if (x.optional) {
+				return `\t\t// "${x.name}": ""`
+			}
+			if (x.default) {
+				return `\t\t// "${x.name}": ${x.default}`
+			}
 			return `\t\t// "${x.name}": ""`
-		}
-		if (x.default) {
-			return `\t\t// "${x.name}": ${x.default}`
-		}
-		return `\t\t// "${x.name}": ""`
-	})
-	.join(',\n')}
+		}),
+	...model.foreignKeys.map((x) => `\t\t// "${x.name}": ""`),
+].join(',\n')}
 	}]
 }
 

@@ -92,6 +92,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Node<Model>>) => {
 	const removeSelf = () => {
 		setNodes((prev) => prev.filter((n) => n.id !== data.id))
 		setRelations((prev) => prev.filter((r) => r.sourceId !== data.id && r.targetId !== data.id))
+		setModalHasPopover(null)
 	}
 
 	const updateModel = (model: Model) => {
@@ -446,6 +447,8 @@ type AttributesProps = {
 }
 
 const Attributes = ({ model, detailed, remove, updateAttributeField, updateAttributes }: AttributesProps) => {
+	const { setModalHasPopover } = useERDContext()
+
 	const sensors = useSensors(
 		useSensor(PointerSensor),
 		useSensor(KeyboardSensor, {
@@ -484,7 +487,10 @@ const Attributes = ({ model, detailed, remove, updateAttributeField, updateAttri
 				<AttributeRow
 					attr={idRow}
 					model={model}
-					remove={() => remove(idRow.id)}
+					remove={() => {
+						setModalHasPopover(null)
+						remove(idRow.id)
+					}}
 					updateField={(field, value) => updateAttributeField(idRow, field, value)}
 				/>
 			)}

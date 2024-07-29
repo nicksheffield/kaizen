@@ -4,7 +4,8 @@ import { MODS_DIRNAME } from '@/lib/constants'
 const tmpl = ({ extras }: { extras: HonoGeneratorExtras }) => {
 	const hasSeeder = extras.seeder
 
-	return `import { serve } from '@hono/node-server'
+	return `import { sentry } from './middleware/sentry.js'
+import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { showRoutes } from 'hono/dev'
 import { cors } from 'hono/cors'
@@ -42,6 +43,8 @@ migrate().then(async () => {
 if (env.LOG_REQUESTS === 'true' || isDev) {
 	app.use(logger)
 }
+
+app.use('*', sentry)
 
 app.use(
 	cors({

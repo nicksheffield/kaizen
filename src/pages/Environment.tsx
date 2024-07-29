@@ -50,7 +50,7 @@ export const Environment = () => {
 			DB_URI,
 			PORT,
 			LOG_REQUESTS,
-			SENTRY_API_KEY,
+			SENTRY_DSN,
 			RESEND_API_KEY,
 			RESEND_WEBHOOK_SECRET,
 			SENDGRID_API_KEY,
@@ -105,7 +105,7 @@ export const Environment = () => {
 			},
 			{
 				name: 'Error Reporting',
-				rows: [`SENTRY_API_KEY=${SENTRY_API_KEY || ''}`],
+				rows: [`SENTRY_DSN=${SENTRY_DSN || ''}`],
 			},
 			{
 				name: 'Debug',
@@ -402,9 +402,9 @@ export const Environment = () => {
 									<EnvRow
 										label="Sentry API Key"
 										description="The API key to use for sending error reports to Sentry."
-										field="SENTRY_API_KEY"
-										value={envData.find((x) => x.key === 'SENTRY_API_KEY')?.value || ''}
-										onChange={(val) => updateEnvRow('SENTRY_API_KEY', val)}
+										field="SENTRY_DSN"
+										value={envData.find((x) => x.key === 'SENTRY_DSN')?.value || ''}
+										onChange={(val) => updateEnvRow('SENTRY_DSN', val)}
 										disabled
 									/>
 								</Card>

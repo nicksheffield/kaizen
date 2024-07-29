@@ -34,6 +34,7 @@ import src_lib_modifiers from './root/src/lib/modifiers'
 
 import src_middleware_authenticate from './root/src/middleware/authenticate'
 import src_middleware_rateLimit from './root/src/middleware/rateLimit'
+import src_middleware_sentry from './root/src/middleware/sentry'
 
 import src_routes from './root/src/routes/index'
 
@@ -91,6 +92,7 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 
 	dir['src/middleware/authenticate.ts'] = await format(src_middleware_authenticate({ project }))
 	dir['src/middleware/rateLimit.ts'] = await format(src_middleware_rateLimit())
+	dir['src/middleware/sentry.ts'] = await format(src_middleware_sentry())
 
 	dir['src/routes/index.ts'] = await format(src_routes({ project, extras }))
 

@@ -18,6 +18,8 @@ const envSchema = z.object({
 	RESEND_API_KEY: z.string().optional(),
 	RESEND_WEBHOOK_SECRET: z.string().optional(),
 
+	SENTRY_DSN: z.string().optional(),
+
 	EMAIL_BASEURL: z.string().optional(),
 })
 

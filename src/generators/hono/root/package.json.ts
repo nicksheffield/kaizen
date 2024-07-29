@@ -24,6 +24,8 @@ const tmpl = () => {
 			'@lucia-auth/adapter-drizzle': '^1.0.3',
 			'@react-email/components': '^0.0.16',
 			'@react-email/render': '^0.0.12',
+			'@sentry/node': '^8.20.0',
+			'@sentry/profiling-node': '^8.20.0',
 			chalk: '^5.3.0',
 			'date-fns': '^3.6.0',
 			dotenv: '^16.4.5',

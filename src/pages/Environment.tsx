@@ -400,12 +400,11 @@ export const Environment = () => {
 
 								<Card className="flex flex-col gap-6 border p-4">
 									<EnvRow
-										label="Sentry API Key"
-										description="The API key to use for sending error reports to Sentry."
+										label="Sentry DSN"
+										description="The url to use for sending error reports to Sentry."
 										field="SENTRY_DSN"
 										value={envData.find((x) => x.key === 'SENTRY_DSN')?.value || ''}
 										onChange={(val) => updateEnvRow('SENTRY_DSN', val)}
-										disabled
 									/>
 								</Card>
 

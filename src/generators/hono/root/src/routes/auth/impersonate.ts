@@ -39,7 +39,7 @@ router.post(
 			throw new HTTPException(404, { message: 'User not found' })
 		}
 
-		return doLogin(c, user)
+		return doLogin(c, targetUser)
 	}
 )
 `

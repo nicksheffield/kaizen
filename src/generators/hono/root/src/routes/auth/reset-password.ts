@@ -18,6 +18,7 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	import { hashPassword, validatePassword } from '../../lib/password.js'
 	import { sendPasswordResetToken } from '../../lib/email.js'
 	import { rateLimit } from '../../middleware/rateLimit.js'
+	import { validatePassword } from 'lib/password.js'
 	
 	// @TODO: If the user has implemented multi-factor authentication, such as via authenticator apps or passkeys, they should be prompted to authenticate using their second factor before entering their new password.
 	// https://thecopenhagenbook.com/password-reset
@@ -133,6 +134,20 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 			return c.body(null, 204)
 		}
 	)
+	
+	router.post(
+		'/check-password',
+		rateLimit(new TimeSpan(1, 'm'), 20),
+		zValidator('json', z.object({
+			password: z.string(),
+		})),
+		async (c) => {
+			const body: z.infer<typeof registerDTO> = await c.req.json()
+			await validatePassword(body.password)
+			return c.json({ message: 'Password is valid' })
+		}
+	)
+
 	`
 }
 

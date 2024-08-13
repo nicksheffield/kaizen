@@ -1,4 +1,14 @@
+import { GeneratorFn, generators } from '@/generators'
+import { workspaceFiles, generate as workspaceGenerator } from '@/generators/workspace'
+import { MODS_PATH, SERVER_PATH } from '@/lib/constants'
+import { Project, parseProject } from '@/lib/projectSchemas'
+import { format as formatFile } from '@/lib/utils'
+import { showDirectoryPicker } from 'file-system-access'
 import { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { toast } from 'sonner'
+import { useLocalStorage } from 'usehooks-ts'
+import { AppContext } from '../lib/AppContext'
+import { db } from '../lib/db'
 import {
 	FSDesc,
 	FileDesc,
@@ -12,16 +22,6 @@ import {
 	sortFilesByPath,
 	syncFiles,
 } from '../lib/handle'
-import { AppContext } from '../lib/AppContext'
-import { db } from '../lib/db'
-import { format as formatFile } from '@/lib/utils'
-import { useLocalStorage } from 'usehooks-ts'
-import { generators } from '@/generators'
-import { GeneratorFn } from '@/generators'
-import { workspaceFiles, generate as workspaceGenerator } from '@/generators/workspace'
-import { Project, parseProject } from '@/lib/projectSchemas'
-import { toast } from 'sonner'
-import { MODS_PATH, SERVER_PATH } from '@/lib/constants'
 
 export const AppProvider = ({ children }: PropsWithChildren) => {
 	/**
@@ -143,7 +143,7 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 	 * Open the directory picker and set the root handle
 	 */
 	const getRootHandle = useCallback(async () => {
-		const handle = await window.showDirectoryPicker({ id: 'kaizen', mode: 'readwrite' })
+		const handle = await showDirectoryPicker({ id: 'kaizen', mode: 'readwrite' })
 
 		setRootHandle(handle)
 

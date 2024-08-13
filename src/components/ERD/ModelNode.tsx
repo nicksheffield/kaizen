@@ -1,41 +1,41 @@
-import { CSSProperties, Dispatch, SetStateAction, useState } from 'react'
-import {
-	useStore,
-	useUpdateNodeInternals,
-	type NodeProps,
-	type Node,
-	getNodesBounds,
-	useReactFlow,
-	Viewport,
-} from '@xyflow/react'
-import { camelize, cn, generateId } from '@/lib/utils'
+import { FormRow } from '@/components/FormFields'
+import { Switcher } from '@/components/Switcher'
 import { Button } from '@/components/ui/button'
-import { CalendarIcon, PlusIcon, Settings2Icon, Trash2Icon, UserIcon } from 'lucide-react'
+import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { useERDContext } from '@/lib/ERDContext'
-import { z } from 'zod'
-import { FieldRow } from './FieldRow'
-import { AttributeRow } from './AttributeRow'
-import { RelationRow } from './RelationRow'
-import { Attribute, Model as BasicModel, AttributeType, RelationType, Relation } from '@/lib/projectSchemas'
+import { isReservedKeyword } from '@/lib/ERDHelpers'
+import { Attribute, AttributeType, Model as BasicModel, Relation, RelationType } from '@/lib/projectSchemas'
+import { useModelField } from '@/lib/useModelField'
+import { camelize, cn, generateId } from '@/lib/utils'
 import {
-	DndContext,
 	closestCenter,
+	DndContext,
+	DragEndEvent,
 	KeyboardSensor,
 	PointerSensor,
 	useSensor,
 	useSensors,
-	DragEndEvent,
 } from '@dnd-kit/core'
+import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers'
-import { useModelField } from '@/lib/useModelField'
-import { isReservedKeyword } from '@/lib/ERDHelpers'
+import {
+	getNodesBounds,
+	useReactFlow,
+	useStore,
+	useUpdateNodeInternals,
+	Viewport,
+	type Node,
+	type NodeProps,
+} from '@xyflow/react'
+import { CalendarIcon, PlusIcon, Settings2Icon, Trash2Icon, UserIcon } from 'lucide-react'
 import { plural } from 'pluralize'
-import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
-import { FormRow } from '@/components/FormFields'
-import { Card } from '@/components/ui/card'
-import { Switcher } from '@/components/Switcher'
+import { CSSProperties, Dispatch, SetStateAction, useState } from 'react'
+import { z } from 'zod'
+import { AttributeRow } from './AttributeRow'
+import { FieldRow } from './FieldRow'
+import { RelationRow } from './RelationRow'
 
 const sheetWidth = 600
 
@@ -238,7 +238,7 @@ export const ModelNode = ({ data, selected }: NodeProps<Node<Model>>) => {
 	return (
 		<div
 			className={cn(
-				'flex min-w-[216px] cursor-default flex-col gap-4 rounded-md bg-background pb-3 dark:border',
+				'flex min-w-[216px] cursor-default flex-col gap-4 rounded-md border border-muted bg-background pb-3 dark:border-border',
 				selected &&
 					'opacity-100 ring-2 ring-primary transition-opacity duration-200 dark:ring-offset-background',
 				!data.enabled && 'opacity-50',

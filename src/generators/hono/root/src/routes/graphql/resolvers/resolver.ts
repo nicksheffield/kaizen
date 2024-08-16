@@ -1,8 +1,8 @@
 import { ModelCtx } from '@/generators/hono/contexts'
-import { mapAttrToGQLFilter, mapAttrToGarph } from '@/generators/hono/utils'
 import { ProjectCtx } from '@/generators/hono/types'
-import { isNotNone, removeDuplicates } from '@/lib/utils'
+import { mapAttrToGQLFilter, mapAttrToGarph } from '@/generators/hono/utils'
 import { clean } from '@/generators/utils'
+import { isNotNone, removeDuplicates } from '@/lib/utils'
 
 const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	const nonSelectAttrs = model.attributes.filter((x) => !x.selectable)
@@ -488,6 +488,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 							if (x.type === 'a_i') return null
 							if (x.name === 'id') return null
 							if (x.type === 'password') return `password: hashedPassword,`
+							if (x.optional) return `${x.name}: data.${x.name},`
 							return `${x.name}: data.${x.name} ?? undefined,`
 						})
 						.filter(isNotNone)

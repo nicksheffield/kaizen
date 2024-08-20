@@ -77,10 +77,10 @@ router.post(
 		}
 
 		const numberOfRecoveryCodes = 3
-		const codes = new Array(numberOfRecoveryCodes)
+		const codes = Array.from({ length: numberOfRecoveryCodes })
 			.fill(null)
-			.map((x) => crypto.randomBytes(20).toString('hex'))
-		console.log('codes', codes)
+			.map(() => crypto.randomBytes(20).toString('hex'))
+		// console.log('codes', codes)
 
 		let codeHashes: string[] = []
 

@@ -1,6 +1,5 @@
 import { ModelCtx } from '@/generators/hono/contexts'
 import { HonoGeneratorExtras } from '@/generators/hono/types'
-import { uc } from '@/generators/hono/utils'
 
 const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExtras }) => {
 	const hasQueryMods = extras.queries
@@ -65,7 +64,7 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 		})}
 	}
 
-	type DeleteKey = ${models.map((x) => `| 'delete${uc(x.drizzleName)}'`).join('\n\t')}
+	type DeleteKey = ${models.map((model) => `| 'delete${model.name}'`).join('\n\t')}
 	
 	export type QueryModifiers = Partial<Record<QueryKey, QueryModifier>>
 	export type QueryModifier = <T extends MySqlSelect>(
@@ -77,10 +76,10 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 	) => AnyMySqlSelect | null
 	
 	export type DeleteModifiers = Partial<Record<DeleteKey, DeleteModifier>>
-	export type DeleteModifier = <T extends MySqlDelete>(
+	export type DeleteModifier = <T extends MySqlDelete | MySqlUpdate>(
 		query: T,
 		ctx: {
-			where?: SQL<unknown>
+			id: string
 			user: { id: string; roles: string; email: string }
 		}
 	) => T | Promise<T> | null
@@ -136,11 +135,11 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 		return query as ReturnType<UpdaterFns[S]>
 	}
 	
-	export const modifyDeleteMutation = <T extends MySqlDelete>(
+	export const modifyDeleteMutation = <T extends MySqlDelete | MySqlUpdate>(
 		modifier: DeleteKey,
 		query: T,
 		ctx: Parameters<DeleteModifier>[1]
-	): T | null => {
+	): T | Promise<T> | null => {
 		${
 			hasQueryMods
 				? `const mod: DeleteModifier | undefined = (

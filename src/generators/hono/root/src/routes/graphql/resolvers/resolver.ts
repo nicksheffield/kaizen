@@ -36,7 +36,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 		})
 	).join('\n')}
 	import { removeDuplicates } from '../../../lib/utils.js'
-	import { modifyQuery, modifyInsertMutation, modifyUpdateMutation } from '../../../lib/modifiers.js'
+	import { modifyQuery, modifyInsertMutation, modifyUpdateMutation, modifyDeleteMutation } from '../../../lib/modifiers.js'
 	import { OrderDir, DateType } from './_utils.js'
 	import * as filters from './_filters.js'
 	import * as history from '../../../lib/history.js'
@@ -565,13 +565,32 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 					model.auditDates
 						? `
 				if (args.softDelete) {
-					await db.update(tables.${model.drizzleName}).set({ deletedAt: new Date() }).where(eq(tables.${model.drizzleName}.id, id))
+					const query = db
+						.update(tables.${model.drizzleName})
+						.set({ deletedAt: new Date() })
+						.where(eq(tables.${model.drizzleName}.id, id))
+						.$dynamic()
+
+					await modifyDeleteMutation('delete${model.name}', query, {
+						where: eq(tables.${model.drizzleName}.id, id),
+						user: c.get('user'),
+					})
+					
 					history.softDelete('${model.tableName}', id, c.get('user').id)
 				} else {
 				`
 						: ''
 				}
-					await db.delete(tables.${model.drizzleName}).where(eq(tables.${model.drizzleName}.id, id))
+					const query = db
+						.delete(tables.${model.drizzleName})
+						.where(eq(tables.${model.drizzleName}.id, id))
+						.$dynamic()
+
+					await modifyDeleteMutation('delete${model.name}', query, {
+						where: eq(tables.${model.drizzleName}.id, id),
+						user: c.get('user'),
+					})
+						
 					history.hardDelete('${model.tableName}', id, c.get('user').id)
 					${model.auditDates ? `}` : ''}
 			}

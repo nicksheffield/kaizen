@@ -93,10 +93,14 @@ app.get('*', async (c) => {
 
 if (isDev) showRoutes(app)
 
-serve({
-	port: +(env.PORT || 3000),
-	fetch: app.fetch,
-})
+const port = env.PORT ? Number(env.PORT) : 3000
+
+if (isNaN(port)) {
+	console.log('PORT is not a number')
+	process.exit(1)
+}
+
+serve({ port, fetch: app.fetch })
 
 process.on('uncaughtException', (error) => {
 	if (error.name === 'AbortError') return

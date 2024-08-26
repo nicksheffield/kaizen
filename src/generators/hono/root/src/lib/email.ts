@@ -33,9 +33,15 @@ const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorE
 		env.EMAIL_PASS &&
 		env.EMAIL_FROM
 	
+	const port = env.EMAIL_PORT ? Number(env.EMAIL_PORT) : 0
+
+	if (isNaN(port)) {
+		console.log('EMAIL_PORT is not a number')
+	}
+
 	const transport = nodemailer.createTransport({
 		host: env.EMAIL_HOST,
-		port: +(env.EMAIL_PORT || 0),
+		port,
 		auth: {
 			user: env.EMAIL_USER,
 			pass: env.EMAIL_PASS,

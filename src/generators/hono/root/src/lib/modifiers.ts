@@ -83,7 +83,7 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 			where?: SQL<unknown>
 			user: { id: string; roles: string; email: string }
 		}
-	) => T | null
+	) => T | Promise<T> | null
 	
 	export const modifyQuery = <T extends MySqlSelect>(
 		modifier: QueryKey,

@@ -1,8 +1,7 @@
 import { Project } from '@/lib/projectSchemas'
 
 const tmpl = ({ project }: { project?: Project }) => {
-	return `import * as React from 'react' // do not remove
-	import {
+	return `import {
 		Body,
 		Container,
 		Head,
@@ -14,6 +13,9 @@ const tmpl = ({ project }: { project?: Project }) => {
 		Text,
 	} from '@react-email/components'
 	import { alphabet, generateRandomString } from 'oslo/crypto'
+	import * as React from 'react' // do not remove
+
+	React // make vscode keep the import
 	
 	interface LoginCodeProps {
 		code: string

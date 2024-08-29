@@ -11,7 +11,7 @@ const tmpl = () => {
 	
 	export const isInitial = async () => {
 		const adminUser = await db.query.users.findFirst({
-			where: eq(t.users.email, 'admin@example.com'),
+			where: eq(tables.users.email, 'admin@example.com'),
 		})
 
 		return !adminUser

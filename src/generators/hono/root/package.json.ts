@@ -28,7 +28,7 @@ const tmpl = () => {
 			chalk: '^5.3.0',
 			'date-fns': '^3.6.0',
 			dotenv: '^16.4.5',
-			'drizzle-orm': '0.32.1',
+			'drizzle-orm': '0.33.0',
 			garph: '^0.6.8',
 			graphql: '^16.8.1',
 			'graphql-shield': '^7.6.5',

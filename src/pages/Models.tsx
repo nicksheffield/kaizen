@@ -1,16 +1,16 @@
-import { ReactFlow, Node, NodeChange, ReactFlowProvider, applyNodeChanges, useReactFlow, useStore } from '@xyflow/react'
-import { ERDProvider } from '../components/ERDProvider'
-import { getAttrTypeRecommends, getSourceName, getTargetName, isReservedKeyword } from '@/lib/ERDHelpers'
-import { useCallback, useMemo, useRef, useState } from 'react'
-import { AttributeType, Model, Relation } from '@/lib/projectSchemas'
-import { ERDMarkers } from '@/components/ERDMarkers'
-import { useApp } from '@/lib/AppContext'
+import { Controls } from '@/components/ERD/Controls'
 import { ModelNode } from '@/components/ERD/ModelNode'
 import { SimpleFloatingEdge } from '@/components/ERD/SimpleFloatingEdge'
-import { useLocalStorage } from 'usehooks-ts'
-import { generateId, getUserModelFields, roundToNearest } from '@/lib/utils'
+import { ERDMarkers } from '@/components/ERDMarkers'
 import { Button } from '@/components/ui/button'
-import { Controls } from '@/components/ERD/Controls'
+import { useApp } from '@/lib/AppContext'
+import { getAttrTypeRecommends, getSourceName, getTargetName, isReservedKeyword } from '@/lib/ERDHelpers'
+import { AttributeType, Model, Relation } from '@/lib/projectSchemas'
+import { generateId, getUserModelFields, roundToNearest } from '@/lib/utils'
+import { Node, NodeChange, ReactFlow, ReactFlowProvider, applyNodeChanges, useReactFlow, useStore } from '@xyflow/react'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import { useLocalStorage } from 'usehooks-ts'
+import { ERDProvider } from '../components/ERDProvider'
 
 // https://github.com/xyflow/xyflow/issues/3030#issuecomment-1694349380
 function applyNodeChangesWithTypes(changes: NodeChange[], nodes: Node<Model>[]) {
@@ -78,10 +78,11 @@ export const ERDEditor = () => {
 			return {
 				id: rel.id,
 				source: rel.sourceId,
-				sourceHandle: `${rel.id}-l`,
+				sourceHandle: `${rel.id}-${rel.sourceId}-l`,
 				target: rel.targetId,
-				targetHandle: `${rel.id}-target-r`,
-				type: 'floating',
+				targetHandle: `${rel.id}-${rel.targetId}-target-r`,
+				// type: 'floating', // gotta fix this...
+				type: 'smoothstep',
 				markerStart,
 				markerEnd,
 				data: rel,

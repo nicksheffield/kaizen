@@ -1,23 +1,23 @@
-import { CSSProperties, useCallback, useMemo, useState } from 'react'
-import { getNodesBounds, Handle, Position, useReactFlow, Viewport } from '@xyflow/react'
-import { alphabetical, camelize, cn, generateId, uc } from '@/lib/utils'
+import { FormRow } from '@/components/FormFields'
+import { SelectList } from '@/components/SelectList'
+import { Switcher } from '@/components/Switcher'
 import { Button, buttonVariants } from '@/components/ui/button'
-import { ArrowRightIcon, LinkIcon, RepeatIcon, Trash2Icon } from 'lucide-react'
-import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { labelVariants } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
+import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { Switch } from '@/components/ui/switch'
 import { useERDContext } from '@/lib/ERDContext'
-import { plural, singular } from 'pluralize'
+import { getSourceName, getTargetName } from '@/lib/ERDHelpers'
 import { RelationType, type Model, type Relation } from '@/lib/projectSchemas'
+import { alphabetical, camelize, cn, generateId, uc } from '@/lib/utils'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { getSourceName, getTargetName } from '@/lib/ERDHelpers'
-import { SelectList } from '@/components/SelectList'
-import { Switch } from '@/components/ui/switch'
-import { FormRow } from '@/components/FormFields'
-import { Card } from '@/components/ui/card'
-import { Switcher } from '@/components/Switcher'
-import { Separator } from '@/components/ui/separator'
-import { labelVariants } from '@/components/ui/label'
+import { getNodesBounds, Handle, Position, useReactFlow, Viewport } from '@xyflow/react'
+import { ArrowRightIcon, LinkIcon, RepeatIcon, Trash2Icon } from 'lucide-react'
+import { plural, singular } from 'pluralize'
+import { CSSProperties, useCallback, useMemo, useState } from 'react'
 
 const sheetWidth = 600
 
@@ -467,10 +467,20 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 				</SheetContent>
 			</Sheet>
 
-			<Handle type="source" position={Position.Right} id={`${rel.id}-r`} className="opacity-0" />
-			<Handle type="source" position={Position.Left} id={`${rel.id}-l`} className="opacity-0" />
-			<Handle type="target" position={Position.Right} id={`${rel.id}-target-r`} className="opacity-0" />
-			<Handle type="target" position={Position.Left} id={`${rel.id}-target-l`} className="opacity-0" />
+			<Handle type="source" position={Position.Right} id={`${rel.id}-${model.id}-r`} className="opacity-0" />
+			<Handle type="source" position={Position.Left} id={`${rel.id}-${model.id}-l`} className="opacity-0" />
+			<Handle
+				type="target"
+				position={Position.Right}
+				id={`${rel.id}-${model.id}-target-r`}
+				className="opacity-0"
+			/>
+			<Handle
+				type="target"
+				position={Position.Left}
+				id={`${rel.id}-${model.id}-target-l`}
+				className="opacity-0"
+			/>
 		</div>
 	)
 }

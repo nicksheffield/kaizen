@@ -572,7 +572,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 						.$dynamic()
 
 					await modifyDeleteMutation('delete${model.name}', query, {
-						where: eq(tables.${model.drizzleName}.id, id),
+						id,
 						user: c.get('user'),
 					})
 					
@@ -587,7 +587,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 						.$dynamic()
 
 					await modifyDeleteMutation('delete${model.name}', query, {
-						where: eq(tables.${model.drizzleName}.id, id),
+						id,
 						user: c.get('user'),
 					})
 						

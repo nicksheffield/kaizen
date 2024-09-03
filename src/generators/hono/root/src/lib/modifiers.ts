@@ -29,7 +29,7 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 			data: Ctx & {
 				values: Partial<Creaters[K]['insert']>
 			}
-		) => T | Promise<T> | null | void
+		) => T | null | void | Promise<T | null | void>
 	}
 	export type CreateModifiers = Partial<CreaterFns>
 	type Creaters = {
@@ -50,7 +50,7 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 				original?: Partial<Updaters[K]['select']>
 				values: Partial<Updaters[K]['insert']>
 			}
-		) => T | Promise<T> | null | void
+		) => T | null | void | Promise<T | null | void>
 	}
 	export type UpdateModifiers = Partial<UpdaterFns>
 	type Updaters = {
@@ -82,7 +82,7 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 			id: string
 			user: { id: string; roles: string; email: string }
 		}
-	) => T | Promise<T> | null
+	) => T | null | void |  Promise<T | null | void>
 	
 	export const modifyQuery = <T extends MySqlSelect>(
 		modifier: QueryKey,
@@ -139,7 +139,7 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 		modifier: DeleteKey,
 		query: T,
 		ctx: Parameters<DeleteModifier>[1]
-	): T | Promise<T> | null => {
+	): T | null | void | Promise<T | null | void> => {
 		${
 			hasQueryMods
 				? `const mod: DeleteModifier | undefined = (

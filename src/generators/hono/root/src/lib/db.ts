@@ -23,6 +23,8 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 		schema._sessions,
 		schema.${authModel?.drizzleName || 'users'}
 	)
+
+	export * from 'drizzle-orm'
 	`
 }
 

@@ -1,7 +1,7 @@
 // https://reactflow.dev/docs/examples/edges/simple-floating-edges/
 import { useERDContext } from '@/lib/ERDContext'
+import { type EdgeProps, getSmoothStepPath, type Node, Position, useStore } from '@xyflow/react'
 import { useCallback } from 'react'
-import { useStore, getSmoothStepPath, type Node, type EdgeProps, Position } from '@xyflow/react'
 
 type Dir = 'from' | 'to'
 

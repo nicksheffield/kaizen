@@ -5,7 +5,6 @@ const tmpl = () => {
 		type: 'module',
 		scripts: {
 			dev: 'tsx --watch src/index.ts',
-			studio: 'npx drizzle-kit studio',
 			seed: 'tsx src/seed.ts',
 			start: 'tsx src/index.ts',
 		},
@@ -29,8 +28,7 @@ const tmpl = () => {
 			chalk: '^5.3.0',
 			'date-fns': '^3.6.0',
 			dotenv: '^16.4.5',
-			'drizzle-kit': '^0.23.0',
-			'drizzle-orm': '^0.32.1',
+			'drizzle-orm': '0.32.1',
 			garph: '^0.6.8',
 			graphql: '^16.8.1',
 			'graphql-shield': '^7.6.5',

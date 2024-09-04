@@ -4,13 +4,31 @@ import { SimpleFloatingEdge } from '@/components/ERD/SimpleFloatingEdge'
 import { ERDMarkers } from '@/components/ERDMarkers'
 import { Button } from '@/components/ui/button'
 import { useApp } from '@/lib/AppContext'
+import { useERDContext } from '@/lib/ERDContext'
 import { getAttrTypeRecommends, getSourceName, getTargetName, isReservedKeyword } from '@/lib/ERDHelpers'
 import { AttributeType, Model, Relation } from '@/lib/projectSchemas'
 import { generateId, getUserModelFields, roundToNearest } from '@/lib/utils'
-import { Node, NodeChange, ReactFlow, ReactFlowProvider, applyNodeChanges, useReactFlow, useStore } from '@xyflow/react'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import {
+	Node,
+	NodeChange,
+	ReactFlow,
+	ReactFlowProvider,
+	SmoothStepEdge,
+	applyNodeChanges,
+	useReactFlow,
+	useStore,
+} from '@xyflow/react'
+import { ComponentProps, useCallback, useMemo, useRef, useState } from 'react'
 import { useLocalStorage } from 'usehooks-ts'
 import { ERDProvider } from '../components/ERDProvider'
+
+const PatchedSmoothStepEdge = (props: ComponentProps<typeof SmoothStepEdge>) => {
+	const { showConnections } = useERDContext()
+
+	if (!showConnections) return null
+
+	return <SmoothStepEdge {...props} />
+}
 
 // https://github.com/xyflow/xyflow/issues/3030#issuecomment-1694349380
 function applyNodeChangesWithTypes(changes: NodeChange[], nodes: Node<Model>[]) {
@@ -41,7 +59,7 @@ export const ERDEditor = () => {
 	)
 
 	const nodeTypes = useMemo(() => ({ model: ModelNode }), [])
-	const edgeTypes = useMemo(() => ({ floating: SimpleFloatingEdge }), [])
+	const edgeTypes = useMemo(() => ({ floating: SimpleFloatingEdge, smooth: PatchedSmoothStepEdge }), [])
 
 	const onNodesChange = useCallback(
 		(changes: NodeChange[]) => setNodes((nds) => applyNodeChangesWithTypes(changes, nds)),
@@ -82,7 +100,7 @@ export const ERDEditor = () => {
 				target: rel.targetId,
 				targetHandle: `${rel.id}-${rel.targetId}-target-r`,
 				// type: 'floating', // gotta fix this...
-				type: 'smoothstep',
+				type: 'smooth',
 				markerStart,
 				markerEnd,
 				data: rel,

@@ -12,6 +12,7 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 		MySqlInsertDynamic,
 		MySqlSelect,
 		MySqlUpdate,
+		MySqlUpdateDynamic,
 	} from 'drizzle-orm/mysql-core'
 	${hasQueryMods ? `import { interceptors } from 'mods/src/queries.js'` : ''}
 	import * as tables from '../schema.js'
@@ -54,7 +55,7 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 			query: T,
 			data: Ctx & {
 				original?: Partial<Updaters[K]['select']>
-				values: Partial<Updaters[K]['insert']>
+				values: Partial<Updaters[K]['insert']> & { id: string }
 			}
 		) => T | MySqlUpdateDynamic<any> | null | void | Promise<T | MySqlUpdateDynamic<any> | null | void>
 	}

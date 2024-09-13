@@ -56,7 +56,7 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 				original?: Partial<Updaters[K]['select']>
 				values: Partial<Updaters[K]['insert']>
 			}
-		) => T | null | void | Promise<T | null | void>
+		) => T | MySqlUpdateDynamic<any> | null | void | Promise<T | MySqlUpdateDynamic<any> | null | void>
 	}
 	export type UpdateInterceptors = Partial<UpdaterFns>
 	type Updaters = {

@@ -25,6 +25,12 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 	)
 
 	export * from 'drizzle-orm'
+	export type {
+		MySqlInsert,
+		MySqlInsertDynamic,
+		MySqlSelect,
+		MySqlUpdate,
+	} from 'drizzle-orm/mysql-core'
 	`
 }
 

@@ -36,7 +36,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 		})
 	).join('\n')}
 	import { removeDuplicates } from '../../../lib/utils.js'
-	import { modifyQuery, modifyInsertMutation, modifyUpdateMutation, modifyDeleteMutation } from '../../../lib/modifiers.js'
+	import { interceptQuery, interceptInsertMutation, interceptUpdateMutation, interceptDeleteMutation } from '../../../lib/interceptors.js'
 	import { OrderDir, DateType } from './_utils.js'
 	import * as filters from './_filters.js'
 	import * as history from '../../../lib/history.js'
@@ -262,7 +262,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	
 			let cancelled = false
 	
-			const moddedQuery = modifyQuery('${model.drizzleNameSingular}', mainQ, {
+			const moddedQuery = interceptQuery('${model.drizzleNameSingular}', mainQ, {
 				where,
 				user: c.get('user'),
 			})
@@ -312,7 +312,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				.where(where)
 				.$dynamic()
 	
-			let moddedQuery = modifyQuery('${model.drizzleName}', mainQ, {
+			let moddedQuery = interceptQuery('${model.drizzleName}', mainQ, {
 				where,
 				user: c.get('user'),
 			})
@@ -332,7 +332,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	
 			const items = await moddedQuery
 	
-			const countQuery = modifyQuery('${model.drizzleName}', db
+			const countQuery = interceptQuery('${model.drizzleName}', db
 				.select({ totalCount: count() })
 				.from(tables.${model.drizzleName})
 				.where(where)
@@ -415,7 +415,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 					.values(values)
 					.$dynamic()
 
-				const moddedQuery = await modifyInsertMutation(
+				const moddedQuery = await interceptInsertMutation(
 					'create${model.name}',
 					mainQ,
 					{
@@ -427,6 +427,13 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				if (moddedQuery) {
 					await moddedQuery
 					${isAuthModel ? `userVerification(newId, data.email)` : ''}
+
+					await history.create(
+						'${model.tableName}',
+						newId,
+						data,
+						c.get('user').id
+					)
 				}
 	
 				const item = await db.query.${model.drizzleName}.findFirst({
@@ -439,13 +446,6 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 					}
 					where: eq(tables.${model.drizzleName}.id, newId),
 				})
-				
-				await history.create(
-					'${model.tableName}',
-					newId,
-					data,
-					c.get('user').id
-				)
 	
 				if (item) results.push(item)
 			}
@@ -506,7 +506,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 					.where(eq(tables.${model.drizzleName}.id, data.id))
 					.$dynamic()
 				
-				const moddedQuery = await modifyUpdateMutation(
+				const moddedQuery = await interceptUpdateMutation(
 					'update${model.name}',
 					mainQ,
 					{
@@ -571,7 +571,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 						.where(eq(tables.${model.drizzleName}.id, id))
 						.$dynamic()
 
-					await modifyDeleteMutation('delete${model.name}', query, {
+					await interceptDeleteMutation('delete${model.name}', query, {
 						id,
 						user: c.get('user'),
 					})
@@ -586,7 +586,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 						.where(eq(tables.${model.drizzleName}.id, id))
 						.$dynamic()
 
-					await modifyDeleteMutation('delete${model.name}', query, {
+					await interceptDeleteMutation('delete${model.name}', query, {
 						id,
 						user: c.get('user'),
 					})

@@ -1,9 +1,9 @@
 const tmpl = () => {
 	return `import { and, eq } from 'drizzle-orm'
-	import { QueryModifiers, CreateModifiers, DeleteModifiers, UpdateModifiers } from 'server/src/lib/modifiers'
+	import { QueryInterceptors, CreateInterceptors, DeleteInterceptors, UpdateInterceptors } from 'server/src/lib/interceptors'
 	import { users } from 'server/src/schema'
 	
-	export const queryModifiers: QueryModifiers = {
+	export const queryInterceptors: QueryInterceptors = {
 		// modify the "users" graphql query
 		// users: (query, { where, user }) => {
 		// 	// if the user is an admin, then don't modify the query
@@ -14,11 +14,11 @@ const tmpl = () => {
 		// }
 	}
 	
-	export const createModifiers: CreateModifiers = {}
+	export const createInterceptors: CreateInterceptors = {}
 	
-	export const updateModifiers: UpdateModifiers = {}
+	export const updateInterceptors: UpdateInterceptors = {}
 	
-	export const deleteModifiers: DeleteModifiers = {}
+	export const deleteInterceptors: DeleteInterceptors = {}
 	`
 }
 

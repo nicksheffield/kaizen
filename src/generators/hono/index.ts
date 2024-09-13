@@ -1,16 +1,16 @@
+import { createModelCtx } from './contexts'
 import { HonoGeneratorFn } from './types'
 import { format } from './utils'
-import { createModelCtx } from './contexts'
 
+import dockerCompose from './root/docker-compose'
+import drizzleConfig from './root/drizzle.config'
 import envExample from './root/env.example'
 import gitignore from './root/gitignore'
-import restHttp from './root/rest.http'
-import prettierRc from './root/prettierrc'
-import schemaJson from './root/schema.json'
 import packageJson from './root/package.json'
+import prettierRc from './root/prettierrc'
+import restHttp from './root/rest.http'
+import schemaJson from './root/schema.json'
 import tsconfigJson from './root/tsconfig.json'
-import drizzleConfig from './root/drizzle.config'
-import dockerCompose from './root/docker-compose'
 
 import httpTest_test from './root/http-test/test.http'
 
@@ -25,12 +25,12 @@ import src_lib_db from './root/src/lib/db'
 import src_lib_email from './root/src/lib/email'
 import src_lib_env from './root/src/lib/env'
 import src_lib_history from './root/src/lib/history'
+import src_lib_interceptors from './root/src/lib/interceptors'
 import src_lib_lucia from './root/src/lib/lucia'
 import src_lib_manageUser from './root/src/lib/manageUser'
 import src_lib_password from './root/src/lib/password'
 import src_lib_storage from './root/src/lib/storage'
 import src_lib_utils from './root/src/lib/utils'
-import src_lib_modifiers from './root/src/lib/modifiers'
 
 import src_middleware_authenticate from './root/src/middleware/authenticate'
 import src_middleware_rateLimit from './root/src/middleware/rateLimit'
@@ -40,20 +40,20 @@ import src_routes from './root/src/routes/index'
 
 import src_routes_webhooks_resend from './root/src/routes/webhooks/resend'
 
+import src_routes_auth_changePassword from './root/src/routes/auth/change-password'
+import src_routes_auth_confirmAccount from './root/src/routes/auth/confirm-account'
+import src_routes_auth_impersonate from './root/src/routes/auth/impersonate'
 import src_routes_auth_login from './root/src/routes/auth/login'
 import src_routes_auth_logout from './root/src/routes/auth/logout'
 import src_routes_auth_profile from './root/src/routes/auth/profile'
-import src_routes_auth_confirmAccount from './root/src/routes/auth/confirm-account'
-import src_routes_auth_resetPassword from './root/src/routes/auth/reset-password'
-import src_routes_auth_changePassword from './root/src/routes/auth/change-password'
-import src_routes_auth_twoFactor from './root/src/routes/auth/two-factor'
-import src_routes_auth_impersonate from './root/src/routes/auth/impersonate'
 import src_routes_auth_register from './root/src/routes/auth/register'
+import src_routes_auth_resetPassword from './root/src/routes/auth/reset-password'
+import src_routes_auth_twoFactor from './root/src/routes/auth/two-factor'
 
-import src_routes_graphql_router from './root/src/routes/graphql/router'
 import src_routes_graphql_resolvers_filters from './root/src/routes/graphql/resolvers/_filters'
 import src_routes_graphql_resolvers_utils from './root/src/routes/graphql/resolvers/_utils'
 import src_routes_graphql_resolvers_resolver from './root/src/routes/graphql/resolvers/resolver'
+import src_routes_graphql_router from './root/src/routes/graphql/router'
 
 export const generate: HonoGeneratorFn = async (project, extras) => {
 	const models = project.models.map((model) => createModelCtx(model, project))
@@ -88,7 +88,7 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['src/lib/password.ts'] = await format(src_lib_password())
 	dir['src/lib/storage.ts'] = await format(src_lib_storage())
 	dir['src/lib/utils.ts'] = await format(src_lib_utils())
-	dir['src/lib/modifiers.ts'] = await format(src_lib_modifiers({ models, extras }))
+	dir['src/lib/interceptors.ts'] = await format(src_lib_interceptors({ models, extras }))
 
 	dir['src/middleware/authenticate.ts'] = await format(src_middleware_authenticate({ project }))
 	dir['src/middleware/rateLimit.ts'] = await format(src_middleware_rateLimit())

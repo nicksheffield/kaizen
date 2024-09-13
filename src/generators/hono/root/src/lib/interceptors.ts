@@ -9,10 +9,11 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 		AnyMySqlSelect,
 		MySqlDelete,
 		MySqlInsert,
+		MySqlInsertDynamic,
 		MySqlSelect,
 		MySqlUpdate,
 	} from 'drizzle-orm/mysql-core'
-	${hasQueryMods ? `import queryMods from 'mods/src/queries.js'` : ''}
+	${hasQueryMods ? `import { interceptors } from 'mods/src/queries.js'` : ''}
 	import * as tables from '../schema.js'
 
 	type Ctx = {
@@ -22,17 +23,22 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 	type QueryKey =
 	${models.map((x) => `| '${x.drizzleNameSingular}' | '${x.drizzleName}'`).join('\n\t')}
 	
-	type CreateKey = keyof Creaters
-	export type CreaterFns = {
-		[K in keyof Creaters]: <T extends MySqlInsert>(
+	type CreateKey = keyof Creators
+	export type CreatorFns = {
+		[K in keyof Creators]: <T extends MySqlInsert>(
 			query: T,
 			data: Ctx & {
-				values: Partial<Creaters[K]['insert']>
+				values: Creators[K]['insert']
 			}
-		) => T | null | void | Promise<T | null | void>
+		) => 
+			| T
+			| MySqlInsertDynamic<any>
+			| null
+			| void
+			| Promise<T | MySqlInsertDynamic<any> | null | void>
 	}
-	export type CreateModifiers = Partial<CreaterFns>
-	type Creaters = {
+	export type CreateInterceptors = Partial<CreatorFns>
+	type Creators = {
 		${models.map((model) => {
 			return `
 				create${model.name}: {
@@ -52,7 +58,7 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 			}
 		) => T | null | void | Promise<T | null | void>
 	}
-	export type UpdateModifiers = Partial<UpdaterFns>
+	export type UpdateInterceptors = Partial<UpdaterFns>
 	type Updaters = {
 		${models.map((model) => {
 			return `
@@ -66,8 +72,8 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 
 	type DeleteKey = ${models.map((model) => `| 'delete${model.name}'`).join('\n\t')}
 	
-	export type QueryModifiers = Partial<Record<QueryKey, QueryModifier>>
-	export type QueryModifier = <T extends MySqlSelect>(
+	export type QueryInterceptors = Partial<Record<QueryKey, QueryInterceptor>>
+	export type QueryInterceptor = <T extends MySqlSelect>(
 		query: T,
 		ctx: {
 			where?: SQL<unknown>
@@ -75,25 +81,25 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 		}
 	) => AnyMySqlSelect | null
 	
-	export type DeleteModifiers = Partial<Record<DeleteKey, DeleteModifier>>
-	export type DeleteModifier = <T extends MySqlDelete | MySqlUpdate>(
+	export type DeleteInterceptors = Partial<Record<DeleteKey, DeleteInterceptor>>
+	export type DeleteInterceptor = <T extends MySqlDelete | MySqlUpdate>(
 		query: T,
 		ctx: {
 			id: string
 			user: { id: string; roles: string; email: string }
 		}
 	) => T | null | void |  Promise<T | null | void>
+
+	export type Interceptors = QueryInterceptors & CreateInterceptors & UpdateInterceptors & DeleteInterceptors
 	
-	export const modifyQuery = <T extends MySqlSelect>(
-		modifier: QueryKey,
+	export const interceptQuery = <T extends MySqlSelect>(
+		interceptor: QueryKey,
 		query: T,
-		ctx: Parameters<QueryModifier>[1]
+		ctx: Parameters<QueryInterceptor>[1]
 	): AnyMySqlSelect | null => {
 		${
 			hasQueryMods
-				? `const mod: QueryModifier | undefined = (
-			queryMods.queryModifiers as Record<QueryKey, QueryModifier>
-		)[modifier as keyof typeof queryMods.queryModifiers]
+				? `const mod = interceptors[interceptor]
 	
 		if (mod) return mod(query, ctx)`
 				: ''
@@ -101,50 +107,48 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 		return query
 	}
 
-	export const modifyInsertMutation = <
+	export const interceptInsertMutation = <
 		T extends MySqlInsert,
 		S extends CreateKey,
 	>(
-		modifier: S,
+		interceptor: S,
 		query: T,
-		ctx: Parameters<CreaterFns[S]>[1]
-	): ReturnType<CreaterFns[S]> => {
+		ctx: Parameters<CreatorFns[S]>[1]
+	): ReturnType<CreatorFns[S]> => {
 		${
 			hasQueryMods
-				? `const mod = queryMods.createModifiers[modifier]
-		if (mod) return mod(query, ctx) as ReturnType<CreaterFns[S]>`
+				? `const mod: CreateInterceptors[S] = interceptors[interceptor]
+		if (mod) return mod(query, ctx) as ReturnType<CreatorFns[S]>`
 				: ''
 		}
-		return query as ReturnType<CreaterFns[S]>
+		return query as ReturnType<CreatorFns[S]>
 	}
 
-	export const modifyUpdateMutation = <
+	export const interceptUpdateMutation = <
 		T extends MySqlUpdate,
 		S extends UpdateKey,
 	>(
-		modifier: S,
+		interceptor: S,
 		query: T,
 		ctx: Parameters<UpdaterFns[S]>[1]
 	): ReturnType<UpdaterFns[S]> => {
 		${
 			hasQueryMods
-				? `const mod = queryMods.updateModifiers[modifier]
+				? `const mod = interceptors[interceptor]
 		if (mod) return mod(query, ctx) as ReturnType<UpdaterFns[S]>`
 				: ''
 		}
 		return query as ReturnType<UpdaterFns[S]>
 	}
 	
-	export const modifyDeleteMutation = <T extends MySqlDelete | MySqlUpdate>(
-		modifier: DeleteKey,
+	export const interceptDeleteMutation = <T extends MySqlDelete | MySqlUpdate>(
+		interceptor: DeleteKey,
 		query: T,
-		ctx: Parameters<DeleteModifier>[1]
+		ctx: Parameters<DeleteInterceptor>[1]
 	): T | null | void | Promise<T | null | void> => {
 		${
 			hasQueryMods
-				? `const mod: DeleteModifier | undefined = (
-			queryMods.deleteModifiers as Record<DeleteKey, DeleteModifier>
-		)[modifier as keyof typeof queryMods.deleteModifiers]
+				? `const mod = interceptors[interceptor]
 	
 		if (mod) return mod(query, ctx)`
 				: ''

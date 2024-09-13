@@ -16,6 +16,7 @@ const tmpl = () => {
 		schema: GraphQLSchema,
 		path: string
 	) => {
+		console.log(chalk.green('Writing introspection files'))
 		await writeFile(join(path, 'schema.graphql'), printSchema(schema), 'utf-8')
 		await writeFile(
 			join(path, 'schema.json'),
@@ -36,7 +37,7 @@ const tmpl = () => {
 	}
 
 	export const logger = async (c: Context, next: Next) => {
-		const method = c.req.method.padEnd(7, ' ')
+		const method = c.req.method.padEnd(6, ' ')
 		const path = getPath(c.req.raw)
 
 		const queries = Object.entries(c.req.queries())

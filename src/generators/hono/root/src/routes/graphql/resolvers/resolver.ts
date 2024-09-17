@@ -424,8 +424,10 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 					}
 				)
 
-				if (moddedQuery) {
-					await moddedQuery
+				const query = moddedQuery || mainQ
+
+				if (query) {
+					await query
 					${isAuthModel ? `userVerification(newId, data.email)` : ''}
 
 					await history.create(
@@ -482,6 +484,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				}
 
 				const values = {
+					id: data.id,
 					${model.attributes
 						.filter((x) => x.insertable && !x.generated)
 						.map((x) => {
@@ -517,8 +520,10 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 					}
 				)
 
-				if (moddedQuery) {
-					await moddedQuery
+				const query = moddedQuery || mainQ
+
+				if (query) {
+					await query
 
 					if (original) {
 						await history.update(

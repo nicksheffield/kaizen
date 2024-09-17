@@ -519,6 +519,16 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 
 				if (moddedQuery) {
 					await moddedQuery
+
+					if (original) {
+						await history.update(
+							'${model.tableName}',
+							data.id,
+							original,
+							data,
+							c.get('user').id
+						)
+					}
 				}
 	
 				const item = await db.query.${model.drizzleName}.findFirst({
@@ -531,16 +541,6 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 					}
 					where: eq(tables.${model.drizzleName}.id, data.id),
 				})
-
-				if (original) {
-					await history.update(
-						'${model.tableName}',
-						data.id,
-						original,
-						data,
-						c.get('user').id
-					)
-				}
 	
 				if (item) results.push(item)
 			}

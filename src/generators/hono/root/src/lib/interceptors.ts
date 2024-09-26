@@ -14,8 +14,11 @@ const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExt
 		MySqlUpdate,
 		MySqlUpdateDynamic,
 	} from 'drizzle-orm/mysql-core'
-	${hasQueryMods ? `import { interceptors } from 'mods/src/queries.js'` : ''}
+	${hasQueryMods ? `import queryInterceptors from 'mods/src/queries.js'` : ''}
+	
 	import * as tables from '../schema.js'
+
+	${hasQueryMods ? `const interceptors = queryInterceptors.interceptors` : ''}
 
 	type Ctx = {
 		user: { id: string; roles: string; email: string }

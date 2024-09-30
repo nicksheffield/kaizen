@@ -1,7 +1,7 @@
 import { MODS_PATH, SERVER_PATH } from '@/lib/constants'
 import { format as formatFile } from '@/lib/utils'
 import { Project, parseProject } from 'common/src'
-import { showDirectoryPicker } from 'file-system-access'
+// import { showDirectoryPicker } from 'file-system-access'
 import { GeneratorFn, generators } from 'generators/src'
 import { workspaceFiles, generate as workspaceGenerator } from 'generators/src/workspace'
 import { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -282,15 +282,41 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 
 			if (!generate) return
 
-			const generated = await generate(proj, {
-				seeder: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/seed.ts`)),
-				api: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/api.ts`)),
-				queries: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/queries.ts`)),
-				emails: files
-					.filter(isFile)
-					.filter((x) => x.path.startsWith(`${MODS_PATH}/emails`))
-					.map((x) => x.name),
+			const seeder = files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/seed.ts`))
+			const api = files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/api.ts`))
+			const queries = files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/queries.ts`))
+			const emails = files
+				.filter(isFile)
+				.filter((x) => x.path.startsWith(`${MODS_PATH}/emails`))
+				.map((x) => x.name)
+
+			const response = await fetch('http://localhost:3333/generate', {
+				method: 'post',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					project: JSON.stringify(proj),
+					hasSeeder: seeder,
+					hasApi: api,
+					hasQueries: queries,
+					emails,
+				}),
 			})
+
+			const responseJson = await response.json()
+
+			const generated = responseJson.generated as Record<string, string>
+
+			// const generated = await generate(proj, {
+			// 	seeder: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/seed.ts`)),
+			// 	api: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/api.ts`)),
+			// 	queries: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/queries.ts`)),
+			// 	emails: files
+			// 		.filter(isFile)
+			// 		.filter((x) => x.path.startsWith(`${MODS_PATH}/emails`))
+			// 		.map((x) => x.name),
+			// })
 
 			const generatedDescs = await convertGeneratedFilesToDescs(generated, rootHandle, SERVER_PATH)
 

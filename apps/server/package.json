@@ -1,3 +1,19 @@
 {
-	"name": "server"
+	"name": "server",
+	"scripts": {
+		"dev": "tsx --watch src/index.ts",
+		"start": "tsx src/index.ts"
+	},
+	"dependencies": {
+		"body-parser": "^1.20.3",
+		"common": "workspace:*",
+		"cors": "^2.8.5",
+		"express": "^4.21.0",
+		"generators": "workspace:*"
+	},
+	"devDependencies": {
+		"@types/body-parser": "^1.19.5",
+		"@types/cors": "^2.8.17",
+		"@types/express": "^5.0.0"
+	}
 }

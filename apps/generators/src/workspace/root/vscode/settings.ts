@@ -1,4 +1,4 @@
-import { ProjectCtx } from '@/generators/workspace/types'
+import { ProjectCtx } from '../../types'
 
 const tmpl = ({ project }: { project?: ProjectCtx }) => {
 	const object: Record<string, any> = {}

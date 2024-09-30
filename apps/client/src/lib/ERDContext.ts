@@ -1,7 +1,7 @@
 import { AttrTypeRecommend } from '@/lib/ERDHelpers'
-import type { Attribute, Model, Project, Relation } from './projectSchemas'
-import { type Dispatch, RefObject, type SetStateAction, createContext, useContext } from 'react'
 import { type Node } from '@xyflow/react'
+import type { Attribute, Model, Project, Relation } from 'common/src'
+import { type Dispatch, RefObject, type SetStateAction, createContext, useContext } from 'react'
 
 export type ExtendedModel = Model & { attributes: Attribute[] }
 

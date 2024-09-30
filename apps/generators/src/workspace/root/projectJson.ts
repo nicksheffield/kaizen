@@ -1,4 +1,4 @@
-import { generateId } from '@/lib/utils'
+import { generateId } from '../../utils'
 
 const tmpl = ({ name }: { name?: string }) => {
 	const json = {

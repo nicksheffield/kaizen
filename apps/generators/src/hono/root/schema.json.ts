@@ -1,16 +1,19 @@
-import { camelize, lc } from '../utils'
-import { ModelCtx } from '../contexts'
-import { ProjectCtx } from '@/generators/hono/types'
+import { RelationType } from 'common/src'
 import pluralize from 'pluralize'
 import { z } from 'zod'
-import { isNotFalsish, isNotNone } from '@/lib/utils'
-import { RelationType } from '@/lib/projectSchemas'
+import { isNotFalsish, isNotNone } from '../../utils'
+import { ModelCtx } from '../contexts'
+import { ProjectCtx } from '../types'
+import { camelize, lc } from '../utils'
 
 const AttributeSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	type: z.string(),
-	default: z.union([z.string(), z.number(), z.boolean()]).nullable().optional(),
+	default: z
+		.union([z.string(), z.number(), z.boolean()])
+		.nullable()
+		.optional(),
 	nullable: z.boolean(),
 	selectable: z.boolean(),
 	order: z.number(),
@@ -768,7 +771,13 @@ const loginTokenModel: z.infer<typeof ModelSchema> = {
 	],
 }
 
-const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) => {
+const tmpl = ({
+	models,
+	project,
+}: {
+	models: ModelCtx[]
+	project: ProjectCtx
+}) => {
 	const appModels = models.map((model) => {
 		return ModelSchema.parse({
 			id: model.id,
@@ -795,7 +804,8 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 				},
 				...model.attributes.map((attr) => {
 					const def = (() => {
-						if (attr.default === 'null' || attr.default === null) return null
+						if (attr.default === 'null' || attr.default === null)
+							return null
 						if (attr.default === true) return 'true'
 						if (attr.default === false) return 'false'
 						if (attr.default === '') return null
@@ -809,7 +819,12 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 						id: attr.id,
 						name: attr.name,
 						type: attr.type,
-						default: attr.name === 'id' ? null : attr.optional ? null : def,
+						default:
+							attr.name === 'id'
+								? null
+								: attr.optional
+									? null
+									: def,
 						nullable: attr.optional,
 						selectable: attr.selectable,
 						order: attr.name === 'id' ? -1 : attr.order + 1,
@@ -838,22 +853,36 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 
 	const appRelations = project.relations
 		.map((rel) => {
-			const sourceModel = project.models.find((x) => x.id === rel.sourceId)
-			const targetModel = project.models.find((x) => x.id === rel.targetId)
+			const sourceModel = project.models.find(
+				(x) => x.id === rel.sourceId
+			)
+			const targetModel = project.models.find(
+				(x) => x.id === rel.targetId
+			)
 
 			if (!sourceModel || !targetModel) return null
 
 			const sourceName = lc(
 				pluralize(
-					rel.sourceName || camelize(sourceModel?.key || sourceModel?.name || '') || 'A',
-					rel.type === RelationType.manyToOne || rel.type === RelationType.manyToMany ? 2 : 1
+					rel.sourceName ||
+						camelize(sourceModel?.key || sourceModel?.name || '') ||
+						'A',
+					rel.type === RelationType.manyToOne ||
+						rel.type === RelationType.manyToMany
+						? 2
+						: 1
 				)
 			)
 
 			const targetName = lc(
 				pluralize(
-					rel.targetName || camelize(targetModel?.key || targetModel?.name || '') || 'B',
-					rel.type === RelationType.oneToMany || rel.type === RelationType.manyToMany ? 2 : 1
+					rel.targetName ||
+						camelize(targetModel?.key || targetModel?.name || '') ||
+						'B',
+					rel.type === RelationType.oneToMany ||
+						rel.type === RelationType.manyToMany
+						? 2
+						: 1
 				)
 			)
 

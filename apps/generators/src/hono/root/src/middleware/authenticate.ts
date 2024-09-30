@@ -1,5 +1,5 @@
-import { ProjectCtx } from '@/generators/hono/types'
-import { clean } from '@/generators/utils'
+import { clean } from '../../../../utils'
+import { ProjectCtx } from '../../../types'
 
 const tmpl = ({ project }: { project: ProjectCtx }) => {
 	const cookies = project.settings.auth?.enableCookies

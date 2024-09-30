@@ -1,7 +1,13 @@
-import { ModelCtx } from '@/generators/hono/contexts'
-import { HonoGeneratorExtras } from '@/generators/hono/types'
+import { ModelCtx } from '../../../contexts'
+import { HonoGeneratorExtras } from '../../../types'
 
-const tmpl = ({ models, extras }: { models: ModelCtx[]; extras: HonoGeneratorExtras }) => {
+const tmpl = ({
+	models,
+	extras,
+}: {
+	models: ModelCtx[]
+	extras: HonoGeneratorExtras
+}) => {
 	const hasQueryMods = extras.queries
 
 	return `import { SQL } from 'drizzle-orm'

@@ -1,5 +1,19 @@
-import { CSSProperties, type ElementType, useMemo, useState } from 'react'
+import { FormRow } from '@/components/FormFields'
+import { SelectList } from '@/components/SelectList'
+import { Switcher } from '@/components/Switcher'
 import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { useERDContext } from '@/lib/ERDContext'
+import { getLogicalRecommend, getSourceName, getTargetName, isReservedKeyword } from '@/lib/ERDHelpers'
+import { useAttrField } from '@/lib/useAttrField'
+import { cn } from '@/lib/utils'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { getNodesBounds, useReactFlow, Viewport } from '@xyflow/react'
+import { Attribute, AttributeType, AttributeTypeNames, Model as BasicModel } from 'common/src'
+import { getIsUserAttr } from 'common/src/lib/utils'
 import {
 	CalendarIcon,
 	CheckIcon,
@@ -14,20 +28,7 @@ import {
 	Trash2Icon,
 	UserIcon,
 } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Attribute, Model as BasicModel, AttributeType, AttributeTypeNames } from '@/lib/projectSchemas'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import { cn, getIsUserAttr } from '@/lib/utils'
-import { useERDContext } from '@/lib/ERDContext'
-import { getLogicalRecommend, getSourceName, getTargetName, isReservedKeyword } from '@/lib/ERDHelpers'
-import { useAttrField } from '@/lib/useAttrField'
-import { SelectList } from '@/components/SelectList'
-import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
-import { useReactFlow, getNodesBounds, Viewport } from '@xyflow/react'
-import { FormRow } from '@/components/FormFields'
-import { Card } from '@/components/ui/card'
-import { Switcher } from '@/components/Switcher'
+import { CSSProperties, type ElementType, useMemo, useState } from 'react'
 
 const sheetWidth = 600
 

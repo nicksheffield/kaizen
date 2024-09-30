@@ -1,10 +1,15 @@
-import { ModelCtx } from '@/generators/hono/contexts'
-import { ProjectCtx } from '@/generators/hono/types'
-import { mapAttributeTypeToZod } from '@/generators/hono/utils'
-import { clean } from '@/generators/utils'
-import { isNotNone } from '@/lib/utils'
+import { clean, isNotNone } from '../../../../../utils'
+import { ModelCtx } from '../../../../contexts'
+import { ProjectCtx } from '../../../../types'
+import { mapAttributeTypeToZod } from '../../../../utils'
 
-const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) => {
+const tmpl = ({
+	models,
+	project,
+}: {
+	models: ModelCtx[]
+	project: ProjectCtx
+}) => {
 	const authModel = models.find((x) => project.settings.userModelId === x.id)
 
 	if (!authModel) return ''
@@ -31,7 +36,8 @@ export const registerDTO = z.object({
 			if (x.name === 'roles') return null
 			if (x.name === 'locked') return null
 
-			const isOptional = x.optional || x.default !== null || x.name === 'id'
+			const isOptional =
+				x.optional || x.default !== null || x.name === 'id'
 			const isNullable = x.optional && x.name !== 'id'
 
 			return clean`${x.name}: z.${mapAttributeTypeToZod(x.type)}()${isOptional && '.optional()'}${isNullable && '.nullable()'},`

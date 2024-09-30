@@ -1,4 +1,4 @@
-import { Project } from '@/lib/projectSchemas'
+import { Project } from 'common/src'
 
 export type ProjectCtx = Project
 
@@ -9,4 +9,7 @@ export type HonoGeneratorExtras = {
 	emails: string[]
 }
 
-export type HonoGeneratorFn = (project: ProjectCtx, extras: HonoGeneratorExtras) => Promise<Record<string, string>>
+export type HonoGeneratorFn = (
+	project: ProjectCtx,
+	extras: HonoGeneratorExtras
+) => Promise<Record<string, string>>

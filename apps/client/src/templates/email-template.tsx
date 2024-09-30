@@ -1,5 +1,5 @@
-import { Project } from '@/lib/projectSchemas'
 import { snakeToCamel } from '@/lib/utils'
+import { Project } from 'common/src'
 
 const tmpl = ({ name: emailName, project }: { name: string; project: Project }) => {
 	const name = snakeToCamel(emailName)

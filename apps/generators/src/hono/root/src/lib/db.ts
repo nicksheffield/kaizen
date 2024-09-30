@@ -1,7 +1,13 @@
-import { ModelCtx } from '@/generators/hono/contexts'
-import { ProjectCtx } from '@/generators/hono/types'
+import { ModelCtx } from '../../../contexts'
+import { ProjectCtx } from '../../../types'
 
-const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) => {
+const tmpl = ({
+	models,
+	project,
+}: {
+	models: ModelCtx[]
+	project: ProjectCtx
+}) => {
 	const authModel = models.find((x) => project.settings.userModelId === x.id)
 
 	return `import { DrizzleMySQLAdapter } from '@lucia-auth/adapter-drizzle'

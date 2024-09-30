@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button'
 import { useApp } from '@/lib/AppContext'
 import { useERDContext } from '@/lib/ERDContext'
 import { getAttrTypeRecommends, getSourceName, getTargetName, isReservedKeyword } from '@/lib/ERDHelpers'
-import { AttributeType, Model, Relation } from '@/lib/projectSchemas'
-import { generateId, getUserModelFields, roundToNearest } from '@/lib/utils'
+import { generateId, roundToNearest } from '@/lib/utils'
 import {
 	Node,
 	NodeChange,
@@ -18,6 +17,8 @@ import {
 	useReactFlow,
 	useStore,
 } from '@xyflow/react'
+import { AttributeType, Model, Relation } from 'common/src'
+import { getUserModelFields } from 'common/src/lib/utils'
 import { ComponentProps, useCallback, useMemo, useRef, useState } from 'react'
 import { useLocalStorage } from 'usehooks-ts'
 import { ERDProvider } from '../components/ERDProvider'

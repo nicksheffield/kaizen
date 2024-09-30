@@ -1,12 +1,14 @@
 {
-  "name": "generators",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+	"name": "generators",
+	"dependencies": {
+		"common": "workspace:*",
+		"oslo": "^1.2.1",
+		"pluralize": "^8.0.0",
+		"prettier": "^3.3.3",
+		"yaml": "^2.5.1",
+		"zod": "^3.23.8"
+	},
+	"devDependencies": {
+		"@types/pluralize": "^0.0.33"
+	}
 }

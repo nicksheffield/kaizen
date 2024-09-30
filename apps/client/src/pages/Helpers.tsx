@@ -4,11 +4,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useApp } from '@/lib/AppContext'
-import { Model } from '@/lib/projectSchemas'
 import { camelize } from '@/lib/utils'
+import { Model } from 'common/src'
 import { ChevronDownIcon, FilterIcon, LifeBuoyIcon } from 'lucide-react'
-import pluralize from 'pluralize'
-import { plural, singular } from 'pluralize'
+import pluralize, { plural, singular } from 'pluralize'
 import { useState } from 'react'
 import { toast } from 'sonner'
 

@@ -1,6 +1,6 @@
-import { DirDesc, FileDesc, FSDesc } from './handle'
-import { Project } from '@/lib/projectSchemas'
+import { Project } from 'common/src'
 import { createContext, useContextSelector } from 'use-context-selector'
+import { DirDesc, FileDesc, FSDesc } from './handle'
 
 export type AppContextType = {
 	root: DirDesc | undefined

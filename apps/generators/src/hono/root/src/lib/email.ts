@@ -1,12 +1,24 @@
-import { HonoGeneratorExtras, ProjectCtx } from '@/generators/hono/types'
-import { clean } from '@/generators/utils'
-import { MODS_DIRNAME } from '@/lib/constants'
+import { MODS_DIRNAME } from 'common/src'
+import { HonoGeneratorExtras, ProjectCtx } from '../../../../hono/types'
+import { clean } from '../../../../utils'
 
-const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorExtras }) => {
+const tmpl = ({
+	project,
+	extras,
+}: {
+	project: ProjectCtx
+	extras: HonoGeneratorExtras
+}) => {
 	const useConfirmation = project.settings.auth.requireAccountConfirmation
-	const hasConfirmAccount = extras.emails.find((x) => x === 'ConfirmAccount.tsx')
-	const hasResetPassword = extras.emails.find((x) => x === 'ResetPassword.tsx')
-	const hasTwoFactorCode = extras.emails.find((x) => x === 'TwoFactorCode.tsx')
+	const hasConfirmAccount = extras.emails.find(
+		(x) => x === 'ConfirmAccount.tsx'
+	)
+	const hasResetPassword = extras.emails.find(
+		(x) => x === 'ResetPassword.tsx'
+	)
+	const hasTwoFactorCode = extras.emails.find(
+		(x) => x === 'TwoFactorCode.tsx'
+	)
 	const hasLoginCode = extras.emails.find((x) => x === 'LoginCode.tsx')
 
 	return clean`import { db } from './db.js'

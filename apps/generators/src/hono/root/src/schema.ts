@@ -1,11 +1,19 @@
-import { mapAttrToDrizzleTypeFn, mapAttrToDrizzleTypeName } from '../../utils'
+import { clean } from '../../../utils'
 import { ModelCtx } from '../../contexts'
-import { ProjectCtx } from '@/generators/hono/types'
-import { clean } from '@/generators/utils'
+import { ProjectCtx } from '../../types'
+import { mapAttrToDrizzleTypeFn, mapAttrToDrizzleTypeName } from '../../utils'
 
 const tmpl = (ctx: { models: ModelCtx[]; project: ProjectCtx }) => {
-	const attrTypeImports = ctx.models.flatMap((x) => x.attributes).map((x) => mapAttrToDrizzleTypeName(x.type))
-	const requiredTypeImports = ['AnyMySqlColumn', 'mysqlTable', 'timestamp', 'varchar', 'datetime']
+	const attrTypeImports = ctx.models
+		.flatMap((x) => x.attributes)
+		.map((x) => mapAttrToDrizzleTypeName(x.type))
+	const requiredTypeImports = [
+		'AnyMySqlColumn',
+		'mysqlTable',
+		'timestamp',
+		'varchar',
+		'datetime',
+	]
 
 	const drizzleTypeImports = [
 		'int',
@@ -19,7 +27,9 @@ const tmpl = (ctx: { models: ModelCtx[]; project: ProjectCtx }) => {
 
 	const models = ctx.models
 
-	const authModel = models.find((x) => ctx.project.settings.userModelId === x.id)
+	const authModel = models.find(
+		(x) => ctx.project.settings.userModelId === x.id
+	)
 	const authModelName = authModel?.drizzleName || 'users'
 
 	const hasApiKeys = ctx.project.settings.auth?.enableApiKeys
@@ -218,8 +228,12 @@ ${models
 ${models
 	.map((model) => {
 		const relationTypes = [
-			model.relatedModels.find((x) => x.targetType === 'one') ? 'one' : null,
-			model.relatedModels.find((x) => x.targetType === 'many') ? 'many' : null,
+			model.relatedModels.find((x) => x.targetType === 'one')
+				? 'one'
+				: null,
+			model.relatedModels.find((x) => x.targetType === 'many')
+				? 'many'
+				: null,
 		].filter((x) => !!x)
 
 		if (relationTypes.length === 0) return null

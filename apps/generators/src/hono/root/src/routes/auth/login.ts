@@ -1,8 +1,14 @@
-import { ModelCtx } from '@/generators/hono/contexts'
-import { ProjectCtx } from '@/generators/hono/types'
-import { clean } from '@/generators/utils'
+import { clean } from '../../../../../utils'
+import { ModelCtx } from '../../../../contexts'
+import { ProjectCtx } from '../../../../types'
 
-const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) => {
+const tmpl = ({
+	models,
+	project,
+}: {
+	models: ModelCtx[]
+	project: ProjectCtx
+}) => {
 	const authModel = models.find((x) => project.settings.userModelId === x.id)
 	const authModelName = authModel?.drizzleName || 'users'
 

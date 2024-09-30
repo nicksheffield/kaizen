@@ -1,25 +1,34 @@
+import { RelationType } from 'common/src'
+import pluralize from 'pluralize'
+import { camelize, isNotNone } from '../utils'
+import { ProjectCtx } from './types'
 import {
 	getBigName,
 	getSmallName,
 	getTableName,
 	lc,
 	mapAttributeTypeToGQL,
-	mapAttrToGQLFilter,
 	mapAttributeTypeToJs,
+	mapAttrToGQLFilter,
 	sortAttrs,
 	vetDefault,
 } from './utils'
-import { ProjectCtx } from './types'
-import { camelize, isNotNone } from '@/lib/utils'
-import { RelationType } from '@/lib/projectSchemas'
-import pluralize from 'pluralize'
 
 export type ModelCtx = ReturnType<typeof createModelCtx>
 
-export const createModelCtx = (model: ProjectCtx['models'][number], ctx: ProjectCtx) => {
-	const sourceRels = ctx.relations.filter((x) => x.sourceId === model.id && x.type === RelationType.manyToOne)
-	const targetRels = ctx.relations.filter((x) => x.targetId === model.id && x.type === RelationType.oneToMany)
-	const oneRels = ctx.relations.filter((x) => x.sourceId === model.id && x.type === RelationType.oneToOne)
+export const createModelCtx = (
+	model: ProjectCtx['models'][number],
+	ctx: ProjectCtx
+) => {
+	const sourceRels = ctx.relations.filter(
+		(x) => x.sourceId === model.id && x.type === RelationType.manyToOne
+	)
+	const targetRels = ctx.relations.filter(
+		(x) => x.targetId === model.id && x.type === RelationType.oneToMany
+	)
+	const oneRels = ctx.relations.filter(
+		(x) => x.sourceId === model.id && x.type === RelationType.oneToOne
+	)
 
 	const allSourceRels = ctx.relations.filter((x) => x.sourceId === model.id)
 	const allTargetRels = ctx.relations.filter((x) => x.targetId === model.id)
@@ -65,9 +74,12 @@ export const createModelCtx = (model: ProjectCtx['models'][number], ctx: Project
 			...sourceRels
 				.sort((a, b) => a.sourceOrder - b.sourceOrder)
 				.map((rel) => {
-					const targetModel = ctx.models.find((x) => x.id === rel.targetId)
+					const targetModel = ctx.models.find(
+						(x) => x.id === rel.targetId
+					)
 					if (!targetModel) return null
-					const name = lc(rel.targetName || getBigName(targetModel)) + 'Id'
+					const name =
+						lc(rel.targetName || getBigName(targetModel)) + 'Id'
 
 					return {
 						id: rel.id,
@@ -83,9 +95,12 @@ export const createModelCtx = (model: ProjectCtx['models'][number], ctx: Project
 			...targetRels
 				.sort((a, b) => a.targetOrder - b.targetOrder)
 				.map((rel) => {
-					const sourceModel = ctx.models.find((x) => x.id === rel.sourceId)
+					const sourceModel = ctx.models.find(
+						(x) => x.id === rel.sourceId
+					)
 					if (!sourceModel) return null
-					const name = lc(rel.sourceName || getBigName(sourceModel)) + 'Id'
+					const name =
+						lc(rel.sourceName || getBigName(sourceModel)) + 'Id'
 
 					return {
 						id: rel.id,
@@ -100,9 +115,12 @@ export const createModelCtx = (model: ProjectCtx['models'][number], ctx: Project
 			...oneRels
 				.sort((a, b) => a.sourceOrder - b.sourceOrder)
 				.map((rel) => {
-					const targetModel = ctx.models.find((x) => x.id === rel.targetId)
+					const targetModel = ctx.models.find(
+						(x) => x.id === rel.targetId
+					)
 					if (!targetModel) return null
-					const name = lc(rel.targetName || getBigName(targetModel)) + 'Id'
+					const name =
+						lc(rel.targetName || getBigName(targetModel)) + 'Id'
 
 					return {
 						id: rel.id,
@@ -119,30 +137,44 @@ export const createModelCtx = (model: ProjectCtx['models'][number], ctx: Project
 			...allSourceRels
 				.sort((a, b) => a.sourceOrder - b.sourceOrder)
 				.map((rel) => {
-					const otherModel = ctx.models.find((x) => x.id === rel.targetId)
+					const otherModel = ctx.models.find(
+						(x) => x.id === rel.targetId
+					)
 					if (!otherModel) return null
 
 					const tableName = getTableName(otherModel)
 
-					const thisName = rel.sourceName || camelize(model.key || model.name)
-					const otherName = rel.targetName || camelize(otherModel.key || otherModel.name)
+					const thisName =
+						rel.sourceName || camelize(model.key || model.name)
+					const otherName =
+						rel.targetName ||
+						camelize(otherModel.key || otherModel.name)
 
-					const isArray = rel.type === RelationType.oneToMany || rel.type === RelationType.manyToMany
+					const isArray =
+						rel.type === RelationType.oneToMany ||
+						rel.type === RelationType.manyToMany
 
-					const fieldName = isArray ? pluralize(otherName, 2) : otherName
+					const fieldName = isArray
+						? pluralize(otherName, 2)
+						: otherName
 
 					const thisKey = (() => {
-						if (rel.type === RelationType.oneToOne) return `${otherName}Id`
-						if (rel.type === RelationType.manyToOne) return `${otherName}Id`
+						if (rel.type === RelationType.oneToOne)
+							return `${otherName}Id`
+						if (rel.type === RelationType.manyToOne)
+							return `${otherName}Id`
 						if (rel.type === RelationType.oneToMany) return `id`
-						if (rel.type === RelationType.manyToMany) return `${otherName}Id`
+						if (rel.type === RelationType.manyToMany)
+							return `${otherName}Id`
 					})()
 
 					const oppositeKey = (() => {
 						if (rel.type === RelationType.oneToOne) return `id`
 						if (rel.type === RelationType.manyToOne) return `id`
-						if (rel.type === RelationType.oneToMany) return `${thisName}Id`
-						if (rel.type === RelationType.manyToMany) return `${thisName}Id`
+						if (rel.type === RelationType.oneToMany)
+							return `${thisName}Id`
+						if (rel.type === RelationType.manyToMany)
+							return `${thisName}Id`
 					})()
 
 					const targetType = (() => {
@@ -171,27 +203,39 @@ export const createModelCtx = (model: ProjectCtx['models'][number], ctx: Project
 			...allTargetRels
 				.sort((a, b) => a.targetOrder - b.targetOrder)
 				.map((rel) => {
-					const otherModel = ctx.models.find((x) => x.id === rel.sourceId)
+					const otherModel = ctx.models.find(
+						(x) => x.id === rel.sourceId
+					)
 					if (!otherModel) return null
 
 					const tableName = getTableName(otherModel)
 
-					const thisName = rel.targetName || camelize(model.key || model.name)
-					const otherName = rel.sourceName || camelize(otherModel.key || otherModel.name)
+					const thisName =
+						rel.targetName || camelize(model.key || model.name)
+					const otherName =
+						rel.sourceName ||
+						camelize(otherModel.key || otherModel.name)
 
-					const isArray = rel.type === RelationType.manyToOne || rel.type === RelationType.manyToMany
-					const fieldName = isArray ? pluralize(otherName, 2) : otherName
+					const isArray =
+						rel.type === RelationType.manyToOne ||
+						rel.type === RelationType.manyToMany
+					const fieldName = isArray
+						? pluralize(otherName, 2)
+						: otherName
 
 					const thisKey = (() => {
 						if (rel.type === RelationType.oneToOne) return `id`
 						if (rel.type === RelationType.manyToOne) return `id`
-						if (rel.type === RelationType.oneToMany) return `${otherName}Id`
+						if (rel.type === RelationType.oneToMany)
+							return `${otherName}Id`
 						/* manyToMany */ return `${otherName}Id`
 					})()
 
 					const oppositeKey = (() => {
-						if (rel.type === RelationType.oneToOne) return `${thisName}Id`
-						if (rel.type === RelationType.manyToOne) return `${thisName}Id`
+						if (rel.type === RelationType.oneToOne)
+							return `${thisName}Id`
+						if (rel.type === RelationType.manyToOne)
+							return `${thisName}Id`
 						if (rel.type === RelationType.oneToMany) return `id`
 						/* manyToMany */ return `${thisName}Id`
 					})()

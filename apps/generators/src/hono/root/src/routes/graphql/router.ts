@@ -1,8 +1,14 @@
-import { ModelCtx } from '@/generators/hono/contexts'
-import { ProjectCtx } from '@/generators/hono/types'
-import { CLIENT_DIRNAME, SERVER_PATH } from '@/lib/constants'
+import { CLIENT_DIRNAME, SERVER_PATH } from 'common/src'
+import { ModelCtx } from '../../../../contexts'
+import { ProjectCtx } from '../../../../types'
 
-const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) => {
+const tmpl = ({
+	models,
+	project,
+}: {
+	models: ModelCtx[]
+	project: ProjectCtx
+}) => {
 	return `import { Context, Hono } from 'hono'
 import { g, InferResolvers, buildSchema } from 'garph'
 import { createYoga, maskError } from 'graphql-yoga'

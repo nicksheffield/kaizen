@@ -1,10 +1,15 @@
-import { ModelCtx } from '@/generators/hono/contexts'
-import { mapAttributeTypeToJs } from '@/generators/hono/utils'
-import { ProjectCtx } from '@/generators/hono/types'
-import { isNotNone } from '@/lib/utils'
-import { clean } from '@/generators/utils'
+import { clean, isNotNone } from '../../../../utils'
+import { ModelCtx } from '../../../contexts'
+import { ProjectCtx } from '../../../types'
+import { mapAttributeTypeToJs } from '../../../utils'
 
-const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) => {
+const tmpl = ({
+	models,
+	project,
+}: {
+	models: ModelCtx[]
+	project: ProjectCtx
+}) => {
 	const authModel = models.find((x) => project.settings.userModelId === x.id)
 
 	if (!authModel) return ''
@@ -48,7 +53,8 @@ const tmpl = ({ models, project }: { models: ModelCtx[]; project: ProjectCtx }) 
 				if (x.name === 'password') return null
 				if (x.name === 'email') return null
 
-				const isOptional = x.optional || x.default !== null || x.name === 'id'
+				const isOptional =
+					x.optional || x.default !== null || x.name === 'id'
 				const isNullable = x.optional && x.name !== 'id'
 				const canBeSQL = x.name !== 'id'
 

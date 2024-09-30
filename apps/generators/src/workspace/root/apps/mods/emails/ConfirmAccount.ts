@@ -1,4 +1,4 @@
-import { Project } from '@/lib/projectSchemas'
+import { Project } from 'common/src'
 
 const tmpl = ({ project }: { project?: Project }) => {
 	return `import {

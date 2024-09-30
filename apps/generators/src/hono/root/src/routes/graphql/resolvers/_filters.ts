@@ -1,4 +1,4 @@
-import { ModelCtx } from '@/generators/hono/contexts'
+import { ModelCtx } from '../../../../../contexts'
 
 const tmpl = ({ models }: { models: ModelCtx[] }) => {
 	return `import {

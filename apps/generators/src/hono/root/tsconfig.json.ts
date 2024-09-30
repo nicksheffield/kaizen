@@ -1,4 +1,4 @@
-import { MODS_DIRNAME } from '@/lib/constants'
+import { MODS_DIRNAME } from 'common/src'
 
 const tmpl = () => {
 	const tsConfigJson = {

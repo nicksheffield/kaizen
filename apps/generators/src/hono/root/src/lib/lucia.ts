@@ -1,4 +1,4 @@
-import { ProjectCtx } from '@/generators/hono/types'
+import { ProjectCtx } from '../../../types'
 
 const tmpl = ({ project }: { project: ProjectCtx }) => {
 	return `import { Lucia, TimeSpan } from 'lucia'

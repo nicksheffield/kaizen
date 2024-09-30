@@ -1,5 +1,5 @@
-import { Attribute } from '@/lib/projectSchemas'
 import { useERDContext } from '@/lib/ERDContext'
+import { Attribute } from 'common/src'
 import { useCallback, useState } from 'react'
 
 export const useAttrField = (

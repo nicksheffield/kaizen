@@ -1,7 +1,13 @@
-import { HonoGeneratorExtras, ProjectCtx } from '@/generators/hono/types'
-import { clean } from '@/generators/utils';
+import { clean } from '../../../../utils'
+import { HonoGeneratorExtras, ProjectCtx } from '../../../types'
 
-const tmpl = ({ project, extras }: { project: ProjectCtx; extras: HonoGeneratorExtras }) => {
+const tmpl = ({
+	project,
+	extras,
+}: {
+	project: ProjectCtx
+	extras: HonoGeneratorExtras
+}) => {
 	const hasApi = extras.api !== undefined
 
 	const {

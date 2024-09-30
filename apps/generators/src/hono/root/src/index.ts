@@ -1,5 +1,5 @@
-import { HonoGeneratorExtras } from '@/generators/hono/types'
-import { MODS_DIRNAME } from '@/lib/constants'
+import { MODS_DIRNAME } from 'common/src'
+import { HonoGeneratorExtras } from '../../types'
 
 const tmpl = ({ extras }: { extras: HonoGeneratorExtras }) => {
 	const hasSeeder = extras.seeder

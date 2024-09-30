@@ -1,7 +1,7 @@
-import { type Node } from '@xyflow/react'
-import { AttributeType, Project, type Model, type Relation } from './projectSchemas'
-import { plural, singular } from 'pluralize'
 import { camelize } from '@/lib/utils'
+import { type Node } from '@xyflow/react'
+import { AttributeType, Project, type Model, type Relation } from 'common/src'
+import { plural, singular } from 'pluralize'
 
 export const getSourceName = (rel: Relation, nodes: Node<Model>[]) => {
 	const sourceCardinality = rel.type === 'oneToMany' || rel.type === 'oneToOne' ? 'one' : 'many'

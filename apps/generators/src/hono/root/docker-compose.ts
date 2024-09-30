@@ -1,5 +1,5 @@
-import { ProjectCtx } from '@/generators/hono/types'
 import { stringify } from 'yaml'
+import { ProjectCtx } from '../types'
 
 const tmpl = ({ project }: { project: ProjectCtx }) => {
 	const settings = project.settings
@@ -34,7 +34,10 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 	return stringify(
 		{
 			version: '3.1',
-			name: project.settings.name.toLowerCase().replaceAll(/\s/g, '-').replaceAll(/\./g, '-'),
+			name: project.settings.name
+				.toLowerCase()
+				.replaceAll(/\s/g, '-')
+				.replaceAll(/\./g, '-'),
 			services: {
 				db,
 				adminer,

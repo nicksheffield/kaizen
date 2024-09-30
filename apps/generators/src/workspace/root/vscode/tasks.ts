@@ -1,4 +1,4 @@
-import { ProjectCtx } from '@/generators/workspace/types'
+import { ProjectCtx } from '../../types'
 
 type Task = {
 	label: string

@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { useERDContext } from '@/lib/ERDContext'
 import { isReservedKeyword } from '@/lib/ERDHelpers'
-import { Attribute, AttributeType, Model as BasicModel, Relation, RelationType } from '@/lib/projectSchemas'
 import { useModelField } from '@/lib/useModelField'
 import { camelize, cn, generateId } from '@/lib/utils'
 import {
@@ -29,6 +28,7 @@ import {
 	type Node,
 	type NodeProps,
 } from '@xyflow/react'
+import { Attribute, AttributeType, Model as BasicModel, Relation, RelationType } from 'common/src'
 import { CalendarIcon, PlusIcon, Settings2Icon, Trash2Icon, UserIcon } from 'lucide-react'
 import { plural } from 'pluralize'
 import { CSSProperties, Dispatch, SetStateAction, useState } from 'react'

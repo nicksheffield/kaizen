@@ -131,6 +131,9 @@ importers:
       cmdk:
         specifier: ^0.2.1
         version: 0.2.1(@types/react@18.3.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      common:
+        specifier: workspace:*
+        version: link:../common
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
@@ -149,6 +152,9 @@ importers:
       framer-motion:
         specifier: ^11.5.4
         version: 11.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      generators:
+        specifier: workspace:*
+        version: link:../generators
       lucide-react:
         specifier: ^0.407.0
         version: 0.407.0(react@18.3.1)
@@ -259,9 +265,7 @@ importers:
         specifier: ^5.4.6
         version: 5.4.8(@types/node@22.7.4)
 
-  apps/generators: {}
-
-  apps/projectSchemas:
+  apps/common:
     dependencies:
       oslo:
         specifier: ^1.2.1
@@ -269,6 +273,31 @@ importers:
       zod:
         specifier: ^3.23.8
         version: 3.23.8
+
+  apps/generators:
+    dependencies:
+      common:
+        specifier: workspace:*
+        version: link:../common
+      oslo:
+        specifier: ^1.2.1
+        version: 1.2.1
+      pluralize:
+        specifier: ^8.0.0
+        version: 8.0.0
+      prettier:
+        specifier: ^3.3.3
+        version: 3.3.3
+      yaml:
+        specifier: ^2.5.1
+        version: 2.5.1
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
+    devDependencies:
+      '@types/pluralize':
+        specifier: ^0.0.33
+        version: 0.0.33
 
 packages:
 

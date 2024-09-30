@@ -1,10 +1,13 @@
-import prettier from 'prettier'
-import typescriptPlugin from 'prettier/plugins/typescript'
-import estreePlugin from 'prettier/plugins/estree'
-import { Attribute, AttributeType, Model } from '@/lib/projectSchemas'
+import { Attribute, AttributeType, Model } from 'common/src'
 import { plural, singular } from 'pluralize'
+import prettier from 'prettier'
+import estreePlugin from 'prettier/plugins/estree'
+import typescriptPlugin from 'prettier/plugins/typescript'
 
-export const format = async (content: string, settings: Partial<prettier.Options> = {}) => {
+export const format = async (
+	content: string,
+	settings: Partial<prettier.Options> = {}
+) => {
 	try {
 		const result = await prettier.format(content, {
 			tabWidth: 4,
@@ -43,11 +46,13 @@ export const lc = (str: string) => {
 	return `${firstLetter.toLowerCase()}${str.slice(1)}`
 }
 
-export const getSmallName = (model: Model) => singular(model.key || camelize(model.name))
+export const getSmallName = (model: Model) =>
+	singular(model.key || camelize(model.name))
 
 export const getBigName = (model: Model) => uc(getSmallName(model))
 
-export const getTableName = (model: Model) => model.tableName || plural(model.key || camelize(model.name))
+export const getTableName = (model: Model) =>
+	model.tableName || plural(model.key || camelize(model.name))
 
 export const camelize = (str: string) => {
 	return str
@@ -123,7 +128,10 @@ export const mapAttrToDrizzleTypeName = (type: string) => {
 	}
 }
 
-export const mapAttrToDrizzleTypeFn = (attr: { name: string; type: string }) => {
+export const mapAttrToDrizzleTypeFn = (attr: {
+	name: string
+	type: string
+}) => {
 	const name = attr.name
 
 	switch (attr.type) {

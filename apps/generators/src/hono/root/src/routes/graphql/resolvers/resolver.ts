@@ -1,13 +1,14 @@
-import { ModelCtx } from '@/generators/hono/contexts'
-import { ProjectCtx } from '@/generators/hono/types'
-import { mapAttrToGQLFilter, mapAttrToGarph } from '@/generators/hono/utils'
-import { clean } from '@/generators/utils'
-import { isNotNone, removeDuplicates } from '@/lib/utils'
+import { clean, isNotNone, removeDuplicates } from '../../../../../../utils'
+import { ModelCtx } from '../../../../../contexts'
+import { ProjectCtx } from '../../../../../types'
+import { mapAttrToGQLFilter, mapAttrToGarph } from '../../../../../utils'
 
 const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	const nonSelectAttrs = model.attributes.filter((x) => !x.selectable)
 
-	const authModel = project.models.find((x) => x.id === project.settings.userModelId)
+	const authModel = project.models.find(
+		(x) => x.id === project.settings.userModelId
+	)
 	const isAuthModel = authModel?.id === model.id
 
 	const relatedModels = model.relatedModels
@@ -110,7 +111,8 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 					if (!x.insertable) return null
 					if (x.generated) return null
 
-					const isOptional = x.optional || x.default !== null || x.name === 'id'
+					const isOptional =
+						x.optional || x.default !== null || x.name === 'id'
 
 					return `${x.name}: g.${mapAttrToGarph(x.type)}${isOptional ? '.optional()' : ''},`
 				})
@@ -245,7 +247,10 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				.select({
 					${model.attributes
 						.filter((x) => x.selectable)
-						.map((x) => `${x.name}: tables.${model.drizzleName}.${x.name},`)
+						.map(
+							(x) =>
+								`${x.name}: tables.${model.drizzleName}.${x.name},`
+						)
 						.join('\n')}
 					${model.foreignKeys.map((x) => `${x.name}: tables.${model.drizzleName}.${x.name},`).join('\n')}
 					${
@@ -290,7 +295,10 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				.select({
 					${model.attributes
 						.filter((x) => x.selectable)
-						.map((x) => `${x.name}: tables.${model.drizzleName}.${x.name},`)
+						.map(
+							(x) =>
+								`${x.name}: tables.${model.drizzleName}.${x.name},`
+						)
 						.join('\n')}
 					${model.foreignKeys.map((x) => `${x.name}: tables.${model.drizzleName}.${x.name},`).join('\n')}
 					${
@@ -490,7 +498,8 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 						.map((x) => {
 							if (x.type === 'a_i') return null
 							if (x.name === 'id') return null
-							if (x.type === 'password') return `password: hashedPassword,`
+							if (x.type === 'password')
+								return `password: hashedPassword,`
 							if (x.optional) return `${x.name}: data.${x.name},`
 							return `${x.name}: data.${x.name} ?? undefined,`
 						})

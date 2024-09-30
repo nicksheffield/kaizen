@@ -1,5 +1,5 @@
-import { ModelCtx } from '@/generators/hono/contexts'
-import { uc } from '@/lib/utils'
+import { uc } from '../../../utils'
+import { ModelCtx } from '../../contexts'
 
 const tmpl = ({ model }: { model: ModelCtx }) => {
 	const port = 3000

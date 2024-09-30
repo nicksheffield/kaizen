@@ -1,8 +1,8 @@
 import { Attribute, AttributeType, Model } from 'common/src'
 import { plural, singular } from 'pluralize'
 import prettier from 'prettier'
-import estreePlugin from 'prettier/plugins/estree'
-import typescriptPlugin from 'prettier/plugins/typescript'
+import * as estreePlugin from 'prettier/plugins/estree'
+import * as typescriptPlugin from 'prettier/plugins/typescript'
 
 export const format = async (
 	content: string,

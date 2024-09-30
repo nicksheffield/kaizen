@@ -21,8 +21,6 @@ app.post('/generate', async (req, res) => {
 	const queries = req.body.hasQueries
 	const emails = req.body.emails
 
-	console.log(project)
-
 	const generate: GeneratorFn | undefined =
 		generators[project.settings.generator as keyof typeof generators]
 

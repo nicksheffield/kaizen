@@ -901,8 +901,6 @@ const tmpl = ({
 		})
 		.filter(isNotNone)
 
-	console.log('appModels', appModels)
-
 	return JSON.stringify(
 		{
 			models: [

@@ -1,14 +1,13 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import { Environment } from '@/pages/Environment'
 import { Header } from '@/components/Header'
 import { useApp } from '@/lib/AppContext'
-import { Welcome } from '@/pages/Welcome'
+import { Auth } from '@/pages/Auth'
 import { Details } from '@/pages/Details'
-import { Sandbox } from '@/pages/Sandbox'
+import { Environment } from '@/pages/Environment'
 import { Helpers } from '@/pages/Helpers'
 import { Models } from '@/pages/Models'
-import { Files } from '@/pages/Files'
-import { Auth } from '@/pages/Auth'
+import { Sandbox } from '@/pages/Sandbox'
+import { Welcome } from '@/pages/Welcome'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 export const App = () => {
 	const project = useApp((v) => v.project)
@@ -28,7 +27,7 @@ export const App = () => {
 						<Route path="/sandbox" element={<Sandbox />} />
 						<Route path="/environment" element={<Environment />} />
 						<Route path="/helpers" element={<Helpers />} />
-						<Route path="/files" element={<Files />} />
+						{/* <Route path="/files" element={<Files />} /> */}
 
 						<Route path="*" element={<Navigate to="/" />} />
 					</Routes>

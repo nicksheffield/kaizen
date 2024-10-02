@@ -1,19 +1,8 @@
 import { type ClassValue, clsx } from 'clsx'
 import { alphabet, generateRandomString } from 'oslo/crypto'
 import { singular } from 'pluralize'
-import prettier from 'prettier'
-import estreePlugin from 'prettier/plugins/estree'
-import typescriptPlugin from 'prettier/plugins/typescript'
 import { twMerge } from 'tailwind-merge'
-// import { nanoid, customAlphabet } from 'nanoid'
 
-// const alphanumeric = alphabet('0-9', 'A-Z').replace('O', '').replace('I', '')
-
-// const id = customAlphabet(alphanumeric, 5)
-
-// for (let i = 0; i < 10; i++) {
-// 	console.log(id(9))
-// }
 export type VoidPromise = void | Promise<void>
 
 export type Nullish = null | undefined | void
@@ -82,29 +71,5 @@ export const safeParse = <T>(str: string, fallback: T): T => {
 	}
 }
 
-
-
 export const roundToNearest = (n: number, t: number) => Math.round(n / t) * t
 export const ceilToNearest = (n: number, t: number) => Math.ceil(n / t) * t
-
-export const format = async (content: string, settings: Partial<prettier.Options> = {}) => {
-	try {
-		const result = await prettier.format(content, {
-			tabWidth: 4,
-			useTabs: true,
-			singleQuote: true,
-			semi: false,
-			printWidth: 80,
-			trailingComma: 'es5',
-			arrowParens: 'always',
-			parser: 'typescript',
-			...settings,
-			plugins: [estreePlugin, typescriptPlugin],
-		})
-		return result
-	} catch (e) {
-		console.log(e)
-		return `/* unformatted */
-${content}`
-	}
-}

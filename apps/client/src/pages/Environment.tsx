@@ -1,10 +1,10 @@
 import { FormRow } from '@/components/FormFields'
-import { MonacoEditor } from '@/components/MonacoEditor'
 import { Button } from '@/components/ui/button'
 import { Card, CardDescription, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
 import { useApp } from '@/lib/AppContext'
 import { SERVER_PATH } from '@/lib/constants'
 import { isFile } from '@/lib/handle'
@@ -424,16 +424,14 @@ export const Environment = () => {
 								</Card>
 							</div>
 						) : (
-							<Card className="overflow-hidden rounded-md border py-1">
-								<MonacoEditor
-									value={code}
-									onValueChange={(val) => {
-										setCode(val)
-										setEnvData(codeToEnvData(val))
-									}}
-									height="600px"
-								/>
-							</Card>
+							<Textarea
+								value={code}
+								onChange={(e) => {
+									setCode(e.target.value)
+									setEnvData(codeToEnvData(e.target.value))
+								}}
+								className="h-[600px]"
+							/>
 						)}
 					</div>
 				</div>

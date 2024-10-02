@@ -3,17 +3,18 @@ import { parseProject } from 'common/src'
 import cors from 'cors'
 import express from 'express'
 import { GeneratorFn, generators } from 'generators/src'
+import { generate as workspaceGenerator } from 'generators/src/workspace'
+import path from 'node:path'
 
 const app = express()
 
 app.use(bodyParser.json())
 app.use(cors())
 
-app.get('/', (req, res) => {
-	res.send('')
-})
+const clientDir = path.join(__dirname, '../../client/dist')
+app.use(express.static(clientDir))
 
-app.post('/generate', async (req, res) => {
+app.post('/api/generate/project', async (req, res) => {
 	const project = parseProject(req.body.project)
 
 	const seeder = req.body.hasSeeder
@@ -38,6 +39,26 @@ app.post('/generate', async (req, res) => {
 	res.send({ generated })
 })
 
-app.listen(3333, () => {
-	console.log('Example app listening on port 3333!')
+app.post('/api/generate/workspace', async (req, res) => {
+	const project = parseProject(req.body.project)
+	const name = req.body.name
+
+	if (!project) {
+		res.status(400).send('Invalid project')
+		return
+	}
+
+	const generated = await workspaceGenerator({ project, name })
+
+	res.send({ generated })
+})
+
+app.get('*', (req, res) => {
+	res.sendFile(path.join(clientDir, 'index.html'))
+})
+
+const PORT = process.env.PORT || 4000
+
+app.listen(PORT, () => {
+	console.log(`KZ3 listening on port ${PORT}!`)
 })

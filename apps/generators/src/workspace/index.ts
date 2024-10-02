@@ -1,4 +1,4 @@
-import { MODS_PATH, Project } from 'common/src/index'
+import { MODS_PATH } from 'common/src/index'
 import apps_mods_emails_ConfirmAccount from './root/apps/mods/emails/ConfirmAccount'
 import apps_mods_emails_LoginCode from './root/apps/mods/emails/LoginCode'
 import apps_mods_emails_ResetPassword from './root/apps/mods/emails/ResetPassword'
@@ -17,36 +17,6 @@ import vscode_settings from './root/vscode/settings'
 import vscode_tasks from './root/vscode/tasks'
 import { WorkspaceGeneratorFn } from './types'
 import { format } from './utils'
-
-export const workspaceFiles = (project?: Project) => {
-	const files = [
-		'.gitignore',
-		'package.json',
-		'project.json',
-		'tsconfig.json',
-		'pnpm-workspace.yaml',
-
-		'.vscode/settings.json',
-		'.vscode/tasks.json',
-
-		`${MODS_PATH}/tsconfig.json`,
-		`${MODS_PATH}/package.json`,
-		`${MODS_PATH}/src/api.ts`,
-		`${MODS_PATH}/src/seed.ts`,
-		`${MODS_PATH}/src/queries.ts`,
-		`${MODS_PATH}/emails/ResetPassword.tsx`,
-		`${MODS_PATH}/emails/TwoFactorCode.tsx`,
-	]
-
-	if (project?.settings.auth.requireAccountConfirmation) {
-		files.push(`${MODS_PATH}/emails/ConfirmAccount.tsx`)
-	}
-	if (project?.settings.auth.enableMagicLink) {
-		files.push(`${MODS_PATH}/emails/LoginCode.tsx`)
-	}
-
-	return files
-}
 
 export const generate: WorkspaceGeneratorFn = async ({ project, name }) => {
 	const dir: Record<string, string> = {}

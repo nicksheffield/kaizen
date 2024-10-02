@@ -1,9 +1,6 @@
 import { MODS_PATH, SERVER_PATH } from '@/lib/constants'
-import { format as formatFile } from '@/lib/utils'
-import { Project, parseProject } from 'common/src'
+import { Project, parseProject, workspaceFiles } from 'common/src'
 // import { showDirectoryPicker } from 'file-system-access'
-import { GeneratorFn, generators } from 'generators/src'
-import { workspaceFiles, generate as workspaceGenerator } from 'generators/src/workspace'
 import { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { useLocalStorage } from 'usehooks-ts'
@@ -206,7 +203,7 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 	const saveFile = useCallback(
 		async (x: FileDesc | string, content: string, options?: { showToast?: boolean; format?: boolean }) => {
 			if (!rootHandle) return
-			const { showToast = true, format = false } = options || {}
+			const { showToast = true } = options || {}
 
 			const path = isFile(x) ? x.path : x
 			const fileName = path.split('/').pop()
@@ -216,11 +213,11 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 			if (fileHandle) {
 				const writable = await fileHandle.createWritable({ keepExistingData: false })
 
-				if (format) {
-					await writable.write(await formatFile(content))
-				} else {
-					await writable.write(content)
-				}
+				// if (format) {
+				// await writable.write(await formatFile(content))
+				// } else {
+				await writable.write(content)
+				// }
 
 				await writable.close()
 
@@ -278,9 +275,9 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 
 			if (!proj || !rootHandle || !proj.settings.generator) return
 
-			const generate: GeneratorFn | undefined = generators[proj.settings.generator as keyof typeof generators]
+			// const generate: GeneratorFn | undefined = generators[proj.settings.generator as keyof typeof generators]
 
-			if (!generate) return
+			// if (!generate) return
 
 			const seeder = files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/seed.ts`))
 			const api = files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/api.ts`))
@@ -290,7 +287,7 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 				.filter((x) => x.path.startsWith(`${MODS_PATH}/emails`))
 				.map((x) => x.name)
 
-			const response = await fetch('http://localhost:3333/generate', {
+			const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/generate/project`, {
 				method: 'post',
 				headers: {
 					'Content-Type': 'application/json',
@@ -303,6 +300,10 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 					emails,
 				}),
 			})
+
+			if (!response.ok) {
+				return
+			}
 
 			const responseJson = await response.json()
 
@@ -363,7 +364,25 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 
 			const clientRelatedFilePaths = ['package.json', '.vscode/settings.json', '.vscode/tasks.json']
 
-			const workspace = await workspaceGenerator({ project: projectObj, name })
+			// const workspace = await workspaceGenerator({ project: projectObj, name })
+			const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/generate/workspace`, {
+				method: 'post',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					project: JSON.stringify(projectObj),
+					name,
+				}),
+			})
+
+			if (!response.ok) {
+				return
+			}
+
+			const responseJson = await response.json()
+
+			const workspace = responseJson.generated as Record<string, string>
 
 			const filteredWorkspaceFiles = Object.fromEntries(
 				Object.entries(workspace).filter(([path]) => {

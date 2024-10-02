@@ -27,9 +27,9 @@ export const Header = () => {
 					<NavLink to="/helpers" className={tabStyle}>
 						Helpers
 					</NavLink>
-					<NavLink to="/files" className={tabStyle}>
+					{/* <NavLink to="/files" className={tabStyle}>
 						Files
-					</NavLink>
+					</NavLink> */}
 					<NavLink to="/sandbox" className={tabStyle}>
 						Sandbox
 					</NavLink>

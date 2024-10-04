@@ -50,8 +50,8 @@ import src_routes_auth_register from './root/src/routes/auth/register'
 import src_routes_auth_resetPassword from './root/src/routes/auth/reset-password'
 import src_routes_auth_twoFactor from './root/src/routes/auth/two-factor'
 
+import src_routes_graphql_resolvers_extras from './root/src/routes/graphql/resolvers/_extras'
 import src_routes_graphql_resolvers_filters from './root/src/routes/graphql/resolvers/_filters'
-import src_routes_graphql_resolvers_utils from './root/src/routes/graphql/resolvers/_utils'
 import src_routes_graphql_resolvers_resolver from './root/src/routes/graphql/resolvers/resolver'
 import src_routes_graphql_router from './root/src/routes/graphql/router'
 
@@ -147,8 +147,8 @@ export const generate: HonoGeneratorFn = async (project, extras) => {
 	dir['src/routes/graphql/resolvers/_filters.ts'] = await format(
 		src_routes_graphql_resolvers_filters({ models })
 	)
-	dir['src/routes/graphql/resolvers/_utils.ts'] = await format(
-		src_routes_graphql_resolvers_utils()
+	dir['src/routes/graphql/resolvers/_extras.ts'] = await format(
+		src_routes_graphql_resolvers_extras()
 	)
 
 	for (const model of models) {

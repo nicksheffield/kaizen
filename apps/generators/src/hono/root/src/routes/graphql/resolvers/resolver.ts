@@ -38,8 +38,8 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 	).join('\n')}
 	import { removeDuplicates } from '../../../lib/utils.js'
 	import { interceptQuery, interceptInsertMutation, interceptUpdateMutation, interceptDeleteMutation } from '../../../lib/interceptors.js'
-	import { OrderDir, DateType } from './_utils.js'
-	import * as filters from './_filters.js'
+	import { OrderDir, DateType, StringFilter, BooleanFilter, NumberFilter, DateFilter } from './_extras.js'
+	import { toWhere } from './_filters.js'
 	import * as history from '../../../lib/history.js'
 	${isAuthModel ? `import { hashPassword, validatePassword } from 'lib/password.js'` : ''}
 	
@@ -155,11 +155,11 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				.map((x) => {
 					if (!x.selectable) return null
 
-					return `${x.name}: g.ref(filters.${mapAttrToGQLFilter(x.type)}).optional(),`
+					return `${x.name}: g.ref(${mapAttrToGQLFilter(x.type)}).optional(),`
 				})
 				.filter(isNotNone)
 				.join('\n')}
-			${model.foreignKeys.map((x) => `${x.name}: g.ref(filters.StringFilter).optional(),`).join('\n')}
+			${model.foreignKeys.map((x) => `${x.name}: g.ref(StringFilter).optional(),`).join('\n')}
 			${model.relatedModels
 				.map((x) => {
 					return `${x.fieldName}: g.ref(() => ${x.otherModel.name}.types.filter).optional(),`
@@ -208,7 +208,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 								removeDuplicates(queries.map((q) => q.parent.${rel.thisKey} ?? ''))
 							),
 							${model.auditDates && `isNull(tables.${rel.drizzleName}.deletedAt),`} 
-							${rel.targetType === 'many' && `...filters.toWhere(tables.${rel.drizzleName}, args?.where)`} 
+							${rel.targetType === 'many' && `...toWhere(tables.${rel.drizzleName}, args?.where)`} 
 						),
 						${rel.targetType === 'many' && `orderBy`}
 					})
@@ -287,7 +287,7 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 			const dir = args.orderDir === 'ASC' ? asc : desc
 	
 			const where = and(
-				...filters.toWhere(tables.${model.drizzleName}, args.where),
+				...toWhere(tables.${model.drizzleName}, args.where),
 				${model.auditDates ? `isNull(tables.${model.drizzleName}.deletedAt)` : ''}
 			)
 

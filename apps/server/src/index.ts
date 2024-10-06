@@ -40,13 +40,15 @@ app.post('/api/generate/project', async (req, res) => {
 })
 
 app.post('/api/generate/workspace', async (req, res) => {
-	const project = parseProject(req.body.project)
+	const project = req.body.project
+		? parseProject(req.body.project)
+		: undefined
 	const name = req.body.name
 
-	if (!project) {
-		res.status(400).send('Invalid project')
-		return
-	}
+	// if (!project) {
+	// 	res.status(400).send('Invalid project')
+	// 	return
+	// }
 
 	const generated = await workspaceGenerator({ project, name })
 

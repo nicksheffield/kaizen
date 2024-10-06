@@ -4,21 +4,15 @@
 	"compilerOptions": {
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
+		"esModuleInterop": true,
 		"allowJs": true,
 		"jsx": "preserve",
 		"noEmit": true,
 		"baseUrl": "src",
 		"paths": {
-			"mods/*": [
-				"../../mods/*"
-			]
+			"mods/*": ["../../mods/*"]
 		}
 	},
-	"include": [
-		"**/*.ts",
-		"**/*.tsx"
-	],
-	"exclude": [
-		"node_modules"
-	]
+	"include": ["**/*.ts", "**/*.tsx"],
+	"exclude": ["node_modules"]
 }

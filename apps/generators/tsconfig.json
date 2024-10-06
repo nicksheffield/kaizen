@@ -4,6 +4,7 @@
 	"compilerOptions": {
 		"module": "ESNext",
 		"moduleResolution": "Bundler",
+		"esModuleInterop": true,
 		"allowJs": true,
 		"jsx": "react-jsx",
 		"noEmit": true,

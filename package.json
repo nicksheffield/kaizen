@@ -3,6 +3,7 @@
 	"scripts": {
 		"build": "cd apps/client && vite build",
 		"start": "cd apps/server && tsx src/index.ts",
+		"client": "pnpm --filter client",
 		"dev": "pnpm --recursive --parallel --stream run dev"
 	},
 	"dependencies": {

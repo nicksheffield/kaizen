@@ -5,12 +5,9 @@
     <link rel="icon" type="image/svg+xml" href="https://fav.farm/⚡️" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kaizen App Builder</title>
-    <style>
-      body { margin: 0; overflow: hidden; }
-      iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-    </style>
   </head>
   <body>
-    <iframe src="%VITE_PUBLIC_PATH%/frame.html"></iframe>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

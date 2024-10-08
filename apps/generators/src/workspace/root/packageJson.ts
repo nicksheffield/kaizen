@@ -1,10 +1,17 @@
 import { ProjectCtx } from '../types'
 
 const tmpl = ({ project }: { project?: ProjectCtx }) => {
-	const scripts: Record<string, string> = {
-		start: 'cd apps/server && tsx src/index.ts',
-		'dev-server': 'cd apps/server && pnpm run dev',
+	const scripts: Record<string, string> = {}
+
+	scripts['server'] = 'pnpm --filter server'
+
+	if (project?.settings.hasClient) {
+		scripts['client'] = 'pnpm --filter client'
+		scripts.build = 'pnpm --filter client build'
 	}
+
+	scripts['start'] = 'pnpm --filter server start'
+	scripts['dev'] = 'pnpm --recursive --parallel --stream run dev'
 
 	const dependencies: Record<string, string> = {
 		tsx: '^4.7.1',
@@ -12,8 +19,6 @@ const tmpl = ({ project }: { project?: ProjectCtx }) => {
 	}
 
 	if (project?.settings.hasClient) {
-		scripts.build = 'cd apps/client && vite build'
-		scripts['dev-client'] = 'cd apps/client && pnpm run dev'
 		dependencies.vite = '^5.1.4'
 	}
 

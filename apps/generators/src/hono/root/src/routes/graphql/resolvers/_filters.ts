@@ -130,6 +130,12 @@ export const toWhere = (
 			continue
 		}
 
+		if (field === 'not') {
+			queries = [...queries, not(toWhere(table, filterItem as Record<string, any>))]
+
+			continue
+		}
+
 		const col = table[field as keyof typeof table] as Column | undefined
 
 		if (col) {

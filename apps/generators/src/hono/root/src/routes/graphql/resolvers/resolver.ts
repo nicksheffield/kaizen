@@ -173,6 +173,9 @@ const tmpl = ({ model, project }: { model: ModelCtx; project: ProjectCtx }) => {
 				.ref(() => types.filter)
 				.list()
 				.optional(),
+			not: g
+				.ref(() => types.filter)
+				.optional(),
 		}),
 	}
 	

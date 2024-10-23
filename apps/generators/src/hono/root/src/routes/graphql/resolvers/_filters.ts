@@ -131,7 +131,7 @@ export const toWhere = (
 		}
 
 		if (field === 'not') {
-			queries = [...queries, not(toWhere(table, filterItem as Record<string, any>))]
+			queries = [...queries, not(toWhere(table, filters as Record<string, any>))]
 
 			continue
 		}

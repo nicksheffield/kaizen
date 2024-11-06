@@ -356,7 +356,7 @@ export const ERDEditor = () => {
 	const selectNodes = useStore((actions) => actions.addSelectedNodes)
 
 	const focusOn = (node: Node<Model>) => {
-		flow.fitView({ padding: 0.2, includeHiddenNodes: true, nodes: [node], duration: 400 })
+		// flow.fitView({ padding: 0.2, includeHiddenNodes: true, nodes: [node], duration: 400 })
 		selectNodes([node.id])
 	}
 

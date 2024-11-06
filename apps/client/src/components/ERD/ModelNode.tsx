@@ -19,15 +19,7 @@ import {
 } from '@dnd-kit/core'
 import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import {
-	getNodesBounds,
-	useReactFlow,
-	useStore,
-	useUpdateNodeInternals,
-	Viewport,
-	type Node,
-	type NodeProps,
-} from '@xyflow/react'
+import { useStore, useUpdateNodeInternals, type Node, type NodeProps } from '@xyflow/react'
 import { Attribute, AttributeType, Model as BasicModel, Relation, RelationType } from 'common/src'
 import { CalendarIcon, PlusIcon, Settings2Icon, Trash2Icon, UserIcon } from 'lucide-react'
 import { plural } from 'pluralize'
@@ -196,39 +188,13 @@ export const ModelNode = ({ data, selected }: NodeProps<Node<Model>>) => {
 
 	const addSelectedNodes = useStore((store) => store.addSelectedNodes)
 
-	const flow = useReactFlow()
-	const [prevViewport, setPrevViewport] = useState<Viewport | null>(null)
-
 	const [isPopoverOpen, setPopoverOpen] = useState(false)
 	const onPopoverOpen = (val: boolean) => {
 		setPopoverOpen(val)
 		if (val) {
 			setModalHasPopover(data.id)
-			setPrevViewport(flow.getViewport())
-
-			if (node) {
-				const viewWidth = window.innerWidth - sheetWidth
-				const viewHeight = frameRef.current?.clientHeight || 0 // 872
-
-				const bounds = getNodesBounds([node], { nodeOrigin: [-0.5, -0.5] })
-
-				flow.setViewport(
-					{
-						x: bounds.x * -1 + viewWidth / 2,
-						y: bounds.y * -1 + viewHeight / 2,
-						zoom: 1,
-					},
-					{
-						duration: 600,
-					}
-				)
-			}
 		} else {
 			setModalHasPopover(null)
-
-			if (prevViewport !== null) {
-				flow.setViewport(prevViewport, { duration: 200 })
-			}
 		}
 	}
 

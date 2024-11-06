@@ -11,7 +11,6 @@ import { useAttrField } from '@/lib/useAttrField'
 import { cn } from '@/lib/utils'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { getNodesBounds, useReactFlow, Viewport } from '@xyflow/react'
 import { Attribute, AttributeType, AttributeTypeNames, Model as BasicModel } from 'common/src'
 import { getIsUserAttr } from 'common/src/lib/utils'
 import {
@@ -46,18 +45,8 @@ type AttributeRowProps = {
 // const zoomSelector = (s: ReactFlowState) => s.transform[2]
 
 export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowProps) => {
-	const {
-		relations,
-		nodes,
-		attrTypeRecommends,
-		modalHasPopover,
-		setModalHasPopover,
-		showAuthAttributes,
-		showTypes,
-		frameRef,
-	} = useERDContext()
-
-	const node = nodes.find((x) => x.data.id === model.id)
+	const { relations, nodes, attrTypeRecommends, modalHasPopover, setModalHasPopover, showAuthAttributes, showTypes } =
+		useERDContext()
 
 	const isUserAttr = getIsUserAttr(attr.id)
 	const isLocked = isUserAttr || attr.name === 'id'
@@ -117,40 +106,14 @@ export const AttributeRow = ({ attr, model, remove, updateField }: AttributeRowP
 		transition,
 	}
 
-	const flow = useReactFlow()
-	const [prevViewport, setPrevViewport] = useState<Viewport | null>(null)
-
 	const [isPopoverOpen, setPopoverOpen] = useState(false)
 	const onPopoverOpen = (val: boolean) => {
 		setPopoverOpen(val)
 
 		if (val) {
 			setModalHasPopover(model.id)
-			setPrevViewport(flow.getViewport())
-
-			if (node) {
-				const viewWidth = window.innerWidth - sheetWidth
-				const viewHeight = frameRef.current?.clientHeight || 0 // 872
-
-				const bounds = getNodesBounds([node], { nodeOrigin: [-0.5, -0.5] })
-
-				flow.setViewport(
-					{
-						x: bounds.x * -1 + viewWidth / 2,
-						y: bounds.y * -1 + viewHeight / 2,
-						zoom: 1,
-					},
-					{
-						duration: 600,
-					}
-				)
-			}
 		} else {
 			setModalHasPopover(null)
-
-			if (prevViewport !== null) {
-				flow.setViewport(prevViewport, { duration: 200 })
-			}
 		}
 	}
 

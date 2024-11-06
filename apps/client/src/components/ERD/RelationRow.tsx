@@ -13,7 +13,7 @@ import { getSourceName, getTargetName } from '@/lib/ERDHelpers'
 import { alphabetical, camelize, cn, generateId, uc } from '@/lib/utils'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { getNodesBounds, Handle, Position, useReactFlow, Viewport } from '@xyflow/react'
+import { Handle, Position } from '@xyflow/react'
 import { RelationType, type Model, type Relation } from 'common/src'
 import { ArrowRightIcon, LinkIcon, RepeatIcon, Trash2Icon } from 'lucide-react'
 import { plural, singular } from 'pluralize'
@@ -30,20 +30,9 @@ type RelationRowProps = {
 }
 
 export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
-	const {
-		nodes,
-		relations,
-		setRelations,
-		addNode,
-		focusOn,
-		showTypes,
-		modalHasPopover,
-		setModalHasPopover,
-		frameRef,
-	} = useERDContext()
+	const { nodes, relations, setRelations, addNode, focusOn, showTypes, modalHasPopover, setModalHasPopover } =
+		useERDContext()
 	const attrs = nodes.flatMap((x) => x.data.attributes)
-
-	const node = nodes.find((x) => x.data.id === model.id)
 
 	const sourceCardinality = rel.type === 'oneToMany' || rel.type === 'oneToOne' ? 'one' : 'many'
 	const targetCardinality = rel.type === 'oneToMany' || rel.type === 'manyToMany' ? 'many' : 'one'
@@ -195,40 +184,14 @@ export const RelationRow = ({ rel, model, mode }: RelationRowProps) => {
 			if (y.modelId === rel.targetId) return y.name === name
 		})
 
-	const flow = useReactFlow()
-	const [prevViewport, setPrevViewport] = useState<Viewport | null>(null)
-
 	const [isPopoverOpen, setPopoverOpen] = useState(false)
 
 	const onPopoverOpen = (val: boolean) => {
 		setPopoverOpen(val)
 		if (val) {
 			setModalHasPopover(model.id)
-			setPrevViewport(flow.getViewport())
-
-			if (node) {
-				const viewWidth = window.innerWidth - sheetWidth
-				const viewHeight = frameRef.current?.clientHeight || 0 // 872
-
-				const bounds = getNodesBounds([node], { nodeOrigin: [-0.5, -0.5] })
-
-				flow.setViewport(
-					{
-						x: bounds.x * -1 + viewWidth / 2,
-						y: bounds.y * -1 + viewHeight / 2,
-						zoom: 1,
-					},
-					{
-						duration: 600,
-					}
-				)
-			}
 		} else {
 			setModalHasPopover(null)
-
-			if (prevViewport !== null) {
-				flow.setViewport(prevViewport, { duration: 200 })
-			}
 		}
 	}
 

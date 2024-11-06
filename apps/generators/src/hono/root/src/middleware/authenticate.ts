@@ -75,7 +75,7 @@ const tmpl = ({ project }: { project: ProjectCtx }) => {
 		const { session, user, app } = await getSession(c)
 	
 		// if no session, return 401
-		if (!user || !session) {
+		if (!session) {
 			throw new HTTPException(401, { message: 'Unauthorized' })
 		}
 	

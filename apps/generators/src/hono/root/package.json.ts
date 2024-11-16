@@ -33,7 +33,7 @@ const tmpl = () => {
 			graphql: '^16.8.1',
 			'graphql-shield': '^7.6.5',
 			'graphql-yoga': '^5.1.1',
-			hono: '^4.0.10',
+			hono: '4.6.4',
 			lucia: '^3.1.1',
 			'mime-types': '^2.1.35',
 			mysql2: '^3.9.2',

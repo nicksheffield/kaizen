@@ -7,7 +7,7 @@ const tmpl = () => {
 		dependencies: {
 			server: 'workspace:*',
 			'@faker-js/faker': '^8.4.1',
-			hono: '^4.0.10',
+			hono: '4.6.4',
 			oslo: '^1.1.3',
 			'drizzle-orm': '^0.32.1',
 			'@react-email/components': '0.0.17',

@@ -18,7 +18,7 @@ const tmpl = () => {
 			'@escape.tech/graphql-armor': '^2.4.0',
 			'@faker-js/faker': '^8.4.1',
 			'@graphql-yoga/plugin-disable-introspection': '^2.2.0',
-			'@hono/node-server': '^1.8.2',
+			'@hono/node-server': '^1.12.2',
 			'@hono/zod-validator': '^0.2.0',
 			'@lucia-auth/adapter-drizzle': '^1.0.3',
 			'@react-email/components': '^0.0.16',

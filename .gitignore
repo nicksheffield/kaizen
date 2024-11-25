@@ -185,3 +185,4 @@ bun.lockb
 package-lock.json
 
 .vite
+.DS_Store

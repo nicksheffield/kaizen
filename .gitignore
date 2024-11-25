@@ -183,3 +183,5 @@ apps/server/public
 
 bun.lockb
 package-lock.json
+
+# .vite

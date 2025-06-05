@@ -62,10 +62,10 @@ export const ModelNode = ({ data, selected }: NodeProps<Node<Model>>) => {
 		modalHasPopover,
 		setModalHasPopover,
 		focusOn,
-		frameRef,
+		// frameRef,
 	} = useERDContext()
 
-	const node = nodes.find((x) => x.data.id === data.id)
+	// const node = nodes.find((x) => x.data.id === data.id)
 
 	const hasUserModel = nodes.some((x) => x.data.id === userModelId)
 	const isUserModel = data.id === userModelId

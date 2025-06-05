@@ -1,6 +1,7 @@
 import { MODS_PATH, SERVER_PATH } from '@/lib/constants'
 import { Project, parseProject, workspaceFiles } from 'common/src'
 // import { showDirectoryPicker } from 'file-system-access'
+import { generators, type GeneratorFn } from 'generators/src'
 import { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { useLocalStorage } from 'usehooks-ts'
@@ -19,6 +20,8 @@ import {
 	sortFilesByPath,
 	syncFiles,
 } from '../lib/handle'
+
+console.log('client side')
 
 export const AppProvider = ({ children }: PropsWithChildren) => {
 	/**
@@ -275,49 +278,53 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 
 			if (!proj || !rootHandle || !proj.settings.generator) return
 
-			// const generate: GeneratorFn | undefined = generators[proj.settings.generator as keyof typeof generators]
+			const generate: GeneratorFn | undefined = generators[proj.settings.generator as keyof typeof generators]
 
-			// if (!generate) return
+			if (!generate) return
 
-			const seeder = files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/seed.ts`))
-			const api = files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/api.ts`))
-			const queries = files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/queries.ts`))
-			const emails = files
-				.filter(isFile)
-				.filter((x) => x.path.startsWith(`${MODS_PATH}/emails`))
-				.map((x) => x.name)
+			// // server side version
+			// const seeder = files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/seed.ts`))
+			// const api = files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/api.ts`))
+			// const queries = files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/queries.ts`))
+			// const emails = files
+			// 	.filter(isFile)
+			// 	.filter((x) => x.path.startsWith(`${MODS_PATH}/emails`))
+			// 	.map((x) => x.name)
 
-			const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/generate/project`, {
-				method: 'post',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					project: JSON.stringify(proj),
-					hasSeeder: seeder,
-					hasApi: api,
-					hasQueries: queries,
-					emails,
-				}),
-			})
-
-			if (!response.ok) {
-				return
-			}
-
-			const responseJson = await response.json()
-
-			const generated = responseJson.generated as Record<string, string>
-
-			// const generated = await generate(proj, {
-			// 	seeder: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/seed.ts`)),
-			// 	api: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/api.ts`)),
-			// 	queries: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/queries.ts`)),
-			// 	emails: files
-			// 		.filter(isFile)
-			// 		.filter((x) => x.path.startsWith(`${MODS_PATH}/emails`))
-			// 		.map((x) => x.name),
+			// const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/generate/project`, {
+			// 	method: 'post',
+			// 	headers: {
+			// 		'Content-Type': 'application/json',
+			// 	},
+			// 	body: JSON.stringify({
+			// 		project: JSON.stringify(proj),
+			// 		hasSeeder: seeder,
+			// 		hasApi: api,
+			// 		hasQueries: queries,
+			// 		emails,
+			// 	}),
 			// })
+
+			// if (!response.ok) {
+			// 	return
+			// }
+
+			// const responseJson = await response.json()
+
+			// const generated = responseJson.generated as Record<string, string>
+			// // server side version ends here
+
+			// client side version
+			const generated = await generate(proj, {
+				seeder: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/seed.ts`)),
+				api: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/api.ts`)),
+				queries: files.filter(isFile).some((x) => x.path.startsWith(`${MODS_PATH}/src/queries.ts`)),
+				emails: files
+					.filter(isFile)
+					.filter((x) => x.path.startsWith(`${MODS_PATH}/emails`))
+					.map((x) => x.name),
+			})
+			// client side version ends here
 
 			const generatedDescs = await convertGeneratedFilesToDescs(generated, rootHandle, SERVER_PATH)
 

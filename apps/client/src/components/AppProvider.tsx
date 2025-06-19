@@ -2,6 +2,7 @@ import { MODS_PATH, SERVER_PATH } from '@/lib/constants'
 import { Project, parseProject, workspaceFiles } from 'common/src'
 // import { showDirectoryPicker } from 'file-system-access'
 import { generators, type GeneratorFn } from 'generators/src'
+import { generate as workspaceGenerator } from 'generators/src/workspace'
 import { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { useLocalStorage } from 'usehooks-ts'
@@ -371,25 +372,28 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
 
 			const clientRelatedFilePaths = ['package.json', '.vscode/settings.json', '.vscode/tasks.json']
 
-			// const workspace = await workspaceGenerator({ project: projectObj, name })
-			const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/generate/workspace`, {
-				method: 'post',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					project: JSON.stringify(projectObj),
-					name,
-				}),
-			})
+			// // server side version
+			// const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/generate/workspace`, {
+			// 	method: 'post',
+			// 	headers: {
+			// 		'Content-Type': 'application/json',
+			// 	},
+			// 	body: JSON.stringify({
+			// 		project: JSON.stringify(projectObj),
+			// 		name,
+			// 	}),
+			// })
 
-			if (!response.ok) {
-				return
-			}
+			// if (!response.ok) {
+			// 	return
+			// }
 
-			const responseJson = await response.json()
+			// const responseJson = await response.json()
 
-			const workspace = responseJson.generated as Record<string, string>
+			// const workspace = responseJson.generated as Record<string, string>
+
+			// client side version
+			const workspace = await workspaceGenerator({ project: projectObj, name })
 
 			const filteredWorkspaceFiles = Object.fromEntries(
 				Object.entries(workspace).filter(([path]) => {
